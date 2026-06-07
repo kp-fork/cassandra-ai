@@ -190,7 +190,23 @@ model EntityVote {
   entityType String   // "person" | "fund" | "corp"
   entityUid  String   // Person.personUid / Fund.fundUid / Corp.corpCode
   entityName String   // 표시용 이름
-  vote       String   // "up" | "down" | "neutral"
+  vote       String   // "bad_ass" | "good" | "neutral"
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityUid])
+  @@index([createdAt])
+}
+
+// ─── 평가 댓글 ───
+model EntityComment {
+  id         String   @id @default(uuid())
+  entityType String   // "person" | "fund" | "corp"
+  entityUid  String
+  entityName String
+  authorName String   @default("익명")
+  password   String?  // 수정/삭제용 비밀번호 해시
+  content    String
   ip         String?
   createdAt  DateTime @default(now())
 

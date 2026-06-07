@@ -13,21 +13,21 @@ export async function GET(req: NextRequest) {
       _count: { vote: true },
     });
 
-    const stats = { up: 0, down: 0, neutral: 0, total: 0 };
+    const stats: Record<string, number> = { bad_ass: 0, good: 0, neutral: 0, total: 0 };
     for (const v of votes) {
-      stats[v.vote as keyof typeof stats] = v._count.vote;
+      if (v.vote in stats) stats[v.vote] = v._count.vote;
       stats.total += v._count.vote;
     }
 
-    // 악의 지수: down이 up보다 많으면 음수
+    // 악의 지수: bad_ass이 good보다 많으면 +
     const maliceScore = stats.total > 0
-      ? ((stats.down - stats.up) / stats.total * 100).toFixed(0)
+      ? ((stats.bad_ass - stats.good) / stats.total * 100).toFixed(0)
       : "0";
 
     return NextResponse.json({ ...stats, maliceScore: Number(maliceScore) });
   }
 
-  return NextResponse.json({ up: 0, down: 0, neutral: 0, total: 0, maliceScore: 0 });
+  return NextResponse.json({ bad_ass: 0, good: 0, neutral: 0, total: 0, maliceScore: 0 });
 }
 
 // 투표 제출
@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
   if (!entityType || !entityUid || !vote) {
     return NextResponse.json({ error: "필수 필드 누락" }, { status: 400 });
   }
-  if (!["up", "down", "neutral"].includes(vote)) {
-    return NextResponse.json({ error: "vote 값은 up/down/neutral 중 하나여야 합니다" }, { status: 400 });
+  if (!["bad_ass", "good", "neutral"].includes(vote)) {
+    return NextResponse.json({ error: "vote 값이 올바르지 않습니다" }, { status: 400 });
   }
 
   await prisma.entityVote.create({
@@ -59,13 +59,13 @@ export async function POST(req: NextRequest) {
     _count: { vote: true },
   });
 
-  const stats = { up: 0, down: 0, neutral: 0, total: 0 };
+  const stats: Record<string, number> = { bad_ass: 0, good: 0, neutral: 0, total: 0 };
   for (const v of votes) {
-    stats[v.vote as keyof typeof stats] = v._count.vote;
+    if (v.vote in stats) stats[v.vote] = v._count.vote;
     stats.total += v._count.vote;
   }
   const maliceScore = stats.total > 0
-    ? ((stats.down - stats.up) / stats.total * 100).toFixed(0)
+    ? ((stats.bad_ass - stats.good) / stats.total * 100).toFixed(0)
     : "0";
 
   return NextResponse.json({ ...stats, maliceScore: Number(maliceScore) });
