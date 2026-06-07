@@ -183,3 +183,17 @@ model BoardPost {
   @@index([createdAt])
   @@index([status])
 }
+
+// ─── 집단 평가 투표 ───
+model EntityVote {
+  id         String   @id @default(uuid())
+  entityType String   // "person" | "fund" | "corp"
+  entityUid  String   // Person.personUid / Fund.fundUid / Corp.corpCode
+  entityName String   // 표시용 이름
+  vote       String   // "up" | "down" | "neutral"
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityUid])
+  @@index([createdAt])
+}

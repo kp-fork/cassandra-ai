@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Landmark, AlertTriangle, ArrowLeft, Building2, User, Loader2, Shield } from "lucide-react";
+import VoteWidget from "@/components/VoteWidget";
 
 export default function FundDetailPage() {
   const params = useParams();
@@ -49,6 +50,9 @@ export default function FundDetailPage() {
         <InfoCard label="고유 ID" value={fund.fundUid} />
         <InfoCard label="등록일" value={new Date(fund.createdAt).toLocaleDateString("ko-KR")} />
       </div>
+
+      {/* 집단 평가 */}
+      <VoteWidget entityType="fund" entityUid={fund.fundUid} entityName={fund.name} />
 
       {/* 관련 회사 */}
       <section>

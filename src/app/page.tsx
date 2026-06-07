@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import TrendingSearches from "@/components/TrendingSearches";
 import BoardPage from "@/components/BoardPage";
 import PinboardPanel from "@/components/PinboardPanel";
+import VoteWidget from "@/components/VoteWidget";
 import { usePinboardStore } from "@/lib/pinboard-store";
 import type { NodeDetail } from "@/components/EntityGraph";
 
@@ -254,6 +255,13 @@ function NodeDetailPanel({ node, onClose }: { node: NodeDetail; onClose: () => v
             </span>
           )}
         </div>
+
+        {/* 집단 평가 투표 */}
+        <VoteWidget
+          entityType={node.type as "person" | "fund" | "corp"}
+          entityUid={(node as any).personUid || (node as any).fundUid || node.label}
+          entityName={node.label}
+        />
 
         {/* 참여 기업 목록 */}
         {node.corpRelations?.length > 0 && (

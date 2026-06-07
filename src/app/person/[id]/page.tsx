@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User, AlertTriangle, ArrowLeft, Building2, Landmark, Loader2, Shield } from "lucide-react";
+import VoteWidget from "@/components/VoteWidget";
 
 export default function PersonDetailPage() {
   const params = useParams();
@@ -61,6 +62,9 @@ export default function PersonDetailPage() {
           </p>
         </div>
       )}
+
+      {/* 집단 평가 */}
+      <VoteWidget entityType="person" entityUid={person.personUid} entityName={person.name} />
 
       {/* 관련 회사 */}
       <section>
