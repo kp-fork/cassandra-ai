@@ -1,0 +1,27 @@
+# 의존성
+node_modules/
+.next/
+
+# 환경변수 (API 키 등)
+.env
+.env.local
+.env.*.local
+
+# 블랙리스트/백테스팅 데이터 (공익 목적 로컬 전용)
+prisma/seed.ts
+prisma/seed/
+data/blacklist/
+
+# DB 파일
+*.db
+*.db-journal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

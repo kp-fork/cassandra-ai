@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── 회사 (상장사) ───
+model Corp {
+  id          String   @id @default(uuid())
+  corpCode    String   @unique @db.VarChar(8)
+  stockCode   String?  @db.VarChar(6)
+  companyName String
+  market      String   @default("KOSDAQ")
+  marketCap   BigInt?
+  isAdmin     Boolean  @default(false)
+  delistedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  // 관계
+  personRelations CorpPersonRelation[]
+  fundRelations   CorpFundRelation[]
+  filings         Filing[]
+  signals         Signal[]
+
+  @@index([companyName])
+  @@index([corpCode])
+}
+
+// ─── 인물 (자연인) ───
+model Person {
+  id        String   @id @default(uuid())
+  personUid String   @unique
+  name      String
+  aliases   String[] @default([])
+  flags     String[] @default([]) // ["blacklist", "suspicious"]
+  createdAt DateTime @default(now())
+
+  corpRelations CorpPersonRelation[]
+  fundRelations FundPersonRelation[]
+
+  @@index([name])
+}
+
+// ─── 법인/조합 (SPC, 신기술조합, 투자조합 등) ───
+model Fund {
+  id       String   @id @default(uuid())
+  fundUid  String   @unique
+  name     String
+  fundType String   @default("spc") // spc, tech_assoc, invest_assoc, shell
+  flags    String[] @default([])
+  createdAt DateTime @default(now())
+
+  corpRelations   CorpFundRelation[]
+  personRelations FundPersonRelation[]
+
+  @@index([name])
+}
+
+// ─── 인물-회사 관계 ───
+model CorpPersonRelation {
+  id            String   @id @default(uuid())
+  personId      String
+  corpId        String
+  role          String   // "CEO", "DIRECTOR", "AUDITOR", "LARGEST_HOLDER", "INSIDER"
+  description   String?  // 부연 설명
+  since         DateTime?
+  until         DateTime?
+  source        String?  // 출처 (뉴스 URL, DART rcept_no 등)
+  person        Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  corp          Corp     @relation(fields: [corpId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@index([corpId])
+}
+
+// ─── 법인-회사 관계 ───
+model CorpFundRelation {
+  id           String   @id @default(uuid())
+  fundId       String
+  corpId       String
+  relationType String   // "CB_ACQUIRER", "LARGEST_HOLDER", "INVESTOR", "ACQUIRER"
+  description  String?
+  amount       BigInt?
+  pct          Float?
+  at           DateTime?
+  source       String?
+  fund         Fund     @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  corp         Corp     @relation(fields: [corpId], references: [id], onDelete: Cascade)
+
+  @@index([fundId])
+  @@index([corpId])
+}
+
+// ─── 법인-인물 관계 (실질지배) ───
+model FundPersonRelation {
+  id       String @id @default(uuid())
+  fundId   String
+  personId String
+  role     String // "BENEFICIAL_OWNER", "REPRESENTATIVE"
+  fund     Fund   @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([fundId])
+  @@index([personId])
+}
+
+// ─── 공시 이벤트 ───
+model Filing {
+  id            String   @id @default(uuid())
+  rceptNo       String   @unique @db.VarChar(14)
+  corpId        String
+  filingType    String   // "CB_ISSUANCE", "BW_ISSUANCE", "MAJORITY_HOLDER_CHANGE", etc.
+  title         String
+  summary       String?  // 요약 설명
+  filedAt       DateTime
+  sourceUrl     String?
+  involvedPeople String[] @default([])
+  involvedFunds  String[] @default([])
+  corp          Corp     @relation(fields: [corpId], references: [id], onDelete: Cascade)
+
+  @@index([corpId, filedAt])
+  @@index([filedAt])
+}
+
+// ─── 신호 발화 ───
+model Signal {
+  id        String   @id @default(uuid())
+  corpId    String
+  ruleName  String
+  score     Float
+  detail    String?
+  firedAt   DateTime @default(now())
+  corp      Corp     @relation(fields: [corpId], references: [id], onDelete: Cascade)
+
+  @@index([corpId, firedAt])
+  @@index([firedAt])
+}
