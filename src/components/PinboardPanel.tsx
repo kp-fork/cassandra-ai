@@ -13,23 +13,11 @@ export default function PinboardPanel() {
   const [generating, setGenerating] = useState(false);
   const router = useRouter();
 
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     if (items.length === 0) return;
-    setGenerating(true);
-    try {
-      const res = await fetch("/api/report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
-      });
-      const report = await res.json();
-      if (!report.error) {
-        // 세션 스토리지에 저장 후 리포트 페이지로 이동
-        sessionStorage.setItem("cassandra-report", JSON.stringify(report));
-        router.push("/report");
-      }
-    } catch {}
-    setGenerating(false);
+    // URL-safe: 각 항목을 type:label:uid 형식으로 인코딩
+    const encoded = items.map((i) => `${i.type}:${encodeURIComponent(i.label)}:${encodeURIComponent(i.uid || "")}`).join(",");
+    router.push(`/report?items=${encodeURIComponent(encoded)}`);
   };
 
   const handleDownloadMD = async () => {
@@ -44,8 +32,13 @@ export default function PinboardPanel() {
       const report = await res.json();
       if (!report.error) {
         downloadMarkdown(report);
+      } else {
+        alert("리포트 생성 실패: " + report.error);
       }
-    } catch {}
+    } catch (err) {
+      alert("리포트 생성 중 오류 발생");
+      console.error(err);
+    }
     setGenerating(false);
   };
 
@@ -66,10 +59,7 @@ export default function PinboardPanel() {
 
       <div className="p-2 space-y-1 max-h-[200px] overflow-y-auto">
         {items.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-[var(--bg)] group"
-          >
+          <div key={item.id} className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-[var(--bg)] group">
             {item.type === "corp" ? (
               <Building2 className="w-3.5 h-3.5 text-[var(--corp-color)] shrink-0" />
             ) : item.type === "person" ? (
@@ -91,18 +81,17 @@ export default function PinboardPanel() {
       <div className="p-3 border-t border-[var(--border)] flex gap-2">
         <button
           onClick={handleGenerate}
-          disabled={generating}
-          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:opacity-90 transition-opacity"
         >
-          {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileText className="w-3.5 h-3.5" />}
+          <FileText className="w-3.5 h-3.5" />
           리포트 보기
         </button>
         <button
           onClick={handleDownloadMD}
           disabled={generating}
-          className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] text-xs font-medium hover:text-[var(--text)] hover:border-[var(--accent)] transition-colors"
+          className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] text-xs font-medium hover:text-[var(--text)] hover:border-[var(--accent)] disabled:opacity-50 transition-colors"
         >
-          <Download className="w-3.5 h-3.5" />
+          {generating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
           MD
         </button>
       </div>
