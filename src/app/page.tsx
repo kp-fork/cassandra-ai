@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, Loader2, MessageSquare, Building2, User, Landmark, AlertTriangle, TrendingDown, ShieldAlert, ExternalLink, X } from "lucide-react";
+import { Search, Loader2, MessageSquare, Building2, User, Landmark, AlertTriangle, TrendingDown, ShieldAlert, ExternalLink, X, Pin } from "lucide-react";
 import dynamic from "next/dynamic";
 import TrendingSearches from "@/components/TrendingSearches";
 import BoardPage from "@/components/BoardPage";
+import PinboardPanel from "@/components/PinboardPanel";
+import { usePinboardStore } from "@/lib/pinboard-store";
 import type { NodeDetail } from "@/components/EntityGraph";
 
 const EntityGraph = dynamic(() => import("@/components/EntityGraph"), {
@@ -105,9 +107,10 @@ export default function HomePage() {
 
       {/* 실시간 검색어 + 메인 콘텐츠 */}
       <div className="grid gap-6 lg:grid-cols-4">
-        {/* 왼쪽 사이드바: 실검 랭킹 */}
-        <div className="lg:col-span-1">
+        {/* 왼쪽 사이드바: 실검 랭킹 + 핀보드 */}
+        <div className="lg:col-span-1 space-y-4">
           <TrendingSearches onSelect={(q) => { setQuery(q); doSearch(q); }} />
+          <PinboardPanel />
         </div>
 
         {/* 오른쪽 메인 */}
@@ -175,6 +178,17 @@ export default function HomePage() {
 function NodeDetailPanel({ node, onClose }: { node: NodeDetail; onClose: () => void }) {
   const isPerson = node.type === "person";
   const isBlacklisted = node.flags?.includes("blacklist");
+  const { addItem, removeItem, hasItem } = usePinboardStore();
+  const nodeId = `${node.type}-${node.label}`;
+  const isPinned = hasItem(nodeId);
+
+  const handlePin = () => {
+    if (isPinned) {
+      removeItem(nodeId);
+    } else {
+      addItem({ id: nodeId, type: node.type as "corp" | "person" | "fund", label: node.label, uid: (node as any).uid || node.label });
+    }
+  };
 
   return (
     <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
@@ -187,7 +201,20 @@ function NodeDetailPanel({ node, onClose }: { node: NodeDetail; onClose: () => v
             {isPerson ? "인물" : node.flags?.includes("shell") ? "페이퍼컴퍼니" : "법인/조합"}
           </span>
         </div>
-        <button onClick={onClose} className="p-1 rounded hover:bg-[var(--border)]"><X className="w-4 h-4" /></button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePin}
+            className={`p-1.5 rounded text-xs font-medium transition-colors ${
+              isPinned
+                ? "bg-[var(--accent)]/20 text-[var(--accent-glow)]"
+                : "hover:bg-[var(--border)] text-[var(--text-muted)]"
+            }`}
+            title={isPinned ? "핀 해제" : "핀 고정"}
+          >
+            <Pin className={`w-3.5 h-3.5 ${isPinned ? "fill-current" : ""}`} />
+          </button>
+          <button onClick={onClose} className="p-1 rounded hover:bg-[var(--border)]"><X className="w-4 h-4" /></button>
+        </div>
       </div>
 
       <div className="p-4">
