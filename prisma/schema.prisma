@@ -13,6 +13,7 @@ model Corp {
   corpCode    String   @unique @db.VarChar(8)
   stockCode   String?  @db.VarChar(6)
   companyName String
+  formerNames String[] @default([]) // 이전 법인명 목록
   market      String   @default("KOSDAQ")
   marketCap   BigInt?
   isAdmin     Boolean  @default(false)
@@ -24,6 +25,7 @@ model Corp {
   fundRelations   CorpFundRelation[]
   filings         Filing[]
   signals         Signal[]
+  corpEvents      CorpEvent[]
 
   @@index([companyName])
   @@index([corpCode])
@@ -212,4 +214,18 @@ model EntityComment {
 
   @@index([entityType, entityUid])
   @@index([createdAt])
+}
+
+// ─── 회사 이벤트 (법인명 변경, 사업목적 추가 등) ───
+model CorpEvent {
+  id        String   @id @default(uuid())
+  corpId    String
+  eventType String   // "NAME_CHANGE" | "PURPOSE_ADDITION" | "DIRECTOR_CHANGE" | "CAPITAL_INCREASE" | "CB_ISSUANCE" | "MERGER" | "SPLIT"
+  detail    String   // 상세 내용
+  occurredAt DateTime
+  sourceUrl String?
+  corp      Corp     @relation(fields: [corpId], references: [id], onDelete: Cascade)
+
+  @@index([corpId, occurredAt])
+  @@index([eventType])
 }
