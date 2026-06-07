@@ -218,6 +218,24 @@ function NodeDetailPanel({ node, onClose }: { node: NodeDetail; onClose: () => v
       </div>
 
       <div className="p-4">
+        {/* 생년월일 + 약력 */}
+        {(node as any).birthDate && (
+          <div className="flex items-center gap-3 mb-3 text-xs">
+            <span className="text-[var(--text-muted)]">생년월일</span>
+            <span className="font-mono text-[var(--accent-glow)]">{(node as any).birthDate}</span>
+            {(node as any).sameNameCount > 1 && (
+              <span className="px-1.5 py-0.5 rounded bg-[var(--warning)]/10 text-[var(--warning)] text-[10px]">
+                동명이인 {(node as any).sameNameCount}명
+              </span>
+            )}
+          </div>
+        )}
+        {(node as any).bio && (
+          <p className="text-xs text-[var(--text-muted)] mb-3 leading-relaxed border-l-2 border-[var(--border)] pl-3 py-1">
+            {(node as any).bio}
+          </p>
+        )}
+
         {/* 플래그 + 연관도 통계 */}
         <div className="flex flex-wrap gap-2 mb-4">
           {node.flags?.map((f: string) => (

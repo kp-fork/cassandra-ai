@@ -23,7 +23,11 @@ export async function GET(req: NextRequest) {
     const totalConnections = person.corpRelations.length + person.fundRelations.length;
     const suspiciousCorps = person.corpRelations.filter(r => r.corp.isAdmin || r.corp.delistedAt).length;
 
-    return NextResponse.json(toJSON({ ...person, totalConnections, suspiciousCorps }));
+    // 동명이인 체크
+    const sameNameGroup = await prisma.sameNameGroup.findFirst({ where: { name: person.name } });
+    const sameNameCount = sameNameGroup ? sameNameGroup.personIds.length : 1;
+
+    return NextResponse.json(toJSON({ ...person, totalConnections, suspiciousCorps, sameNameCount }));
   }
 
   if (type === "fund") {

@@ -30,16 +30,31 @@ model Corp {
 }
 
 // ─── 인물 (자연인) ───
+// 동명이인 구분: name + birthDate → personUid = "P-{YYYYMMDD}-{seq}"
 model Person {
   id        String   @id @default(uuid())
   personUid String   @unique
   name      String
+  birthDate String?  // "1972.03.29" — 동명이인 구분키
+  bio       String?  // "전 사이월드제트 CFO, 현 인트로메딕 상무이사"
   aliases   String[] @default([])
   flags     String[] @default([]) // ["blacklist", "suspicious"]
   createdAt DateTime @default(now())
 
   corpRelations CorpPersonRelation[]
   fundRelations FundPersonRelation[]
+
+  @@index([name])
+  @@index([birthDate])
+}
+
+// ─── 동명이인 그룹 (name 기반 묶음) ───
+model SameNameGroup {
+  id       String   @id @default(uuid())
+  name     String   // 동명이인 그룹명
+  personIds String[] @default([]) // Person.personUid 배열
+  note     String?  // 구분 설명
+  createdAt DateTime @default(now())
 
   @@index([name])
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { toJSON } from "@/lib/serialize";
 
 export async function GET(
   _req: NextRequest,
@@ -14,5 +15,9 @@ export async function GET(
     },
   });
   if (!person) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(person);
+
+  const sameNameGroup = await prisma.sameNameGroup.findFirst({ where: { name: person.name } });
+  const sameNameCount = sameNameGroup ? sameNameGroup.personIds.length : 1;
+
+  return NextResponse.json(toJSON({ ...person, sameNameCount }));
 }

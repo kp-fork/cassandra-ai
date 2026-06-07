@@ -38,11 +38,29 @@ export default function PersonDetailPage() {
       </div>
 
       {/* 기본 정보 */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <InfoCard label="고유 ID" value={person.personUid} />
+        <InfoCard label="생년월일" value={person.birthDate || "-"} />
         <InfoCard label="별칭" value={person.aliases?.join(", ") || "-"} />
         <InfoCard label="등록일" value={new Date(person.createdAt).toLocaleDateString("ko-KR")} />
       </div>
+
+      {/* 약력 */}
+      {person.bio && (
+        <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
+          <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase mb-1">약력</h3>
+          <p className="text-sm leading-relaxed">{person.bio}</p>
+        </div>
+      )}
+
+      {/* 동명이인 */}
+      {person.sameNameCount > 1 && (
+        <div className="p-3 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20">
+          <p className="text-xs text-[var(--warning)]">
+            ⚠ 동명이인 {person.sameNameCount}명이 등록되어 있습니다. 생년월일로 구분하세요.
+          </p>
+        </div>
+      )}
 
       {/* 관련 회사 */}
       <section>
