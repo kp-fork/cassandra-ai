@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import cytoscape from "cytoscape";
 import type { GraphData } from "@/lib/graph-queries";
-import { Loader2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 
 export interface NodeDetail {
   type: "person" | "fund";
@@ -25,6 +25,27 @@ interface Props {
 
 export default function EntityGraph({ data, onNodeSelect }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const cyRef = useRef<cytoscape.Core | null>(null);
+
+  const handleZoomIn = useCallback(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    cy.zoom(cy.zoom() * 1.3);
+    cy.center();
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    cy.zoom(cy.zoom() * 0.7);
+    cy.center();
+  }, []);
+
+  const handleFit = useCallback(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    cy.fit(undefined, 40);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -120,8 +141,39 @@ export default function EntityGraph({ data, onNodeSelect }: Props) {
       if (evt.target === cy) onNodeSelect?.(null);
     });
 
-    return () => { cy.destroy(); };
+    cyRef.current = cy;
+
+    return () => { cy.destroy(); cyRef.current = null; };
   }, [data, onNodeSelect]);
 
-  return <div ref={containerRef} className="w-full h-[450px] bg-[var(--bg)]" />;
+  return (
+    <div className="relative w-full h-[450px] bg-[var(--bg)]">
+      <div ref={containerRef} className="w-full h-full" />
+
+      {/* 확대/축소 컨트롤 */}
+      <div className="absolute top-3 right-3 flex flex-col gap-1 z-10">
+        <button
+          onClick={handleZoomIn}
+          className="p-2 rounded-lg bg-[var(--surface)]/90 border border-[var(--border)] hover:bg-[var(--border)]/50 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
+          title="확대"
+        >
+          <ZoomIn className="w-4 h-4" />
+        </button>
+        <button
+          onClick={handleFit}
+          className="p-2 rounded-lg bg-[var(--surface)]/90 border border-[var(--border)] hover:bg-[var(--border)]/50 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
+          title="원래 크기로"
+        >
+          <Maximize2 className="w-4 h-4" />
+        </button>
+        <button
+          onClick={handleZoomOut}
+          className="p-2 rounded-lg bg-[var(--surface)]/90 border border-[var(--border)] hover:bg-[var(--border)]/50 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
+          title="축소"
+        >
+          <ZoomOut className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
 }
