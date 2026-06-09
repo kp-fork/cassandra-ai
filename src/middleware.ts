@@ -10,8 +10,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 로그인 상태면 / 와 /login → /board 로 리다이렉트
-  if (token && (path === "/" || path === "/login")) {
+  // 로그인 상태면 /login → /dashboard 로 리다이렉트
+  if (token && path === "/login") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { toJSON } from "@/lib/serialize";
+import { getCache, setCache, logSearch } from "@/lib/redis-cache";
 import fs from "fs";
 import path from "path";
 
@@ -28,9 +29,8 @@ function getDartKey(): string {
   } catch { return ""; }
 }
 
-// 검색 캐시 (72시간 TTL)
+// 검색 캐시 (Upstash Redis + 인메모리 폴백)
 const CACHE_TTL = 72 * 60 * 60 * 1000;
-const searchCache = new Map<string, { data: any; timestamp: number }>();
 
 // DART 실시간 검색
 async function searchDartRealtime(query: string): Promise<{ corps: any[]; rateLimited: boolean }> {
@@ -75,29 +75,27 @@ export async function GET(req: NextRequest) {
   prisma.searchLog.create({
     data: { query: q.trim(), ip: req.headers.get("x-forwarded-for") || undefined },
   }).catch(() => {});
+  logSearch(q.trim(), req.headers.get("x-forwarded-for") || undefined);
 
-  // 캐시 확인
+  // 캐시 확인 (Upstash Redis 우선)
   const normalizedQ = q.trim().toLowerCase();
   if (!forceRefresh) {
-    const cached = searchCache.get(normalizedQ);
+    const cached = await getCache(`search:${normalizedQ}`);
     if (cached) {
-      const age = Date.now() - cached.timestamp;
       return NextResponse.json(toJSON({
         ...cached.data,
         cached: true,
-        cacheAge: Math.floor(age / 1000 / 60),
-        cacheStale: age > CACHE_TTL,
+        cacheAge: Math.floor(cached.age / 60),
+        cacheStale: cached.stale,
       }));
     }
   }
 
-  // 실행
   const [dartResult, dbResult] = await Promise.all([
     searchDartRealtime(q.trim()),
     searchLocal(q.trim()),
   ]);
 
-  // 지식베이스 매칭
   const kbMatches = knowledgeBase.filter((kb: any) =>
     kb.name.includes(q.trim()) || kb.aliases?.some((a: string) => a.includes(q.trim()))
   );
@@ -112,12 +110,7 @@ export async function GET(req: NextRequest) {
     cached: false, cacheAge: 0, cacheStale: false,
   };
 
-  searchCache.set(normalizedQ, { data: result, timestamp: Date.now() });
-  if (searchCache.size > 100) {
-    const oldest = [...searchCache.entries()].sort((a, b) => a[1].timestamp - b[1].timestamp)[0];
-    if (oldest) searchCache.delete(oldest[0]);
-  }
-
+  await setCache(`search:${normalizedQ}`, result);
   return NextResponse.json(toJSON(result));
 }
 
