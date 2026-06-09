@@ -15,6 +15,8 @@ export default function Header() {
   useEffect(() => {
     checkAuth();
     window.addEventListener("focus", checkAuth);
+    // 페이지뷰 기록
+    fetch("/api/pageview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: window.location.pathname }) }).catch(() => {});
     return () => window.removeEventListener("focus", checkAuth);
   }, [pathname, checkAuth]);
 

@@ -269,3 +269,16 @@ model LoginHistory {
   @@index([userId, createdAt])
   @@index([email])
 }
+
+// ─── 페이지 방문자 통계 ───
+model PageView {
+  id        String   @id @default(uuid())
+  path      String   // 방문 경로
+  ip        String?
+  userAgent String?
+  userId    String?  // 로그인 사용자
+  createdAt DateTime @default(now())
+
+  @@index([path, createdAt])
+  @@index([createdAt])
+}

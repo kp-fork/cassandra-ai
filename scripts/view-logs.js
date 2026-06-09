@@ -34,6 +34,14 @@ async function main() {
   });
   console.log(`\n  총 ${total}건 (성공 ${success}, 실패 ${fail}) | 오늘 ${today}건\n`);
 
+  // 페이지뷰 통계도 표시
+  const pv = await p.pageView.count();
+  const pvToday = await p.pageView.count({ where: { createdAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } } });
+  const topPages = await p.pageView.groupBy({ by: ["path"], _count: { path: true }, orderBy: { _count: { path: "desc" } }, take: 5 });
+  console.log(`  📊 페이지 방문자: 총 ${pv}건 | 오늘 ${pvToday}건`);
+  topPages.forEach(pp => console.log(`     ${pp.path.padEnd(20)} ${pp._count.path}건`));
+  console.log("");
+
   await p.$disconnect();
 }
 
