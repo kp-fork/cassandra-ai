@@ -42,9 +42,7 @@ export default function Header() {
           {btn("/dashboard", "경제 지표")}
           {btn("/", "관계망 분석")}
           {btn("/board", "제보·분석")}
-          <span className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] cursor-not-allowed">
-            WIKI <span className="text-[10px]">(작업중)</span>
-          </span>
+          {btn("/wiki", "WIKI")}
           <a href="/dashboard" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
             이 서비스에 대해
           </a>
