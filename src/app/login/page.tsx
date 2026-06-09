@@ -67,7 +67,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="testcode@naver.com"
+              placeholder="email@domain.com"
               required
               className="w-full mt-1 px-3 py-2.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
             />
@@ -120,10 +120,6 @@ export default function LoginPage() {
             <a href="https://github.com/gameworkerkim/vibe-investing" target="_blank" rel="noopener noreferrer" className="text-[var(--accent-glow)] hover:underline">
               github.com/gameworkerkim/vibe-investing
             </a>
-            <span className="text-[var(--border)]">|</span>
-            <a href="/dashboard" className="hover:text-[var(--text)]">대시보드</a>
-            <span className="text-[var(--border)]">|</span>
-            <span>세션 3시간 유지</span>
           </div>
         </div>
       </div>

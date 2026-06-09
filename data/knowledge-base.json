@@ -1,0 +1,27 @@
+[
+  {
+    "name": "김준범",
+    "context": "현재 씨그널엔터 사건으로 재판 도중 도주중이며, 싸이월드제트 및 여러 코스닥 기업의 CB 발행·무자본 M&A에 관여한 인물로 알려져 있습니다.",
+    "news": [
+      { "title": "김준범, 씨그널엔터 사건 재판 도주", "url": "https://n.news.naver.com/mnews/article/092/0002411192?sid=105" }
+    ],
+    "aliases": ["김준범"],
+    "flags": ["blacklist", "fugitive", "manipulation_suspect"]
+  },
+  {
+    "name": "신승수",
+    "context": "1973년생. 이엠앤아이 사내이사, 전 CBI 사내이사, 제이케이시냅스 사내이사·CB 매수자, CG인바이츠 공동대표, 티쓰리·헬스커넥트 기타비상무이사. 다수 코스닥 기업 등기임원 겸직 및 CB 투자 이력.",
+    "news": [
+      { "title": "이엠앤아이 경영권 분쟁 - 신승수 측 주주총회소집허가 신청", "url": "https://dart.fss.or.kr" }
+    ],
+    "aliases": ["신승수"],
+    "flags": ["blacklist", "manipulation_suspect"]
+  },
+  {
+    "name": "오종원",
+    "context": "1972년생. 전 사이월드제트 CFO, 현 인트로메딕 상무이사. CBI CB 발행 관여. 다수 코스닥 기업에서 CB 인수 및 자금 조달 패턴에 관여.",
+    "news": [],
+    "aliases": ["오종원"],
+    "flags": ["blacklist", "manipulation_suspect"]
+  }
+]

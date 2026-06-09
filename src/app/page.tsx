@@ -23,19 +23,32 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   const [graphData, setGraphData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [cacheAge, setCacheAge] = useState<number | null>(null);
+  const [cacheStale, setCacheStale] = useState(false);
   const [selectedNode, setSelectedNode] = useState<NodeDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
-  const doSearch = useCallback(async (q: string) => {
+  const doSearch = useCallback(async (q: string, force = false) => {
     if (!q.trim()) {
       setGraphData(null);
       setSelectedNode(null);
+      setCacheAge(null);
+      setCacheStale(false);
       return;
     }
     setLoading(true);
     setSelectedNode(null);
-    const graphRes = await fetch(`/api/graph?q=${encodeURIComponent(q)}`).then((r) => r.json());
+    const params = new URLSearchParams({ q });
+    if (force) params.set("refresh", "1");
+    const graphRes = await fetch(`/api/graph?${params}`).then((r) => r.json());
     setGraphData(graphRes);
+    if (graphRes.cached) {
+      setCacheAge(graphRes.cacheAge || 0);
+      setCacheStale(graphRes.cacheStale || false);
+    } else {
+      setCacheAge(null);
+      setCacheStale(false);
+    }
     setLoading(false);
   }, []);
 
@@ -102,6 +115,17 @@ export default function HomePage() {
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           검색
         </button>
+        {cacheStale && (
+          <button
+            onClick={() => doSearch(query, true)}
+            className="h-14 px-4 rounded-xl bg-[var(--warning)]/20 border border-[var(--warning)]/30 text-[var(--warning)] text-xs hover:bg-[var(--warning)]/30 transition-colors shrink-0"
+          >
+            72시간 경과<br />새로고침
+          </button>
+        )}
+        {cacheAge !== null && !cacheStale && (
+          <span className="text-[10px] text-[var(--text-muted)] self-center">{cacheAge}분 전 캐시</span>
+        )}
       </div>
 
       {/* 실시간 검색어 + 메인 콘텐츠 */}

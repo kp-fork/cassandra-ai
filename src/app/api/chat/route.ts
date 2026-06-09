@@ -25,6 +25,13 @@ try {
   }
 } catch {}
 
+// 지식베이스 로드
+let knowledgeBase: any[] = [];
+try {
+  const kbPath = path.join(process.cwd(), "data", "knowledge-base.json");
+  if (fs.existsSync(kbPath)) knowledgeBase = JSON.parse(fs.readFileSync(kbPath, "utf-8"));
+} catch {}
+
 // 기간별 이전 날짜
 function monthsAgo(months: number): string {
   const d = new Date();
