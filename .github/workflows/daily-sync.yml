@@ -16,6 +16,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,9 +29,7 @@ jobs:
         env:
           DATABASE_URL: ${{ vars.DATABASE_URL || secrets.DATABASE_URL }}
           DART_API_KEY: ${{ vars.DART_API_KEY || secrets.DART_API_KEY }}
-        run: |
-          echo "DB: ${#DATABASE_URL} chars, DART: ${#DART_API_KEY} chars"
-          npx tsx scripts/daily-sync.ts
+        run: npx tsx scripts/daily-sync.ts
       - name: Commit updated data
         run: |
           git config user.name "github-actions"

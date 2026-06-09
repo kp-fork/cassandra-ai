@@ -47,10 +47,10 @@ https://cassandra-ai.vercel.app  (기본)
 
 ### GitHub Actions (무료)
 `.github/workflows/daily-sync.yml` 이 매일 09:00 / 18:00 KST에 자동 실행됩니다.
-GitHub Secrets에 `DATABASE_URL`과 `DART_API_KEY` 설정 필요.
+GitHub **Variables**에 등록 필요 (Secrets가 아닌 Variables 탭).
 
 ```bash
-# GitHub → Settings → Secrets → Actions
+# Settings → Secrets and variables → Actions → Variables 탭
 DATABASE_URL=postgresql://...
 DART_API_KEY=...
 ```
