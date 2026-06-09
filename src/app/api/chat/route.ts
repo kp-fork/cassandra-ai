@@ -134,24 +134,51 @@ export async function POST(req: NextRequest) {
 
   // === 4. 최종 폴백: DART 실시간 전체 검색 ===
   if (results.length === 0 && dartKey) {
-    try {
-      const url = `${DART_BASE}/list.json?crtfc_key=${dartKey}&bgn_de=${bgnDe}&end_de=${endDe}&corp_cls=K&page_count=100`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.status === "000" && data.list) {
-        for (const token of tokens) {
-          const matches = data.list.filter((item: any) => item.corp_name?.includes(token));
-          for (const corpName of [...new Set(matches.map((m: any) => m.corp_name))].slice(0, 3)) {
-            const corpData = matches.filter((m: any) => m.corp_name === corpName);
+    // 4a. 지분공시(D)에서 인물명 검색
+    const months3ago = monthsAgo(3);
+    for (const token of tokens) {
+      try {
+        const url = `${DART_BASE}/list.json?crtfc_key=${dartKey}&bgn_de=${months3ago}&end_de=${endDe}&pblntf_ty=D&page_count=100`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === "000" && data.list) {
+          const matches = data.list.filter((item: any) =>
+            (item.flr_nm || "").includes(token) || (item.report_nm || "").includes(token)
+          );
+          if (matches.length > 0) {
             results.push({
-              companyName: corpName, corpCode: corpData[0]?.corp_code || "",
-              role: `DART ${corpData.length}건`, totalDisclosures: corpData.length,
-              dartDisclosures: corpData.slice(0, 10).map((item: any) => ({ title: item.report_nm, date: item.rcept_dt, rceptNo: item.rcept_no })),
+              personName: token, companyName: matches[0].corp_name || "알수없음",
+              role: `지분공시 ${matches.length}건`, totalDisclosures: matches.length,
+              dartDisclosures: matches.slice(0, 10).map((item: any) => ({
+                title: item.report_nm, date: item.rcept_dt, rceptNo: item.rcept_no,
+              })),
             });
           }
         }
-      }
-    } catch {}
+      } catch {}
+    }
+
+    // 4b. 전체 공시 검색
+    if (results.length === 0) {
+      try {
+        const url = `${DART_BASE}/list.json?crtfc_key=${dartKey}&bgn_de=${bgnDe}&end_de=${endDe}&corp_cls=K&page_count=100`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === "000" && data.list) {
+          for (const token of tokens) {
+            const matches = data.list.filter((item: any) => item.corp_name?.includes(token));
+            for (const corpName of [...new Set(matches.map((m: any) => m.corp_name))].slice(0, 3)) {
+              const corpData = matches.filter((m: any) => m.corp_name === corpName);
+              results.push({
+                companyName: corpName, corpCode: corpData[0]?.corp_code || "",
+                role: `DART ${corpData.length}건`, totalDisclosures: corpData.length,
+                dartDisclosures: corpData.slice(0, 10).map((item: any) => ({ title: item.report_nm, date: item.rcept_dt, rceptNo: item.rcept_no })),
+              });
+            }
+          }
+        }
+      } catch {}
+    }
   }
 
   // === 지식베이스 ===
