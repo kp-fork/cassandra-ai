@@ -1,4 +1,13 @@
 import { prisma } from "./prisma";
+import fs from "fs";
+import path from "path";
+
+// DART 기업 매핑
+let dartCorps: { corp_code: string; name: string; stock_code: string }[] = [];
+try {
+  const p = path.join(process.cwd(), "data", "dart-corp-codes.json");
+  if (fs.existsSync(p)) dartCorps = JSON.parse(fs.readFileSync(p, "utf-8"));
+} catch {}
 
 export interface GraphNode {
   data: {
@@ -70,7 +79,24 @@ export async function buildClusterGraph(query: string): Promise<GraphData> {
     take: 5,
   });
 
-  // 4. 회사와 연결된 모든 관계를 그래프로 확장
+  // 4. DB에 없는 경우 DART 매핑에서 검색
+  if (corps.length === 0 && persons.length === 0 && funds.length === 0) {
+    const dartMatch = dartCorps.find(
+      (c) => c.name.includes(query) || c.stock_code === query
+    );
+    if (dartMatch) {
+      const nodeId = `dart-${dartMatch.stock_code}`;
+      nodes.set(nodeId, {
+        data: {
+          id: nodeId,
+          label: dartMatch.name,
+          type: "corp",
+        },
+      });
+    }
+  }
+
+  // 5. 회사와 연결된 모든 관계를 그래프로 확장
   for (const corp of corps) {
     addCorpNode(nodes, corp);
 

@@ -31,7 +31,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 경제 지표
               </a>
               <a href="/board" className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors">
-                제보·분석요청
+                제보·분석
+              </a>
+              <a href="/login" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
+                로그인
               </a>
               <span className="text-[var(--border)]">|</span>
               <span className="text-xs">v0.3.0-beta</span>
