@@ -54,6 +54,20 @@ export async function POST(req: NextRequest) {
   const bgnDe = monthsAgo(period);
   const endDe = new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
+  // 질문에서 인물명/회사명 추출
+  const namePattern = /[가-힣]{2,4}/g;
+  const rawNames: string[] = query.match(namePattern) || [];
+  const excludeWords = ["찾아줘", "분석", "관련", "추가", "알려줘", "검색", "변경", "최근", "법인", "회사", "기업", "공시", "요약"];
+  const names = [...new Set(rawNames)].filter((n) => !excludeWords.includes(n));
+
+  // 카테고리 감지
+  const hasNameChange = /사명|상호|명칭/.test(query);
+  const hasMajorHolder = /대주주|최대주주/.test(query);
+  const hasLawsuit = /소송|분쟁|경영권/.test(query);
+  const hasCB = /CB|사채|전환/.test(query);
+  const activeCategories = { hasNameChange, hasMajorHolder, hasLawsuit, hasCB };
+  const hasCategoryFilter = Object.values(activeCategories).some(Boolean);
+
   // 질문에서 회사명 찾기 (공시 요약, 최근 공시 등)
   const isCompanyQuery = /공시.*요약|최근.*공시|공시.*알려줘|공시.*찾아/.test(query);
 
@@ -116,18 +130,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(toJSON({ results: companyResults, summary }));
     }
   }
-  const namePattern = /[가-힣]{2,4}/g;
-  const rawNames: string[] = query.match(namePattern) || [];
-  const excludeWords = ["찾아줘", "분석", "관련", "추가", "알려줘", "검색", "변경", "최근", "법인", "회사", "기업"];
-  const names = [...new Set(rawNames)].filter((n) => !excludeWords.includes(n));
-
-  // 카테고리 감지
-  const hasNameChange = /사명|상호|명칭/.test(query);
-  const hasMajorHolder = /대주주|최대주주/.test(query);
-  const hasLawsuit = /소송|분쟁|경영권/.test(query);
-  const hasCB = /CB|사채|전환/.test(query);
-  const activeCategories = { hasNameChange, hasMajorHolder, hasLawsuit, hasCB };
-  const hasCategoryFilter = Object.values(activeCategories).some(Boolean);
 
   // 2. 카테고리 필터가 있으면 DART 사전 데이터에서 필터링
   if (hasCategoryFilter) {
