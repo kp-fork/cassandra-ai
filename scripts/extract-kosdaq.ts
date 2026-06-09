@@ -1,9 +1,30 @@
 /**
  * 코스닥 예비 데이터 추출 스크립트
  * 실행: npx tsx scripts/extract-kosdaq.ts
+ * 필요: .env 에 DART_API_KEY 설정
  *
  * 가설: 회사명 변경 + 사업목적 추가 + 소송/경영권 분쟁 → 주가 변동성 증가
  */
+
+import * as fs from "fs";
+import * as path from "path";
+
+// .env 파일에서 DART_API_KEY 읽기
+function getDartApiKey(): string {
+  const envPath = path.join(__dirname, "..", ".env");
+  try {
+    const content = fs.readFileSync(envPath, "utf-8");
+    const match = content.match(/DART_API_KEY=(.+)/);
+    return match ? match[1].trim() : "";
+  } catch {
+    return "";
+  }
+}
+
+const DART_API_KEY = getDartApiKey();
+const DART_BASE = "https://opendart.fss.or.kr/api";
+
+import "dotenv/config";
 
 const UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15";
 const SPAC_KEYWORDS = ["스팩", "SPAC", "기업인수목적", "제\\d+호스팩", "제\\d+호기업인수목적"];
@@ -89,10 +110,102 @@ async function fetchKosdaqStocks(sortType: string, count: number): Promise<Stock
   return all;
 }
 
+// DART API: 회사명으로 공시 검색
+async function searchDartDisclosures(corpName: string): Promise<any[]> {
+  if (!DART_API_KEY) return [];
+
+  const today = new Date();
+  const oneYearAgo = new Date(today);
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+  const bgnDe = oneYearAgo.toISOString().slice(0, 10).replace(/-/g, "");
+  const endDe = today.toISOString().slice(0, 10).replace(/-/g, "");
+
+  // 관심 공시 유형만 검색 (B: 주요사항보고, F: 외부감사, I: 거래소공시)
+  const results: any[] = [];
+
+  for (const pblntfTy of ["B", "F", "I"]) {
+    try {
+      const url = `${DART_BASE}/list.json?crtfc_key=${DART_API_KEY}&bgn_de=${bgnDe}&end_de=${endDe}&pblntf_ty=${pblntfTy}&corp_cls=K&page_count=50`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.status === "000" && data.list) {
+        for (const item of data.list) {
+          // 회사명 부분 매칭
+          if (item.corp_name && item.corp_name.includes(corpName)) {
+            results.push({
+              corpName: item.corp_name,
+              reportName: item.report_nm,
+              rceptNo: item.rcept_no,
+              date: item.rcept_dt,
+              type: pblntfTy,
+            });
+          }
+        }
+      }
+    } catch {}
+    // rate limit 방지
+    await new Promise((r) => setTimeout(r, 100));
+  }
+
+  return results;
+}
+
+// DART 공시에서 이상 징후 검출
+function detectAnomaliesFromDart(disclosures: any[]): {
+  hasNameChange: boolean; nameChangeDetail?: string;
+  hasMajorHolderChange: boolean; holderChangeDetail?: string;
+  hasPurposeAddition: boolean; purposeDetail?: string;
+  hasLawsuit: boolean; lawsuitDetail?: string;
+  hasCB: boolean; cbCount: number;
+} {
+  const result = {
+    hasNameChange: false, nameChangeDetail: undefined as string | undefined,
+    hasMajorHolderChange: false, holderChangeDetail: undefined as string | undefined,
+    hasPurposeAddition: false, purposeDetail: undefined as string | undefined,
+    hasLawsuit: false, lawsuitDetail: undefined as string | undefined,
+    hasCB: false, cbCount: 0,
+  };
+
+  for (const d of disclosures) {
+    const title = d.reportName || "";
+
+    // 사명 변경
+    if (/상호변경|사명변경|회사명\s*변경|명칭변경/.test(title)) {
+      result.hasNameChange = true;
+      result.nameChangeDetail = title;
+    }
+    // 최대주주 변경
+    if (/최대주주변경|최대주주\s*변경|경영권\s*양수|경영권\s*인수/.test(title)) {
+      result.hasMajorHolderChange = true;
+      result.holderChangeDetail = title;
+    }
+    // 사업목적 추가
+    if (/사업목적\s*추가|사업다각화|신규사업/.test(title)) {
+      result.hasPurposeAddition = true;
+      result.purposeDetail = title;
+    }
+    // 소송/경영권 분쟁
+    if (/소송|분쟁|경영권|주주총회소집허가|의결권|가처분/.test(title)) {
+      result.hasLawsuit = true;
+      result.lawsuitDetail = title;
+    }
+    // CB/BW 발행
+    if (/전환사채|신주인수권부사채|CB|BW|사채권/.test(title)) {
+      result.cbCount++;
+    }
+  }
+
+  result.hasCB = result.cbCount > 0;
+  return result;
+}
+
 function computeFlags(
   stock: Stock,
   dbEvents: any[],
-  dbFilings: any[]
+  dbFilings: any[],
+  dartData: any = {}
 ): AnomalyFlags {
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
@@ -176,42 +289,57 @@ async function main() {
   console.log(`   인기 종목: ${marketCapRank.length}개`);
   console.log(`   거래량 상위: ${volumeRank.length}개`);
 
-  // 2. 우리 DB에서 이상 징후 데이터 검색
-  console.log("\n2/4 DB 검색 → 사명변경·대주주변경·사업목적추가·소송...");
+  // 2. DART API + DB 검색
+  console.log("\n2/4 DART API + DB 검색 → 사명변경·대주주변경·사업목적추가·소송...");
   const { PrismaClient } = require("@prisma/client");
   const prisma = new PrismaClient();
 
   const reports: StockReport[] = [];
   const seen = new Set<string>();
+  let dartCalls = 0;
 
-  for (const stock of [...gainers, ...marketCapRank, ...volumeRank]) {
+  // 상위 50개만 DART 검색 (rate limit 고려)
+  const priorityStocks = [...gainers.slice(0, 20), ...marketCapRank.slice(0, 20), ...volumeRank.slice(0, 20)];
+  const uniquePriority = new Map<string, Stock>();
+  for (const s of priorityStocks) {
+    if (!uniquePriority.has(s.code)) uniquePriority.set(s.code, s);
+  }
+
+  for (const stock of uniquePriority.values()) {
     if (seen.has(stock.code)) continue;
     seen.add(stock.code);
 
-    const corpName = stock.name;
+    let dartDisclosures: any[] = [];
+    if (DART_API_KEY && dartCalls < 30) {
+      dartDisclosures = await searchDartDisclosures(stock.name);
+      dartCalls++;
+    }
+
+    const dartFlags = detectAnomaliesFromDart(dartDisclosures);
+
+    // DB 데이터도 병합
     let dbEvents: any[] = [];
     let dbFilings: any[] = [];
-
     try {
       const corp = await prisma.corp.findFirst({
-        where: { companyName: { contains: corpName, mode: "insensitive" } },
+        where: { companyName: { contains: stock.name.slice(0, 3), mode: "insensitive" } },
         include: {
           corpEvents: true,
-          filings: {
-            where: {
-              filedAt: { gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) },
-            },
-          },
+          filings: { where: { filedAt: { gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) } } },
         },
       });
-
-      if (corp) {
-        dbEvents = corp.corpEvents || [];
-        dbFilings = corp.filings || [];
-      }
+      if (corp) { dbEvents = corp.corpEvents || []; dbFilings = corp.filings || []; }
     } catch {}
 
-    const flags = computeFlags(stock, dbEvents, dbFilings);
+    const flags = computeFlags(stock, dbEvents, dbFilings, dartFlags);
+    reports.push({ ...stock, flags });
+  }
+
+  // 나머지 종목은 DB만 검색
+  for (const stock of [...gainers, ...marketCapRank, ...volumeRank]) {
+    if (seen.has(stock.code)) continue;
+    seen.add(stock.code);
+    const flags = computeFlags(stock, [], [], {});
     reports.push({ ...stock, flags });
   }
 
