@@ -157,6 +157,35 @@ export default function ChatPanel() {
               </div>
             )}
 
+            {/* 회사 공시 요약 */}
+            {msg.data?.results && msg.data.results[0]?.categories && (
+              <div className="mt-2 ml-8 space-y-2">
+                {msg.data.results.map((r: any, j: number) => (
+                  <div key={j} className="p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)]">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold">{r.companyName}</span>
+                      <span className="text-[10px] text-[var(--text-muted)]">{r.totalDisclosures}건 공시</span>
+                    </div>
+                    {r.categories && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {Object.entries(r.categories).map(([cat, count]) => (
+                          <span key={cat} className="px-1.5 py-0.5 rounded text-[9px] bg-[var(--accent)]/10 text-[var(--accent-glow)]">{cat} {count as number}건</span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="space-y-0.5 max-h-32 overflow-y-auto">
+                      {r.dartDisclosures?.slice(0, 5).map((d: any, di: number) => (
+                        <div key={di} className="text-[10px] text-[var(--text-muted)] flex gap-2">
+                          <span className="shrink-0">{d.date?.slice(0,4)}.{d.date?.slice(4,6)}.{d.date?.slice(6,8)}</span>
+                          <span className="truncate">{d.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* 결과 카드 */}
             {msg.data?.results && (
               <div className="mt-2 ml-8 space-y-1.5 max-h-[200px] overflow-y-auto">

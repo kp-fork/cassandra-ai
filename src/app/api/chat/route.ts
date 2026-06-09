@@ -15,15 +15,16 @@ function getDartKey(): string {
   }
 }
 
-// DART corp_code 매핑 로드
-let dartCorpMap: Map<string, string> = new Map();
+// DART 기업 매핑 (전체)
+let dartCorps: { corp_code: string; name: string; stock_code: string }[] = [];
 try {
   const mapPath = path.join(process.cwd(), "data", "dart-corp-codes.json");
-  if (fs.existsSync(mapPath)) {
-    const data: any[] = JSON.parse(fs.readFileSync(mapPath, "utf-8"));
-    for (const item of data) dartCorpMap.set(item.stock_code, item.corp_code);
-  }
+  if (fs.existsSync(mapPath)) dartCorps = JSON.parse(fs.readFileSync(mapPath, "utf-8"));
 } catch {}
+
+// DART corp_code 매핑 (stock_code → corp_code)
+let dartCorpMap: Map<string, string> = new Map();
+for (const item of dartCorps) dartCorpMap.set(item.stock_code, item.corp_code);
 
 // 지식베이스 로드
 let knowledgeBase: any[] = [];
@@ -39,6 +40,8 @@ function monthsAgo(months: number): string {
   return d.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
+function sleep(ms: number) { return new Promise((r) => setTimeout(r, ms)); }
+
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { query, period = 12 } = body;
@@ -51,7 +54,73 @@ export async function POST(req: NextRequest) {
   const bgnDe = monthsAgo(period);
   const endDe = new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
-  // 1. 질문에서 인물명과 카테고리 추출
+  // 0. 회사명 직접 검색 (DART API)
+  const dartKey = getDartKey();
+  const bgnDe = monthsAgo(period);
+  const endDe = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+
+  // 질문에서 회사명 찾기 (공시 요약, 최근 공시 등)
+  const isCompanyQuery = /공시.*요약|최근.*공시|공시.*알려줘|공시.*찾아/.test(query);
+
+  if (isCompanyQuery || names.some((n) => dartCorps.some((c) => c.name.includes(n)))) {
+    // DART 매핑에서 회사 찾기
+    const matchingCorps = dartCorps.filter(
+      (c) => names.some((n) => c.name.includes(n))
+    ).slice(0, 5);
+
+    const companyResults: any[] = [];
+    for (const corp of matchingCorps) {
+      if (dartKey) {
+        const disclosures: any[] = [];
+        for (const ty of ["B", "F", "I"]) {
+          try {
+            const url = `${DART_BASE}/list.json?crtfc_key=${dartKey}&corp_code=${corp.corp_code}&bgn_de=${bgnDe}&end_de=${endDe}&pblntf_ty=${ty}&page_count=20`;
+            const res = await fetch(url);
+            const d = await res.json();
+            if (d.status === "000" && d.list) disclosures.push(...d.list);
+          } catch {}
+          await sleep(100);
+        }
+
+        // 카테고리별 집계
+        const categories: Record<string, number> = {};
+        for (const item of disclosures) {
+          const title = item.report_nm || "";
+          if (/전환사채|신주인수권|사채/.test(title)) categories["CB/BW"] = (categories["CB/BW"] || 0) + 1;
+          else if (/유상증자|무상증자|감자/.test(title)) categories["증자/감자"] = (categories["증자/감자"] || 0) + 1;
+          else if (/최대주주|대주주/.test(title)) categories["최대주주"] = (categories["최대주주"] || 0) + 1;
+          else if (/소송|분쟁/.test(title)) categories["소송/분쟁"] = (categories["소송/분쟁"] || 0) + 1;
+          else if (/임원|이사|감사/.test(title)) categories["임원변경"] = (categories["임원변경"] || 0) + 1;
+          else categories["기타"] = (categories["기타"] || 0) + 1;
+        }
+
+        companyResults.push({
+          personName: "회사",
+          companyName: corp.name,
+          corpCode: corp.corp_code,
+          stockCode: corp.stock_code,
+          role: `${period}개월 공시 ${disclosures.length}건`,
+          totalDisclosures: disclosures.length,
+          categories,
+          dartDisclosures: disclosures.slice(0, 10).map((item: any) => ({
+            title: item.report_nm, date: item.rcept_dt, rceptNo: item.rcept_no,
+          })),
+          dbFilings: [],
+        });
+      }
+    }
+
+    if (companyResults.length > 0) {
+      const summary = {
+        query, period: `${period}개월`,
+        foundPersons: 0, foundCompanies: companyResults.length,
+        totalDisclosures: companyResults.reduce((s, r) => s + r.totalDisclosures, 0),
+        knowledge: undefined,
+        searchedAt: new Date().toISOString(),
+      };
+      return NextResponse.json(toJSON({ results: companyResults, summary }));
+    }
+  }
   const namePattern = /[가-힣]{2,4}/g;
   const rawNames: string[] = query.match(namePattern) || [];
   const excludeWords = ["찾아줘", "분석", "관련", "추가", "알려줘", "검색", "변경", "최근", "법인", "회사", "기업"];
