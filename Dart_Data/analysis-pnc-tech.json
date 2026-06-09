@@ -1,0 +1,21 @@
+{
+  "company": "피앤씨테크",
+  "stockCode": "237750",
+  "analyzedAt": "2026-06-09",
+  "totalDisclosures": 39,
+  "riskLevel": "HIGH",
+  "categories": {
+    "소송/분쟁": 5,
+    "합병": 7,
+    "주주총회": 9,
+    "자금조달": 1,
+    "기타": 17
+  },
+  "signals": [
+    { "type": "경영권 분쟁", "severity": "HIGH", "detail": "12개월 내 소송/가처분 5건 — 경영권 분쟁 진행 중" },
+    { "type": "합병/구조조정", "severity": "MEDIUM", "detail": "회사합병결정 7회 반복 정정 — 우회상장 또는 구조조정 의심" },
+    { "type": "주주총회 빈번", "severity": "MEDIUM", "detail": "정기+임시주총 다수 → 경영진 교체 시도" },
+    { "type": "주요주주 변동", "severity": "MONITOR", "detail": "대량보유 보고·주식담보제공 → 지분구조 불안정" }
+  ],
+  "recommendation": "경영권 분쟁 + 소규모합병 반복 + 주식병합 = 전형적인 우회상장/경영권 분쟁 패턴. 투자자 주의 필요."
+}
