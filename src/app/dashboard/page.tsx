@@ -49,6 +49,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [reportText, setReportText] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -90,6 +92,48 @@ export default function DashboardPage() {
 
   const activeData = activeTab === "all" ? filtered : (categories[activeTab] || []);
 
+  // DART 이벤트를 시간순으로 통합
+  const timelineEvents = DART_SECTIONS.flatMap((ds) => {
+    const data = dartSections[ds.key];
+    const events = data?.data || (data?.events ? data.data : []) || [];
+    if (!Array.isArray(events)) return [];
+    return events.map((e: any) => ({ ...e, section: ds.label }));
+  }).sort((a: any, b: any) => (b.date || "").localeCompare(a.date || ""));
+
+  const generateReport = () => {
+    const lines: string[] = [];
+    lines.push("# DART 이상 징후 분석 보고서");
+    lines.push(`\n생성일: ${new Date().toLocaleString("ko-KR")}`);
+    lines.push(`대상: 시총 5,000억 미만 코스닥 100개 기업\n`);
+
+    for (const ds of DART_SECTIONS) {
+      const data = dartSections[ds.key];
+      const events = data?.data || (data?.events ? data.data : []) || [];
+      if (!Array.isArray(events) || events.length === 0) continue;
+      lines.push(`## ${ds.label} (${events.length}건)\n`);
+      for (const e of events.slice(0, 20)) {
+        const d = e.date ? `${e.date.slice(0,4)}-${e.date.slice(4,6)}-${e.date.slice(6,8)}` : "날짜없음";
+        lines.push(`- **${d}** ${e.companyName}${e.marketCap ? ` (${e.marketCap}억)` : ""}`);
+        lines.push(`  ${e.reportName}`);
+      }
+      lines.push("");
+    }
+
+    // 상태 요약
+    lines.push("## 회사별 현재 상태\n");
+    lines.push("| 회사 | 시총 | 등락률 | 변동성 | 상태 |");
+    lines.push("|------|------|--------|--------|------|");
+    for (const s of activeData.slice(0, 20)) {
+      const status = s.flags?.hasNameChange ? "⚠️ 사명변경" :
+                     s.flags?.hasMajorHolderChange ? "⚠️ 대주주변경" :
+                     s.flags?.hasLawsuit ? "🔴 소송중" :
+                     s.flags?.hasCB ? "💰 CB발행" : "정상";
+      lines.push(`| ${s.name} | ${s.marketCap || "-"} | ${s.changePercent > 0 ? "+" : ""}${s.changePercent?.toFixed(1)}% | ${s.flags?.volatilityScore || 0} | ${status} |`);
+    }
+
+    setReportText(lines.join("\n"));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -123,36 +167,108 @@ export default function DashboardPage() {
       {/* DART 실공시 데이터 섹션 */}
       {Object.values(dartCounts).some((c) => c > 0) && (
         <div className="space-y-3">
-          <h3 className="text-sm font-bold flex items-center gap-2">
-            📋 DART 12개월 실공시 데이터
-            <span className="text-[10px] text-[var(--text-muted)] font-normal">(LLM 학습용)</span>
-          </h3>
-          <div className="grid gap-3 md:grid-cols-2">
-            {DART_SECTIONS.map((ds) => {
-              const data = dartSections[ds.key];
-              const events = data?.data || data?.events ? (data.data || []) : [];
-              if (!events || events.length === 0) return null;
-              return (
-                <div key={ds.key} className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
-                  <div className="px-4 py-2 border-b border-[var(--border)] flex items-center justify-between">
-                    <span className="text-xs font-semibold">{ds.label}</span>
-                    <span className="text-[10px] text-[var(--text-muted)]">{events.length}건</span>
-                  </div>
-                  <div className="max-h-[250px] overflow-y-auto divide-y divide-[var(--border)]">
-                    {events.slice(0, 30).map((e: any, i: number) => (
-                      <div key={i} className="px-4 py-2 text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[var(--accent-glow)] font-medium">{e.companyName}</span>
-                          <span className="text-[var(--text-muted)]">{e.date?.slice(0,4)}.{e.date?.slice(4,6)}.{e.date?.slice(6,8)}</span>
-                        </div>
-                        <p className="text-[var(--text-muted)] truncate mt-0.5">{e.reportName}</p>
-                        {e.marketCap && <span className="text-[10px] text-[var(--text-muted)]">{e.marketCap}억</span>}
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold flex items-center gap-2">
+              📋 DART 12개월 실공시 데이터
+              <span className="text-[10px] text-[var(--text-muted)] font-normal">(LLM 학습용)</span>
+            </h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowTimeline(!showTimeline)}
+                className="px-3 py-1.5 rounded-lg text-[10px] font-medium bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors"
+              >
+                {showTimeline ? "카테고리 보기" : "시간순 보기"}
+              </button>
+              <button
+                onClick={generateReport}
+                className="px-3 py-1.5 rounded-lg text-[10px] font-medium bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors"
+              >
+                보고서 만들기
+              </button>
+            </div>
+          </div>
+
+          {showTimeline ? (
+            <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden max-h-[400px] overflow-y-auto">
+              <div className="divide-y divide-[var(--border)]">
+                {timelineEvents.map((e: any, i: number) => (
+                  <div key={i} className="px-4 py-2.5 flex items-start gap-3 text-xs">
+                    <div className="shrink-0 w-20 text-right">
+                      <span className="text-[var(--text-muted)]">
+                        {e.date?.slice(0,4)}.{e.date?.slice(4,6)}.{e.date?.slice(6,8)}
+                      </span>
+                    </div>
+                    <div className="w-[1px] self-stretch bg-[var(--border)] shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${
+                          e.section === "DART 사명변경" ? "bg-[#ff4444]/10 text-[#ff4444]" :
+                          e.section === "DART 대주주변경" ? "bg-[var(--warning)]/10 text-[var(--warning)]" :
+                          e.section === "DART 소송/분쟁" ? "bg-[var(--danger)]/10 text-[var(--danger-glow)]" :
+                          "bg-[var(--accent)]/10 text-[var(--accent-glow)]"
+                        }`}>{e.section}</span>
+                        <span className="font-medium">{e.companyName}</span>
+                        {e.marketCap && <span className="text-[var(--text-muted)]">{e.marketCap}억</span>}
                       </div>
-                    ))}
+                      <p className="text-[var(--text-muted)] mt-0.5 truncate">{e.reportName}</p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              {DART_SECTIONS.map((ds) => {
+                const data = dartSections[ds.key];
+                const events = data?.data || (data?.events ? data.data : []) || [];
+                if (!events || events.length === 0) return null;
+                return (
+                  <div key={ds.key} className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
+                    <div className="px-4 py-2 border-b border-[var(--border)] flex items-center justify-between">
+                      <span className="text-xs font-semibold">{ds.label}</span>
+                      <span className="text-[10px] text-[var(--text-muted)]">{events.length}건</span>
+                    </div>
+                    <div className="max-h-[250px] overflow-y-auto divide-y divide-[var(--border)]">
+                      {events.slice(0, 30).map((e: any, i: number) => (
+                        <div key={i} className="px-4 py-2 text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[var(--accent-glow)] font-medium">{e.companyName}</span>
+                            <span className="text-[var(--text-muted)]">{e.date?.slice(0,4)}.{e.date?.slice(4,6)}.{e.date?.slice(6,8)}</span>
+                          </div>
+                          <p className="text-[var(--text-muted)] truncate mt-0.5">{e.reportName}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 보고서 모달 */}
+      {reportText && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setReportText(null)}>
+          <div className="w-full max-w-2xl max-h-[80vh] rounded-xl bg-[var(--bg)] border border-[var(--border)] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold">📄 이상 징후 분석 보고서</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(reportText);
+                    alert("복사 완료!");
+                  }}
+                  className="px-3 py-1 rounded-lg text-[10px] bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)]"
+                >
+                  복사
+                </button>
+                <button onClick={() => setReportText(null)} className="px-3 py-1 rounded-lg text-[10px] bg-[var(--surface)] border border-[var(--border)]">
+                  닫기
+                </button>
+              </div>
+            </div>
+            <pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed">{reportText}</pre>
           </div>
         </div>
       )}
