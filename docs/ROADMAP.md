@@ -39,6 +39,10 @@
 
 ### 인프라
 - [ ] CDN 캐싱 레이어
+- [ ] Upstash Redis 연동 (일일 사용자 50명 이상 시)  
+  - 현재: 인메모리 Map 폴백 (서버리스에서 초기화됨)  
+  - Upstash Free: 256MB, REST API, 10,000 command/일  
+  - 설정: Vercel Variables에 `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` 추가
 - [ ] OCI Always Free 크롤러 서버
 - [ ] CI/CD 자동화
 
