@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T13:30:08.012Z",
+  "generatedAt": "2026-06-09T14:36:27.209Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,21 +11,14 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 4,
-    "totalSignals": 22,
+    "highRiskCount": 3,
+    "totalSignals": 19,
     "topRisks": [
       {
         "name": "알로이스",
         "score": 95,
         "signals": [
           "대주주변경",
-          "소송/분쟁"
-        ]
-      },
-      {
-        "name": "DKME",
-        "score": 50,
-        "signals": [
           "소송/분쟁"
         ]
       },
