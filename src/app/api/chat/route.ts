@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { toJSON } from "@/lib/serialize";
+import { getCache, setCache } from "@/lib/redis-cache";
 import fs from "fs";
 import path from "path";
 
@@ -28,6 +29,19 @@ export async function POST(req: NextRequest) {
   const bgnDe = monthsAgo(period);
   const endDe = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const tokens = query.trim().split(/\s+/).filter((t: string) => t.length >= 2);
+  const cacheKey = `chat:${query.trim().toLowerCase()}:${period}`;
+
+  // 캐시 확인
+  const cached = await getCache(cacheKey);
+  if (cached) {
+    return NextResponse.json(toJSON({
+      ...cached.data,
+      cached: true,
+      cacheAge: Math.floor(cached.age / 60),
+      cacheStale: cached.stale,
+    }));
+  }
+
   const results: any[] = [];
 
   // === 1. DB에서 회사 검색 ===
@@ -114,7 +128,7 @@ export async function POST(req: NextRequest) {
   // === 지식베이스 ===
   const kbMatches = knowledgeBase.filter((kb: any) => tokens.some((t: string) => kb.name?.includes(t) || kb.aliases?.some((a: string) => a.includes(t))));
 
-  return NextResponse.json(toJSON({
+  const result = {
     results,
     summary: {
       query, period: `${period}개월`,
@@ -123,7 +137,12 @@ export async function POST(req: NextRequest) {
       knowledge: kbMatches.length > 0 ? kbMatches : undefined,
       searchedAt: new Date().toISOString(),
     },
-  }));
+  };
+
+  // 캐시 저장
+  await setCache(cacheKey, result);
+
+  return NextResponse.json(toJSON(result));
 }
 
 function buildResult(name: string, code: string, filings: any[], source: string) {
