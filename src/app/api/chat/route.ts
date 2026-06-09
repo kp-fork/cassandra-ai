@@ -378,6 +378,36 @@ export async function POST(req: NextRequest) {
     names.some((n) => kb.name.includes(n) || kb.aliases?.some((a: string) => a.includes(n)))
   );
 
+  // 4.5 최종 폴백: DART 실시간 검색 (없는 종목 자동 검색)
+  if (results.length === 0 && dartKey) {
+    try {
+      const url = `${DART_BASE}/list.json?crtfc_key=${dartKey}&bgn_de=${bgnDe}&end_de=${endDe}&corp_cls=K&page_count=100`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === "000" && data.list) {
+        for (const name of names) {
+          const matches = data.list.filter((item: any) => item.corp_name?.includes(name));
+          if (matches.length > 0) {
+            const uniqueCorps = [...new Set(matches.map((m: any) => m.corp_name))].slice(0, 3);
+            for (const corpName of uniqueCorps) {
+              const corpDisclosures = matches.filter((m: any) => m.corp_name === corpName);
+              results.push({
+                personName: "", companyName: corpName,
+                corpCode: corpDisclosures[0]?.corp_code || "",
+                role: `DART 실시간 ${corpDisclosures.length}건`,
+                totalDisclosures: corpDisclosures.length,
+                dartDisclosures: corpDisclosures.slice(0, 10).map((item: any) => ({
+                  title: item.report_nm, date: item.rcept_dt, rceptNo: item.rcept_no,
+                })),
+                dbFilings: [],
+              });
+            }
+          }
+        }
+      }
+    } catch {}
+  }
+
   const summary = {
     query,
     period: `${period}개월`,
