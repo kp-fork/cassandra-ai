@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T07:22:58.651Z",
+  "generatedAt": "2026-06-09T07:33:51.911Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -9,5 +9,10 @@
     "cbIssuances": [],
     "capitalChanges": []
   },
-  "companies": {}
+  "companies": {},
+  "dailyReport": {
+    "highRiskCount": 0,
+    "totalSignals": 0,
+    "topRisks": []
+  }
 }

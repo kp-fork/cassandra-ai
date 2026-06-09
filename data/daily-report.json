@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-06-09T07:33:51.910Z",
+  "period": {
+    "from": "20250608",
+    "to": "20260609"
+  },
+  "totalCompanies": 0,
+  "totalDisclosures": 0,
+  "rules": [
+    {
+      "key": "NAME_CHANGE",
+      "label": "사명변경",
+      "weight": 25
+    },
+    {
+      "key": "MAJOR_HOLDER",
+      "label": "대주주변경",
+      "weight": 20
+    },
+    {
+      "key": "LAWSUIT",
+      "label": "소송/분쟁",
+      "weight": 25
+    },
+    {
+      "key": "CB_ISSUANCE",
+      "label": "CB발행",
+      "weight": 10
+    },
+    {
+      "key": "CB_REFIX",
+      "label": "CB리픽싱",
+      "weight": 15
+    },
+    {
+      "key": "CAPITAL",
+      "label": "증자/감자",
+      "weight": 10
+    },
+    {
+      "key": "PAYMENT_DELAY",
+      "label": "대금지연",
+      "weight": 20
+    },
+    {
+      "key": "AUDIT",
+      "label": "감사위험",
+      "weight": 30
+    }
+  ],
+  "highRisk": [],
+  "companies": []
+}

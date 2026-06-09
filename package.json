@@ -15,7 +15,8 @@
     "setup": "node scripts/setup-key.js",
     "postinstall": "npx prisma generate",
     "deploy:setup": "node scripts/deploy-setup.js",
-    "extract": "tsx scripts/extract-kosdaq.ts",
+    "extract-kb": "tsx scripts/build-knowledge-base.ts",
+    "daily": "tsx scripts/daily-sync.ts",
     "extract-dart": "tsx scripts/extract-dart-events.ts"
   },
   "prisma": {
