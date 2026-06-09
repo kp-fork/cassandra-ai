@@ -149,8 +149,8 @@ export default function HomePage() {
           <PinboardPanel />
         </div>
 
-        {/* 오른쪽 메인 */}
-        <div className="lg:col-span-3 space-y-4">
+        {/* 중앙: 그래프 + 분석 */}
+        <div className="lg:col-span-2 space-y-4">
           {/* 그래프 */}
           <div className="relative rounded-xl border border-[var(--border)] overflow-hidden">
             {graphData && graphData.nodes.length > 0 ? (
