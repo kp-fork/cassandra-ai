@@ -32,32 +32,47 @@ function getDartKey(): string {
 // 검색 캐시 (Upstash Redis + 인메모리 폴백)
 const CACHE_TTL = 72 * 60 * 60 * 1000;
 
-// DART 실시간 검색
+// DART 실시간 검색 (최근 3개월)
 async function searchDartRealtime(query: string): Promise<{ corps: any[]; rateLimited: boolean }> {
   const key = getDartKey();
   if (!key) return { corps: [], rateLimited: false };
 
   try {
-    const url = `https://opendart.fss.or.kr/api/list.json?crtfc_key=${key}&bgn_de=${new Date().toISOString().slice(0,10).replace(/-/g,"")}&end_de=${new Date().toISOString().slice(0,10).replace(/-/g,"")}&corp_cls=K&page_count=100`;
+    const today = new Date();
+    const threeMonthsAgo = new Date(today);
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    const bgnDe = threeMonthsAgo.toISOString().slice(0,10).replace(/-/g,"");
+    const endDe = today.toISOString().slice(0,10).replace(/-/g,"");
+
+    const url = `https://opendart.fss.or.kr/api/list.json?crtfc_key=${key}&bgn_de=${bgnDe}&end_de=${endDe}&corp_cls=K&page_count=100`;
     const res = await fetch(url);
     const data = await res.json();
 
     if (data.status === "020") return { corps: [], rateLimited: true };
     if (data.status !== "000" || !data.list) return { corps: [], rateLimited: false };
 
-    const matches = data.list
-      .filter((item: any) => item.corp_name?.includes(query))
-      .slice(0, 10)
-      .map((item: any) => ({
-        companyName: item.corp_name,
-        corpCode: item.corp_code,
-        stockCode: item.stock_code || "",
-        market: "KOSDAQ",
-        reportNm: item.report_nm,
-        rceptDt: item.rcept_dt,
-        _count: { filings: 0, signals: 0 },
-        source: "DART 실시간",
-      }));
+    // 검색어 토큰화해서 매칭
+    const tokens = query.split(/\s+/).filter(t => t.length >= 2);
+    const seen = new Set<string>();
+    const matches: any[] = [];
+
+    for (const item of data.list) {
+      const name = item.corp_name || "";
+      if (tokens.some(t => name.includes(t)) && !seen.has(name)) {
+        seen.add(name);
+        matches.push({
+          companyName: name,
+          corpCode: item.corp_code,
+          stockCode: item.stock_code || "",
+          market: "KOSDAQ",
+          reportNm: item.report_nm,
+          rceptDt: item.rcept_dt,
+          _count: { filings: 0, signals: 0 },
+          source: "DART 실시간",
+        });
+      }
+      if (matches.length >= 10) break;
+    }
 
     return { corps: matches, rateLimited: false };
   } catch {
