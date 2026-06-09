@@ -138,7 +138,70 @@ function getDartKey(): string {
     }
   }
 
-  // 5. 회사와 연결된 모든 관계를 그래프로 확장
+  // 5. 5-hop 관계망 확장
+  for (let hop = 0; hop < 5; hop++) {
+    const currentCorpIds = new Set(
+      [...nodes.values()].filter((n) => n.data.type === "corp").map((n) => n.data.id.replace("corp-", ""))
+    );
+    const currentPersonIds = new Set(
+      [...nodes.values()].filter((n) => n.data.type === "person").map((n) => n.data.id.replace("person-", ""))
+    );
+    const currentFundIds = new Set(
+      [...nodes.values()].filter((n) => n.data.type === "fund").map((n) => n.data.id.replace("fund-", ""))
+    );
+
+    let newFound = false;
+
+    // Corp → Person → Corp (2-hop)
+    for (const corpId of currentCorpIds) {
+      const rels = await prisma.corpPersonRelation.findMany({
+        where: { corpId },
+        include: { person: { include: { corpRelations: { include: { corp: true } } } } },
+        take: 10,
+      });
+      for (const rel of rels) {
+        addPersonNode(nodes, rel.person);
+        edges.push({ data: { id: `pc-${rel.id}`, source: `corp-${corpId}`, target: `person-${rel.personId}`, label: rel.role, type: "person_corp" } });
+        for (const cr of rel.person.corpRelations) {
+          if (!currentCorpIds.has(cr.corpId)) {
+            newFound = true;
+            addCorpNode(nodes, cr.corp);
+            edges.push({ data: { id: `pc-${cr.id}`, source: `person-${rel.personId}`, target: `corp-${cr.corpId}`, label: cr.role, type: "person_corp" } });
+          }
+        }
+      }
+    }
+
+    // Corp → Fund → Person/Corp
+    for (const corpId of currentCorpIds) {
+      const fundRels = await prisma.corpFundRelation.findMany({
+        where: { corpId },
+        include: { fund: { include: { corpRelations: { include: { corp: true } }, personRelations: { include: { person: true } } } } },
+        take: 10,
+      });
+      for (const rel of fundRels) {
+        if (!currentFundIds.has(rel.fundId)) {
+          newFound = true;
+          addFundNode(nodes, rel.fund);
+          edges.push({ data: { id: `fc-${rel.id}`, source: `fund-${rel.fundId}`, target: `corp-${corpId}`, label: rel.relationType, type: "fund_corp" } });
+          for (const cr of rel.fund.corpRelations) {
+            if (!currentCorpIds.has(cr.corpId)) {
+              addCorpNode(nodes, cr.corp);
+              edges.push({ data: { id: `fc2-${cr.id}`, source: `fund-${rel.fundId}`, target: `corp-${cr.corpId}`, label: cr.relationType, type: "fund_corp" } });
+            }
+          }
+          for (const pr of rel.fund.personRelations) {
+            if (!currentPersonIds.has(pr.personId)) {
+              addPersonNode(nodes, pr.person);
+              edges.push({ data: { id: `fp-${pr.id}`, source: `fund-${rel.fundId}`, target: `person-${pr.personId}`, label: pr.role === "BENEFICIAL_OWNER" ? "실소유" : "대표", type: "fund_person" } });
+            }
+          }
+        }
+      }
+    }
+
+    if (!newFound) break;
+  }
   for (const corp of corps) {
     addCorpNode(nodes, corp);
 
