@@ -47,6 +47,15 @@ export async function POST(req: NextRequest) {
     path: "/",
   });
 
+  // 세션 플래그 쿠키 (JS에서 읽기 가능)
+  c.set("session", "1", {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 3 * 60 * 60,
+    path: "/",
+  });
+
   return NextResponse.json({
     success: true,
     user: { id: user.id, email: user.email, name: user.name, role: user.role },

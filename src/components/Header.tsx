@@ -8,8 +8,8 @@ export default function Header() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    const hasToken = document.cookie.includes("auth-token=");
-    setLoggedIn(hasToken);
+    const hasSession = document.cookie.includes("session=");
+    setLoggedIn(hasSession);
   }, []);
 
   const handleLogout = async () => {
