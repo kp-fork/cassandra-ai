@@ -1,6 +1,47 @@
 # CASSANDRA AI — 배포 및 운영 전략
 
-> 최소 비용($0~5/월)으로 운영 가능한 인프라 설계
+> Vercel (Hobby, $0) + Neon (Free, $0) = **$0/월 운영**
+
+---
+
+## 빠른 배포 (Vercel + Neon)
+
+### 1. Neon DB 생성
+```bash
+# 1. https://neon.tech → Sign up (GitHub)
+# 2. Create Project → "cassandra-db"
+# 3. Connection string 복사
+# postgresql://user:pass@ep-xxx.ap-southeast-1.aws.neon.tech/cassandra-db?sslmode=require
+```
+
+### 2. Vercel 배포
+```bash
+npm i -g vercel
+cd dart-monitor
+vercel login
+vercel
+# → Import existing project
+# → Framework: Next.js
+# → Root Directory: ./
+```
+
+### 3. 환경변수 설정 (Vercel Dashboard)
+```
+DATABASE_URL=postgresql://...   # Neon 연결 문자열
+DART_API_KEY=발급받은_40자리
+NEXT_PUBLIC_APP_NAME=CASSANDRA AI
+```
+
+### 4. DB 마이그레이션
+```bash
+npx prisma migrate deploy
+```
+
+### 5. 도메인
+```
+https://cassandra-ai.vercel.app  (기본)
+→ 커스텀 도메인 추가 가능 ($10~15/년)
+```
 
 ---
 
