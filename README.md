@@ -80,10 +80,10 @@ npm run setup        # DART API 키 입력
 
 ## 문서
 
-- [SERVICE_FLOW.md](SERVICE_FLOW.md) — 서비스 흐름도
-- [DEPLOYMENT.md](DEPLOYMENT.md) — 배포 전략
-- [TECH_STACK.md](TECH_STACK.md) — 기술 스택
-- [ROADMAP.md](ROADMAP.md) — 작업 로드맵
+- [SERVICE_FLOW.md](docs/SERVICE_FLOW.md) — 서비스 흐름도
+- [DEPLOYMENT.md](docs/DEPLOYMENT.md) — 배포 전략
+- [TECH_STACK.md](docs/TECH_STACK.md) — 기술 스택
+- [ROADMAP.md](docs/ROADMAP.md) — 작업 로드맵
 
 ## 라이선스
 
