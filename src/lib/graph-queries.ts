@@ -79,7 +79,7 @@ export async function buildClusterGraph(query: string): Promise<GraphData> {
     take: 5,
   });
 
-  // 4. DB에 없는 경우 DART 매핑에서 검색
+  // 4. DB에 없는 경우 DART 매핑에서 검색 + DART API 호출
   if (corps.length === 0 && persons.length === 0 && funds.length === 0) {
     const dartMatch = dartCorps.find(
       (c) => c.name.includes(query) || c.stock_code === query
@@ -93,6 +93,48 @@ export async function buildClusterGraph(query: string): Promise<GraphData> {
           type: "corp",
         },
       });
+
+      // DART API로 최근 공시 검색 (별도 import 없이 fetch 사용)
+      try {
+        const dartKey = getDartKey();
+        if (dartKey) {
+          const today = new Date().toISOString().slice(0,10).replace(/-/g,"");
+          const ago = new Date(Date.now()-365*86400000).toISOString().slice(0,10).replace(/-/g,"");
+          const url = `https://opendart.fss.or.kr/api/list.json?crtfc_key=${dartKey}&corp_code=${dartMatch.corp_code}&bgn_de=${ago}&end_de=${today}&page_count=10`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.status === "000" && data.list) {
+            for (const item of data.list) {
+              // 공시 제목에서 인물/법인명 추출
+              const title = item.report_nm || "";
+              if (title.includes(query)) {
+                const filingNodeId = `filing-${item.rcept_no}`;
+                nodes.set(filingNodeId, {
+                  data: { id: filingNodeId, label: title.slice(0, 30), type: "corp" },
+                });
+                edges.push({
+                  data: {
+                    id: `fe-${item.rcept_no}`,
+                    source: nodeId,
+                    target: filingNodeId,
+                    label: item.rcept_dt,
+                    type: "filing_flow",
+                  },
+                });
+              }
+            }
+          }
+        }
+} catch {}
+
+function getDartKey(): string {
+  try {
+    const envPath = path.join(process.cwd(), ".env");
+    const env = fs.readFileSync(envPath, "utf-8");
+    const m = env.match(/DART_API_KEY=(.+)/);
+    return m ? m[1].trim() : "";
+  } catch { return ""; }
+}
     }
   }
 
