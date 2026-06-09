@@ -131,6 +131,33 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // 1.5 DB에 회사명 직접 검색 (dartCorps 없을 때 폴백)
+  for (const name of names) {
+    const dbCorp = await prisma.corp.findFirst({
+      where: { companyName: { contains: name, mode: "insensitive" } },
+      include: { filings: { orderBy: { filedAt: "desc" }, take: 20 } },
+    });
+    if (dbCorp && dbCorp.filings.length > 0) {
+      const cats: Record<string, number> = {};
+      dbCorp.filings.forEach(f => {
+        const t = f.title;
+        if (/전환사채|사채/.test(t)) cats['CB'] = (cats['CB']||0) + 1;
+        else if (/소송|판결/.test(t)) cats['소송'] = (cats['소송']||0) + 1;
+        else if (/최대주주/.test(t)) cats['대주주'] = (cats['대주주']||0) + 1;
+        else if (/유상증자|무상증자|감자/.test(t)) cats['증자/감자'] = (cats['증자/감자']||0) + 1;
+        else if (/합병/.test(t)) cats['합병'] = (cats['합병']||0) + 1;
+        else cats['기타'] = (cats['기타']||0) + 1;
+      });
+      return NextResponse.json(toJSON({ results: [{
+        personName: '', companyName: dbCorp.companyName, corpCode: dbCorp.corpCode,
+        role: `DB 공시 ${dbCorp.filings.length}건`, totalDisclosures: dbCorp.filings.length,
+        categories: cats,
+        dartDisclosures: dbCorp.filings.slice(0, 10).map(f => ({ title: f.title, date: f.filedAt.toISOString().slice(0,10), rceptNo: f.rceptNo })),
+        dbFilings: [],
+      }], summary: { query, period: `${period}개월`, foundCompanies: 1, totalDisclosures: dbCorp.filings.length, searchedAt: new Date().toISOString() } }));
+    }
+  }
+
   // 2. 카테고리 필터가 있으면 DART 사전 데이터에서 필터링
   if (hasCategoryFilter) {
     const dartFiles: string[] = [];
