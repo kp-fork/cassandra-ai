@@ -202,7 +202,31 @@ function getDartKey(): string {
 
     if (!newFound) break;
   }
-  for (const corp of corps) {
+
+  // 6. 관계가 없으면 공시 타임라인 추가
+  if (nodes.size <= 1 && corps.length > 0) {
+    const corp = corps[0];
+    const filings = await prisma.filing.findMany({
+      where: { corpId: corp.id },
+      orderBy: { filedAt: "desc" },
+      take: 10,
+    });
+    for (const f of filings) {
+      const fid = `filing-${f.id}`;
+      nodes.set(fid, {
+        data: { id: fid, label: f.title.slice(0, 25), type: "corp" },
+      });
+      edges.push({
+        data: {
+          id: `fe-${f.id}`,
+          source: `corp-${corp.id}`,
+          target: fid,
+          label: f.filedAt.toISOString().slice(0, 10),
+          type: "filing_flow",
+        },
+      });
+    }
+  }
     addCorpNode(nodes, corp);
 
     for (const rel of corp.personRelations) {
