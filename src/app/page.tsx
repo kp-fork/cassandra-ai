@@ -27,6 +27,7 @@ export default function HomePage() {
   const [cacheStale, setCacheStale] = useState(false);
   const [selectedNode, setSelectedNode] = useState<NodeDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [knowledgePopup, setKnowledgePopup] = useState<any>(null);
 
   const doSearch = useCallback(async (q: string, force = false) => {
     if (!q.trim()) {
@@ -42,13 +43,14 @@ export default function HomePage() {
     if (force) params.set("refresh", "1");
     const graphRes = await fetch(`/api/graph?${params}`).then((r) => r.json());
     setGraphData(graphRes);
+
+    // 지식베이스 별도 확인
+    const searchRes = await fetch(`/api/search?q=${encodeURIComponent(q)}`).then((r) => r.json());
+    if (searchRes.knowledge?.length > 0) setKnowledgePopup(searchRes.knowledge[0]);
     if (graphRes.cached) {
       setCacheAge(graphRes.cacheAge || 0);
       setCacheStale(graphRes.cacheStale || false);
-    } else {
-      setCacheAge(null);
-      setCacheStale(false);
-    }
+    } else { setCacheAge(null); setCacheStale(false); }
     setLoading(false);
   }, []);
 
@@ -171,6 +173,53 @@ export default function HomePage() {
 
       {/* 법적 고지 */}
       <LegalDisclaimer />
+
+      {/* 지식베이스 팝업 */}
+      {knowledgePopup && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setKnowledgePopup(null)}>
+          <div className="w-full max-w-lg rounded-xl bg-[var(--bg)] border border-[var(--border)] p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[var(--danger-glow)]" />
+                <h3 className="text-lg font-bold">{knowledgePopup.name}</h3>
+              </div>
+              <button onClick={() => setKnowledgePopup(null)} className="p-1 rounded hover:bg-[var(--border)] text-[var(--text-muted)]">✕</button>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {knowledgePopup.flags?.map((f: string) => (
+                <span key={f} className="px-2 py-0.5 rounded text-[10px] bg-[var(--danger)]/10 text-[var(--danger-glow)] border border-[var(--danger)]/20">{f}</span>
+              ))}
+            </div>
+
+            <p className="text-sm text-[var(--text)] leading-relaxed">{knowledgePopup.context}</p>
+
+            {knowledgePopup.news?.length > 0 && (
+              <div className="space-y-1.5">
+                <h4 className="text-[10px] text-[var(--text-muted)] uppercase">관련 뉴스</h4>
+                {knowledgePopup.news.map((n: any, i: number) => (
+                  <a
+                    key={i}
+                    href={n.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-2.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors text-sm text-[var(--accent-glow)] hover:underline"
+                  >
+                    📰 {n.title}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => setKnowledgePopup(null)}
+              className="w-full py-2 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:opacity-90"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
