@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import TrendingSearches from "@/components/TrendingSearches";
 import PinboardPanel from "@/components/PinboardPanel";
 import VoteWidget from "@/components/VoteWidget";
+import ChatPanel from "@/components/ChatPanel";
 import { usePinboardStore } from "@/lib/pinboard-store";
 import type { NodeDetail } from "@/components/EntityGraph";
 
@@ -140,6 +141,9 @@ export default function HomePage() {
           )}
         </div>
       </div>
+
+      {/* 챗봇 */}
+      <ChatPanel />
 
       {/* 법적 고지 */}
       <LegalDisclaimer />
