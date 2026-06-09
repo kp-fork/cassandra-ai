@@ -97,9 +97,9 @@
 | **DB 백업** | 매일 03:00 | pg_dump → OCI Object Storage |
 | **PDF 아카이브** | 공시 접수 시 | DART PDF → Object Storage 저장 |
 
-### Docker Compose 구성
+### Docker Compose 구성 (OCI VM)
 ```yaml
-# OCI VM의 docker-compose.worker.yml
+# docker-compose.worker.yml
 services:
   postgres:
     image: timescale/timescaledb:latest-pg16
@@ -116,7 +116,9 @@ services:
     restart: unless-stopped
 
   worker:
-    build: ./packages/worker
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
     environment:
       DATABASE_URL: postgresql://postgres:${PG_PASSWORD}@postgres/dart_monitor
       REDIS_URL: redis://redis:6379

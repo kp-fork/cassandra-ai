@@ -71,7 +71,7 @@
 
 | 계층 | 현재 | 계획 |
 |---|---|---|
-| 백엔드 | Next.js 15 + TypeScript + Express | |
+| 백엔드 | Next.js 15 + TypeScript (App Router + API Routes) | |
 | DB | PostgreSQL 16 | + TimescaleDB |
 | ORM | Prisma 6 | |
 | 프론트엔드 | React 19 + Tailwind CSS 4 + Cytoscape.js | |
