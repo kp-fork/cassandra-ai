@@ -51,6 +51,7 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showTimeline, setShowTimeline] = useState(false);
   const [reportText, setReportText] = useState<string | null>(null);
+  const [showLegal, setShowLegal] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -138,9 +139,9 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">코스닥 이상 징후 대시보드</h1>
+          <h1 className="text-xl font-bold">코스닥 주가 영향 검토 시그널</h1>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
-            시총 5,000억 미만 100종목 · DART 실공시 매칭 · SPAC 제외
+            시총 5,000억 미만 100종목 · DART 실공시 분석 · SPAC 제외
           </p>
         </div>
       </div>
@@ -362,10 +363,70 @@ export default function DashboardPage() {
           <strong className="text-[var(--warning)]">※ 데이터 출처</strong> — Naver Finance API (시세) + DART OpenAPI (공시)
           · SPAC 제외 · 시총 5,000억 미만 · 변동성 점수 = 사명(25) + 대주주(20) + 소송(25) + CB(5~15) + 사업목적(15) + 증자/감자(10)
         </p>
-        <p className="text-xs text-[var(--text-muted)]">
-          데이터 갱신: <code className="text-[var(--accent-glow)]">npm run extract</code>
-        </p>
+        <div className="flex items-center gap-3 pt-1 border-t border-[var(--border)]">
+          <button onClick={() => setShowLegal(true)} className="text-[10px] text-[var(--accent-glow)] hover:underline">
+            ⚖️ 법적 주의사항
+          </button>
+          <span className="text-[var(--border)]">|</span>
+          <a href="https://github.com/gameworkerkim/vibe-investing" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text)]">
+            github.com/gameworkerkim/vibe-investing
+          </a>
+          <span className="text-[var(--border)]">|</span>
+          <span className="text-[10px] text-[var(--text-muted)]">
+            데이터 갱신: <code className="text-[var(--accent-glow)]">npm run extract</code>
+          </span>
+        </div>
       </div>
+
+      {/* 법적 고지 팝업 */}
+      {showLegal && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setShowLegal(false)}>
+          <div className="w-full max-w-2xl max-h-[80vh] rounded-xl bg-[var(--bg)] border border-[var(--border)] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">⚖️ 법적 주의사항 (Legal Disclaimer)</h3>
+              <button onClick={() => setShowLegal(false)} className="p-1 rounded hover:bg-[var(--border)] text-[var(--text-muted)]">✕</button>
+            </div>
+            <div className="text-xs leading-relaxed space-y-4 text-[var(--text-muted)]">
+              <p>본 서비스는 금융감독원 전자공시시스템(DART) 등 공공 기관이 제공하는 정기·수시 공시 정보를 기반으로 한 데이터 분석 및 시각화 도구입니다.</p>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">불법 행위 판단 금지</h4>
+                <p>본 서비스는 특정 기업, 개인, 법인, 이사, 주주 등의 불법 행위, 주가 조작, 시세 조종, 내부자 거래 여부를 탐지, 입증, 고발, 또는 암시하는 기능을 수행하지 않습니다. 본 서비스의 분석 결과는 단순한 데이터 가공 및 패턴 표시에 불과하며, 법적·형사적 판단의 근거로 사용될 수 없습니다.</p>
+              </div>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">투자 판단 보조 자료로서의 성격</h4>
+                <p>본 서비스는 투자자에게 기업 지배구조 변경, 사업 내용 변경, 수익성 및 재무 건전성 하락 신호, 자본 변동 이력 등의 참고 및 보조 자료를 제공합니다. 특정 종목의 매수·매도 시점, 목표 주가, 투자 전략을 제시하지 않으며, 모든 투자 결정은 이용자 본인의 판단과 책임하에 이루어져야 합니다.</p>
+              </div>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">생성형 AI의 오류 가능성</h4>
+                <p>본 서비스는 생성형 AI 기술을 일부 활용합니다. 분석 결과에는 사실과 다른 내용(Hallucination), 누락, 또는 왜곡된 해석이 포함될 수 있습니다. 공시 데이터 해석에서 발생할 수 있는 오류에 대해 서비스 제공자는 책임을 지지 않습니다.</p>
+              </div>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">비금융 자문·비법률 자문</h4>
+                <p>본 서비스의 정보는 투자 조언, 법률 자문, 세무 자문, 또는 증권 신고서로 간주되지 않습니다. 이용자는 필요시 전문 자격을 갖춘 투자 자문사, 변호사, 회계사와 상담하시기 바랍니다.</p>
+              </div>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">책임의 한계</h4>
+                <p>본 서비스의 정보를 신뢰하거나 활용하여 발생한 직접적·간접적 손해(투자 손실, 기회 손실, 법적 분쟁 비용 등)에 대해 서비스 제공자 및 그 관계자는 일체의 법적 책임을 지지 않습니다.</p>
+              </div>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">특정 개인·법인에 대한 평가 아님</h4>
+                <p>본 서비스는 공시된 사실 관계를 나열하거나 통계적으로 집계하는 것에 그치며, 특정 개인이나 법인의 도덕성, 적법성, 또는 미래 행위에 대한 평가를 제공하지 않습니다.</p>
+              </div>
+
+              <div>
+                <h4 className="text-[var(--text)] font-semibold mb-1">이용 시 주의</h4>
+                <p>본 서비스는 대한민국 자본시장법, 외부감사법, 전자공시제도에 기반한 공시 정보를 사용합니다. 해외 투자자 또는 타법 적용 대상 지역에서 이용할 경우 해당 관할권의 법규를 확인하시기 바랍니다. 본 서비스의 내용을 무단으로 복제·배포하거나, 투자 권유·리딩방·불법 리서치 자료 등에 활용하는 행위는 금지됩니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
