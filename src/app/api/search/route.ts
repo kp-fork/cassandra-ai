@@ -133,13 +133,26 @@ async function searchLocal(query: string) {
   // 공백으로 토큰화해서 각 토큰으로 검색
   const tokens = query.split(/\s+/).filter(t => t.length >= 2);
   
+  // DB 검색 + dart-corp-codes 통합
   const dartMatches = kosdaqCorps
     .filter((c) => tokens.some(t => c.name.includes(t)))
-    .slice(0, 10)
+    .slice(0, 5)
     .map((c) => ({
       companyName: c.name, corpCode: c.corp_code, stockCode: c.stock_code,
       market: "KOSDAQ", _count: { filings: 0, signals: 0 }, source: "DART",
     }));
+
+  // DB에서 실제 filing/signal 카운트 조회
+  for (const dm of dartMatches) {
+    const dbCorp = await prisma.corp.findFirst({
+      where: { corpCode: dm.corpCode },
+      include: { _count: { select: { filings: true, signals: true } } },
+    });
+    if (dbCorp) {
+      dm._count = { filings: dbCorp._count.filings, signals: dbCorp._count.signals };
+      dm.source = "DB";
+    }
+  }
 
   const [dbCorps, persons, funds] = await Promise.all([
     prisma.corp.findMany({
