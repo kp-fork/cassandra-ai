@@ -1,6 +1,9 @@
 name: Daily DART Sync
 
 on:
+  push:
+    paths:
+      - ".github/workflows/daily-sync.yml"
   schedule:
     - cron: "0 0 * * *"   # 매일 09:00 KST (UTC 00:00)
     - cron: "0 9 * * *"   # 매일 18:00 KST (UTC 09:00)
