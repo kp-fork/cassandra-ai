@@ -115,8 +115,11 @@ export async function GET(req: NextRequest) {
 }
 
 async function searchLocal(query: string) {
+  // 공백으로 토큰화해서 각 토큰으로 검색
+  const tokens = query.split(/\s+/).filter(t => t.length >= 2);
+  
   const dartMatches = kosdaqCorps
-    .filter((c) => c.name.includes(query))
+    .filter((c) => tokens.some(t => c.name.includes(t)))
     .slice(0, 10)
     .map((c) => ({
       companyName: c.name, corpCode: c.corp_code, stockCode: c.stock_code,
@@ -125,7 +128,7 @@ async function searchLocal(query: string) {
 
   const [dbCorps, persons, funds] = await Promise.all([
     prisma.corp.findMany({
-      where: { OR: [{ companyName: { contains: query, mode: "insensitive" } }, { corpCode: { contains: query } }, { stockCode: { contains: query } }] },
+      where: { OR: tokens.flatMap(t => [{ companyName: { contains: t, mode: "insensitive" as const } }, { corpCode: { contains: t } }, { stockCode: { contains: t } }]) },
       include: { _count: { select: { filings: true, signals: true } } }, take: 10,
     }),
     prisma.person.findMany({
