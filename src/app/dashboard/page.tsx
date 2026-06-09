@@ -1,170 +1,199 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
-import {
-  TrendingUp, BarChart3, Search, Loader2, ArrowUp, ArrowDown, Minus, Activity,
-} from "lucide-react";
+import { AlertTriangle, TrendingUp, FileText, Building2, Search, Loader2, ShieldAlert, ArrowUp, ArrowDown, Scale } from "lucide-react";
 
 interface StockItem {
   rank: number;
   name: string;
-  code?: string;
+  code: string;
   price: string;
   change: string;
+  changePercent: number;
   volume?: string;
+  marketCap?: string;
+  flags?: {
+    hasNameChange: boolean;
+    hasMajorHolderChange: boolean;
+    hasPurposeAddition: boolean;
+    hasLawsuit: boolean;
+    hasCB: boolean;
+    cbCount: number;
+    volatilityScore: number;
+    nameChangeDetail?: string;
+    holderChangeDetail?: string;
+    lawsuitDetail?: string;
+  };
 }
 
-interface Snapshot {
-  id: string;
-  category: string;
-  data: StockItem[] | string;
-  stats: any;
-  createdAt: string;
-}
-
-const CATEGORY_LABEL: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  TOP_MARKET_CAP: { label: "시가총액 상위", icon: <BarChart3 className="w-3.5 h-3.5" />, color: "text-[var(--accent-glow)]" },
-  TOP_VOLUME: { label: "거래량 상위", icon: <Activity className="w-3.5 h-3.5" />, color: "text-[var(--warning)]" },
-  TOP_GAINERS: { label: "등락률 상위", icon: <TrendingUp className="w-3.5 h-3.5" />, color: "text-[#ff4444]" },
-  TOP_SEARCH: { label: "검색 상위", icon: <Search className="w-3.5 h-3.5" />, color: "text-[var(--person-color)]" },
-};
+const CATEGORIES = [
+  { key: "name-changes", label: "사명 변경", icon: <FileText className="w-4 h-4" />, color: "border-l-[#ff4444]" },
+  { key: "major-holder-changes", label: "대주주 변경", icon: <ShieldAlert className="w-4 h-4" />, color: "border-l-[var(--warning)]" },
+  { key: "lawsuits", label: "소송·분쟁", icon: <Scale className="w-4 h-4" />, color: "border-l-[var(--danger-glow)]" },
+  { key: "cb-issuances", label: "CB 발행", icon: <TrendingUp className="w-4 h-4" />, color: "border-l-[var(--accent-glow)]" },
+  { key: "high-volatility", label: "고변동성 (≥30)", icon: <AlertTriangle className="w-4 h-4" />, color: "border-l-[#ff4444]" },
+];
 
 export default function DashboardPage() {
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
+  const [allStocks, setAllStocks] = useState<StockItem[]>([]);
+  const [categories, setCategories] = useState<Record<string, StockItem[]>>({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<string>("all");
 
   useEffect(() => {
-    fetch("/api/dashboard")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.error) setError(d.error);
-        else setSnapshots(d.snapshots || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("데이터를 불러올 수 없습니다");
-        setLoading(false);
+    Promise.all([
+      fetch("/api/kosdaq-data?file=kosdaq-anomaly-report").then((r) => r.json()),
+      ...CATEGORIES.map((c) =>
+        fetch(`/api/kosdaq-data?file=kosdaq-${c.key}`).then((r) => r.json())
+      ),
+    ]).then(([report, ...catData]) => {
+      setAllStocks(report.stocks || []);
+      const catMap: Record<string, StockItem[]> = {};
+      CATEGORIES.forEach((c, i) => {
+        catMap[c.key] = Array.isArray(catData[i]) ? catData[i] : [];
       });
+      setCategories(catMap);
+      setLoading(false);
+    });
   }, []);
-
-  const parseStocks = (data: any): StockItem[] => {
-    if (Array.isArray(data)) return data;
-    if (typeof data === "string") {
-      try { return JSON.parse(data); } catch {}
-    }
-    return [];
-  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="w-8 h-8 animate-spin text-[var(--accent-glow)]" />
-        <span className="ml-3 text-[var(--text-muted)]">경제 지표 불러오는 중...</span>
       </div>
     );
   }
+
+  const filtered = searchQuery
+    ? allStocks.filter((s) => s.name.includes(searchQuery) || s.code.includes(searchQuery))
+    : allStocks;
+
+  const activeData = activeTab === "all" ? filtered : (categories[activeTab] || []);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Activity className="w-5 h-5" /> 경제 지표 대시보드
-          </h1>
+          <h1 className="text-xl font-bold">코스닥 이상 징후 대시보드</h1>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
-            Naver Finance · 코스닥 거래량/급등/검색 상위
-            {snapshots.length > 0 && ` · ${format(new Date(snapshots[0].createdAt), "MM/dd HH:mm", { locale: ko })} 기준`}
+            시총 5,000억 미만 100종목 · DART 실공시 매칭 · SPAC 제외
           </p>
         </div>
-        <a href="/" className="text-xs text-[var(--text-muted)] hover:text-[var(--text)]">← 관계망 분석</a>
       </div>
 
-      {error && (
-        <div className="p-4 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)] text-sm">
-          {error}
-        </div>
-      )}
+      {/* 요약 카드 */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat.key}
+            onClick={() => { setActiveTab(cat.key); setSearchQuery(""); }}
+            className={`p-4 rounded-xl border text-left transition-colors ${cat.color} ${
+              activeTab === cat.key
+                ? "bg-[var(--accent)]/10 border-[var(--accent)]"
+                : "bg-[var(--surface)] border-[var(--border)] hover:border-[var(--accent)]/50"
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-2">{cat.icon}<span className="text-xs font-semibold">{cat.label}</span></div>
+            <span className="text-2xl font-bold">{categories[cat.key]?.length || 0}</span>
+            <span className="text-[10px] text-[var(--text-muted)] ml-1">건</span>
+          </button>
+        ))}
+      </div>
 
-      {snapshots.length === 0 && !error && (
-        <div className="p-4 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)] text-sm">
-          Naver Finance 크롤링에 실패했습니다. stock.naver.com은 동적 렌더링 + 안티봇으로 인해
-          Puppeteer로도 완전한 데이터 수집이 어렵습니다. 추후 KRX Open API 또는
-          대체 데이터 소스로 연동할 예정입니다.
+      {/* 검색 + 탭 */}
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setActiveTab("all"); }}
+            placeholder="종목명 검색..."
+            className="w-full h-10 pl-9 pr-3 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-sm text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
+          />
         </div>
-      )}
+        <button
+          onClick={() => { setActiveTab("all"); setSearchQuery(""); }}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            activeTab === "all" ? "bg-[var(--accent)] text-white" : "bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text)]"
+          }`}
+        >
+          전체 ({allStocks.length})
+        </button>
+      </div>
 
-      {snapshots.length === 0 ? (
-        <div className="text-center py-12 text-[var(--text-muted)]">
-          <BarChart3 className="w-8 h-8 mx-auto mb-2 opacity-30" />
-          실시간 데이터 수집 준비 중...
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2">
-          {snapshots.map((snap) => {
-            const stocks = parseStocks(snap.data);
-            const cat = CATEGORY_LABEL[snap.category] || CATEGORY_LABEL.TOP_VOLUME;
-            const stats = typeof snap.stats === "string" ? JSON.parse(snap.stats) : snap.stats;
-
-            return (
-              <div key={snap.id} className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
-                <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className={cat.color}>{cat.icon}</span>
-                    <span className="text-sm font-semibold">{cat.label}</span>
-                  </div>
-                  {stats && (
-                    <div className="flex items-center gap-2 text-[10px]">
-                      <span className="text-[#ff4444] flex items-center gap-0.5"><ArrowUp className="w-3 h-3" />{stats.gainerCount}</span>
-                      <span className="text-[var(--text-muted)] flex items-center gap-0.5"><Minus className="w-3 h-3" />{stats.neutralCount}</span>
-                      <span className="text-[#44dd44] flex items-center gap-0.5"><ArrowDown className="w-3 h-3" />{stats.loserCount}</span>
-                      <span className="text-[var(--text-muted)] ml-1">평균 {stats.avgChangePercent > 0 ? "+" : ""}{stats.avgChangePercent}%</span>
-                    </div>
-                  )}
-                </div>
-                <div className="divide-y divide-[var(--border)]">
-                  {stocks.slice(0, 10).map((s, i) => (
-                    <a
-                      key={i}
-                      href={`/?q=${encodeURIComponent(s.name)}`}
-                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--border)]/20 transition-colors"
-                    >
-                      <span className={`w-5 text-center text-[10px] font-bold shrink-0 ${
-                        i < 3 ? "text-[var(--accent-glow)]" : "text-[var(--text-muted)]"
-                      }`}>{s.rank || i + 1}</span>
-                      <span className="flex-1 text-sm truncate">{s.name}</span>
-                      {s.price && s.price !== "-" && (
-                        <span className="text-xs text-[var(--text-muted)] shrink-0 w-16 text-right">{s.price}</span>
+      {/* 종목 리스트 */}
+      <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-[var(--border)] text-[var(--text-muted)]">
+                <th className="text-left px-4 py-3 w-8">#</th>
+                <th className="text-left px-2 py-3">종목명</th>
+                <th className="text-right px-2 py-3">현재가</th>
+                <th className="text-right px-2 py-3">등락률</th>
+                <th className="text-right px-2 py-3 hidden md:table-cell">시총</th>
+                <th className="text-center px-2 py-3 w-16">변동성</th>
+                <th className="text-left px-2 py-3">플래그</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {activeData.slice(0, 100).map((s, i) => {
+                const f = s.flags;
+                const isUp = s.changePercent > 0;
+                return (
+                  <tr key={s.code} className="hover:bg-[var(--border)]/20 transition-colors">
+                    <td className="px-4 py-2.5 text-[var(--text-muted)]">{s.rank || i + 1}</td>
+                    <td className="px-2 py-2.5">
+                      <a href={`/?q=${encodeURIComponent(s.name)}`} className="font-medium hover:text-[var(--accent-glow)] transition-colors">
+                        {s.name}
+                      </a>
+                      <span className="text-[var(--text-muted)] ml-1">{s.code}</span>
+                    </td>
+                    <td className="px-2 py-2.5 text-right">{s.price}</td>
+                    <td className={`px-2 py-2.5 text-right font-medium ${isUp ? "text-[#ff4444]" : "text-[#44dd44]"}`}>
+                      {isUp ? <ArrowUp className="w-3 h-3 inline mr-0.5" /> : <ArrowDown className="w-3 h-3 inline mr-0.5" />}
+                      {Math.abs(s.changePercent).toFixed(1)}%
+                    </td>
+                    <td className="px-2 py-2.5 text-right text-[var(--text-muted)] hidden md:table-cell">{s.marketCap || "-"}</td>
+                    <td className="px-2 py-2.5 text-center">
+                      {f && f.volatilityScore > 0 ? (
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                          f.volatilityScore >= 50 ? "bg-[var(--danger)]/20 text-[var(--danger-glow)]" :
+                          f.volatilityScore >= 30 ? "bg-[var(--warning)]/20 text-[var(--warning)]" :
+                          "bg-[var(--accent)]/10 text-[var(--accent-glow)]"
+                        }`}>{f.volatilityScore}</span>
+                      ) : (
+                        <span className="text-[var(--text-muted)]">-</span>
                       )}
-                      <span className={`text-xs shrink-0 w-24 text-right ${
-                        (s.change || "").includes("▲") ? "text-[#ff4444]" :
-                        (s.change || "").includes("▼") ? "text-[#44dd44]" :
-                        "text-[var(--text-muted)]"
-                      }`}>{s.change || "-"}</span>
-                      {s.volume && (
-                        <span className="text-[10px] text-[var(--text-muted)] shrink-0 w-20 text-right hidden md:inline">{s.volume}</span>
-                      )}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+                    </td>
+                    <td className="px-2 py-2.5">
+                      <div className="flex gap-1 flex-wrap">
+                        {f?.hasNameChange && <span className="px-1 py-0.5 rounded bg-[#ff4444]/10 text-[#ff4444] text-[9px]">사명</span>}
+                        {f?.hasMajorHolderChange && <span className="px-1 py-0.5 rounded bg-[var(--warning)]/10 text-[var(--warning)] text-[9px]">대주주</span>}
+                        {f?.hasLawsuit && <span className="px-1 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger-glow)] text-[9px]">소송</span>}
+                        {f?.hasCB && <span className="px-1 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent-glow)] text-[9px]">CB{f.cbCount > 1 ? f.cbCount : ""}</span>}
+                        {f?.hasPurposeAddition && <span className="px-1 py-0.5 rounded bg-[var(--person-color)]/10 text-[var(--person-color)] text-[9px]">사업</span>}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
 
       <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] space-y-2">
         <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-          <strong className="text-[var(--warning)]">※ 데이터 출처</strong> — Naver Finance (stock.naver.com)
-          · 실시간 지연 데이터 · Puppeteer 크롤링 · 1시간 캐시
+          <strong className="text-[var(--warning)]">※ 데이터 출처</strong> — Naver Finance API (시세) + DART OpenAPI (공시)
+          · SPAC 제외 · 시총 5,000억 미만 · 변동성 점수 = 사명(25) + 대주주(20) + 소송(25) + CB(5~15) + 사업목적(15) + 증자/감자(10)
         </p>
-        <div className="flex items-center gap-3 pt-1 border-t border-[var(--border)]">
-          <a href="https://github.com/gameworkerkim/vibe-investing" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[var(--accent-glow)] hover:underline">github.com/gameworkerkim/vibe-investing</a>
-          <span className="text-[var(--border)]">|</span>
-          <a href="https://stock.naver.com" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text)]">stock.naver.com</a>
-        </div>
+        <p className="text-xs text-[var(--text-muted)]">
+          데이터 갱신: <code className="text-[var(--accent-glow)]">npm run extract</code>
+        </p>
       </div>
     </div>
   );
