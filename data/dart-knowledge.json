@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T07:33:51.911Z",
+  "generatedAt": "2026-06-09T13:30:08.012Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,41 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 0,
-    "totalSignals": 0,
-    "topRisks": []
+    "highRiskCount": 4,
+    "totalSignals": 22,
+    "topRisks": [
+      {
+        "name": "알로이스",
+        "score": 95,
+        "signals": [
+          "대주주변경",
+          "소송/분쟁"
+        ]
+      },
+      {
+        "name": "DKME",
+        "score": 50,
+        "signals": [
+          "소송/분쟁"
+        ]
+      },
+      {
+        "name": "애드바이오텍",
+        "score": 40,
+        "signals": [
+          "대주주변경",
+          "CB발행",
+          "증자/감자"
+        ]
+      },
+      {
+        "name": "알엔티엑스",
+        "score": 40,
+        "signals": [
+          "대주주변경",
+          "CB발행"
+        ]
+      }
+    ]
   }
 }

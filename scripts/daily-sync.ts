@@ -55,7 +55,9 @@ async function main() {
     fs.readFileSync(path.join(__dirname, "..", "data", "dart-corp-codes.json"), "utf-8")
   );
   const SPAC = ["스팩", "SPAC", "기업인수목적"];
-  const targets = dartCorps.filter((c: any) => !SPAC.some((kw) => c.name.includes(kw)));
+  // 시총 하위권 + 이미 DB에 있는 기업 우선 (뒤에서 200개 = 최근 상장 기업)
+  const filtered = dartCorps.filter((c: any) => !SPAC.some((kw) => c.name.includes(kw)));
+  const targets = filtered.slice(-200).reverse(); // 뒤에서 200개 (신규/활성 기업)
 
   // 오늘 날짜
   const today = new Date();
@@ -74,9 +76,9 @@ async function main() {
   let totalDisclosures = 0;
   let processed = 0;
 
-  // 배치 처리 (200개씩)
+  // 배치 처리 (100개씩)
   const BATCH = 100;
-  for (let b = 0; b < Math.min(targets.length, 200); b += BATCH) {
+  for (let b = 0; b < targets.length; b += BATCH) {
     const batch = targets.slice(b, b + BATCH);
 
     for (const corp of batch) {
