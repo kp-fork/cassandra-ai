@@ -138,7 +138,11 @@ function getDartKey(): string {
     }
   }
 
-  // 5. 5-hop 관계망 확장
+  // 5. 회사 노드 추가 + 5-hop 관계망 확장
+  for (const corp of corps) {
+    addCorpNode(nodes, corp);
+  }
+
   for (let hop = 0; hop < 5; hop++) {
     const currentCorpIds = new Set(
       [...nodes.values()].filter((n) => n.data.type === "corp").map((n) => n.data.id.replace("corp-", ""))
@@ -204,8 +208,15 @@ function getDartKey(): string {
   }
 
   // 6. 관계가 없으면 공시 타임라인 추가
-  if (nodes.size <= 1 && corps.length > 0) {
+  if (corps.length > 0) {
     const corp = corps[0];
+    const corpNodeId = `corp-${corp.id}`;
+    
+    // corp 노드가 없으면 추가
+    if (!nodes.has(corpNodeId)) {
+      addCorpNode(nodes, corp);
+    }
+
     const filings = await prisma.filing.findMany({
       where: { corpId: corp.id },
       orderBy: { filedAt: "desc" },
@@ -214,12 +225,12 @@ function getDartKey(): string {
     for (const f of filings) {
       const fid = `filing-${f.id}`;
       nodes.set(fid, {
-        data: { id: fid, label: f.title.slice(0, 25), type: "corp" },
+        data: { id: fid, label: f.title.slice(0, 30), type: "corp" },
       });
       edges.push({
         data: {
           id: `fe-${f.id}`,
-          source: `corp-${corp.id}`,
+          source: corpNodeId,
           target: fid,
           label: f.filedAt.toISOString().slice(0, 10),
           type: "filing_flow",
