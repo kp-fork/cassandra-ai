@@ -37,24 +37,24 @@ export default function Header() {
           </span>
         </a>
         <nav className="flex items-center gap-2 text-xs">
+          {loggedIn ? (
+            <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--danger)] hover:text-[var(--danger-glow)] transition-colors">
+              로그아웃
+            </button>
+          ) : (
+            <a href="/login" className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors">
+              로그인
+            </a>
+          )}
+          <a href="/board" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
+            제보·분석
+          </a>
           <a href="/" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
             관계망 분석
           </a>
           <a href="/dashboard" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
             경제 지표
           </a>
-          <a href="/board" className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors">
-            제보·분석
-          </a>
-          {loggedIn ? (
-            <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--danger)] hover:text-[var(--danger-glow)] transition-colors">
-              로그아웃
-            </button>
-          ) : (
-            <a href="/login" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
-              로그인
-            </a>
-          )}
           <span className="text-xs text-[var(--text-muted)]">v0.3.0</span>
         </nav>
       </div>
