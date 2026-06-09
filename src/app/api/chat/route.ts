@@ -6,13 +6,9 @@ import path from "path";
 
 // DART API 키 읽기
 function getDartKey(): string {
-  try {
-    const env = fs.readFileSync(path.join(process.cwd(), ".env"), "utf-8");
-    const m = env.match(/DART_API_KEY=(.+)/);
-    return m ? m[1].trim() : "";
-  } catch {
-    return "";
-  }
+  return process.env.DART_API_KEY || 
+    (() => { try { return (require("fs").readFileSync(require("path").join(process.cwd(), ".env"), "utf-8").match(/DART_API_KEY=(.+)/) || [])[1]?.trim() || ""; } catch { return ""; } })();
+}
 }
 
 // DART 기업 매핑 (전체)
