@@ -9,7 +9,6 @@ function getDartKey(): string {
   return process.env.DART_API_KEY || 
     (() => { try { return (require("fs").readFileSync(require("path").join(process.cwd(), ".env"), "utf-8").match(/DART_API_KEY=(.+)/) || [])[1]?.trim() || ""; } catch { return ""; } })();
 }
-}
 
 // DART 기업 매핑 (전체)
 let dartCorps: { corp_code: string; name: string; stock_code: string }[] = [];
