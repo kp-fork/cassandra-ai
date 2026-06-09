@@ -1,0 +1,54 @@
+# CASSANDRA AI
+
+> Toss × DART × LLM 리스크 모니터링 — 코스닥 1,822개 종목 DART 공시 실시간 분석 + 주식셀럽 관계망
+
+## 프로젝트 개요
+- 코스닥 시장의 소음 속에서 이상 징후 신호를 찾아내고, LLM이 관계망을 분석하여 하나의 흐름으로 재구성하는 공익 목적의 분석 시스템입니다.
+- DART OpenAPI + Naver Finance API + 자체 DB(PostgreSQL) 기반
+- Next.js 15 + TypeScript + Prisma 6 + Cytoscape.js + Tailwind CSS 4
+
+## 핵심 기능
+- 회사명·인물명·법인명 통합 검색 (DART 3,920개 코스닥 기업 매핑)
+- Cytoscape.js 관계망 그래프 (회사↔인물↔법인 1-hop)
+- 공시 분석 패널 (위험 신호·카테고리·타임라인)
+- DART 분석 챗봇 (4단계: DB→DART API→인물→실시간 폴백)
+- 경제 지표 대시보드 (Naver Finance 시총·거래량·등락률)
+- 8종 룰셋: 감사위험·사명변경·소송·대주주·대금지연·CB리픽싱·CB발행·증자/감자
+- WIKI 주식셀럽 (10명 주요 투자자·연관 기업·특이 패턴·코멘트)
+- 핀보드 + 리포트 (MD 다운로드)
+- BAD ASS / Good 집단 평가 + 댓글
+- JWT + bcrypt 로그인 (3시간 세션)
+
+## 데이터
+- DB: 541개사, 2,630건 공시 (PostgreSQL)
+- DART 매핑: data/dart-corp-codes.json (3,920개 코스닥)
+- 지식베이스: Dart_Data/persons-wiki.json (10명 주식셀럽)
+- 실시간: DART OpenAPI (list.json, corpCode.xml)
+- 시세: Naver Finance 모바일 API (m.stock.naver.com)
+
+## API 엔드포인트
+- /api/search — 통합 검색 (회사·인물·법인)
+- /api/graph — 관계망 그래프 데이터
+- /api/chat — DART 분석 챗봇
+- /api/dashboard — 경제 지표 대시보드
+- /api/report — 리포트 생성
+- /api/vote — 집단 평가 투표
+- /api/wiki — 주식셀럽 WIKI
+- /api/auth/login — 로그인
+- /api/trending — 실시간 검색어
+
+## 스크립트
+- npm run daily — 일일 공시 동기화
+- npm run extract — 코스닥 100종목 추출
+- npm run setup — DART API 키 입력
+
+## 문서
+- README.md
+- SERVICE_FLOW.md
+- DEPLOYMENT.md
+- TECH_STACK.md
+- ROADMAP.md
+
+## 배포
+- Vercel Hobby ($0/월) + Neon Serverless PostgreSQL ($0/월)
+- 도메인: dart-monitor-pi.vercel.app
