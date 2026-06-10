@@ -114,29 +114,11 @@ export async function POST(req: NextRequest) {
     filings: r.filings.slice(0, 5),
   }));
 
-  // 2.5 사용자 요청 시에만 Puppeteer DART 스크래핑
-  if (scrape && dedupedResults.length === 0 && filingList.length === 0) {
-    try {
-      const { searchDartPerson } = await import("@/lib/dart-scraper");
-      const today = new Date();
-      const start = new Date(today.getFullYear() - Math.floor(period / 12), today.getMonth(), today.getDate())
-        .toISOString().slice(0, 10).replace(/-/g, "");
-      const end = today.toISOString().slice(0, 10).replace(/-/g, "");
-
-      const scraped = await searchDartPerson(name.trim(), start, end, 20);
-      const grouped = new Map<string, any[]>();
-      for (const item of scraped) {
-        const key = item.companyName || "알수없음";
-        if (!grouped.has(key)) grouped.set(key, []);
-        grouped.get(key)!.push(item);
-      }
-      for (const [company, items] of grouped) {
-        filingList.push({
-          companyName: company, totalFilings: items.length, source: "DART 스크래핑",
-          filings: items.map((item) => ({ title: item.reportName, date: item.date, rceptNo: item.rceptNo })),
-        });
-      }
-    } catch {}
+  // 2.5 GitHub Actions 스크래핑 폴백 (사용자 요청 시)
+  // Puppeteer는 GitHub Actions에서 실행, 여기서는 요청만 전달
+  if (scrape) {
+    // Actions가 완료되면 GitHub 캐시에서 결과를 읽을 수 있음
+    // Actions 트리거는 프론트엔드에서 직접 GitHub API 호출
   }
 
   // 3. 랭킹 업데이트
