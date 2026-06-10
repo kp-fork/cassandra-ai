@@ -46,3 +46,38 @@ async function main() {
 }
 
 main().catch(console.error);
+
+// 검색 통계 추가
+if (process.argv.includes("--search-stats")) {
+  const stats = {
+    todayTotal: await p.searchLog.count({ where: { createdAt: { gte: new Date(new Date().setHours(0,0,0,0)) } } }),
+    todayPerson: await p.searchCache.count({ where: { type: "person", lastSearched: { gte: new Date(new Date().setHours(0,0,0,0)) } } }),
+    totalCached: await p.searchCache.count(),
+    totalPersons: await p.person.count(),
+    oldEntries: await p.searchCache.count({ where: { lastSearched: { lt: new Date(Date.now() - 100 * 86400000) } } }),
+  };
+  console.log("\n  📊 검색 통계");
+  console.log(`  오늘 검색: ${stats.todayTotal}건`);
+  console.log(`  오늘 인명 검색: ${stats.todayPerson}건`);
+  console.log(`  캐시된 검색어: ${stats.totalCached}건`);
+  console.log(`  등록 인물: ${stats.totalPersons}명`);
+  console.log(`  100일 이상 미검색: ${stats.oldEntries}건`);
+  if (stats.oldEntries > 0) console.log(`  → 정리: npm run logs --cleanup\n`);
+}
+
+// 100일 이상 미검색 데이터 정리
+if (process.argv.includes("--cleanup")) {
+  const old = await p.searchCache.findMany({
+    where: { lastSearched: { lt: new Date(Date.now() - 100 * 86400000) } },
+  });
+  for (const c of old) {
+    try {
+      const fp = require("path").join(process.cwd(), c.githubPath);
+      if (require("fs").existsSync(fp)) require("fs").unlinkSync(fp);
+    } catch {}
+  }
+  if (old.length > 0) {
+    await p.searchCache.deleteMany({ where: { id: { in: old.map(e => e.id) } } });
+  }
+  console.log(`  ✅ ${old.length}건 정리 완료\n`);
+}
