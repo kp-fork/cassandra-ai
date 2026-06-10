@@ -1,8 +1,8 @@
-name: Weekly ElesStock Sync
+name: Daily ElesStock Sync
 
 on:
   schedule:
-    - cron: "30 1 * * 1"  # 매주 월요일 10:30 KST
+    - cron: "0 2 * * *"  # 매일 11:00 KST
   workflow_dispatch:
 
 jobs:

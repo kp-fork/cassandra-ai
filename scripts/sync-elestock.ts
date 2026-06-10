@@ -40,7 +40,7 @@ async function main() {
   const targets = dartCorps.filter((c: any) => !SPAC.some((kw) => c.name.includes(kw)));
 
   // 회전: 200개씩
-  const BATCH_SIZE = 200;
+  const BATCH_SIZE = 500;
   const rotation = loadRotation();
   const startIdx = rotation.lastBatch * BATCH_SIZE;
   const batch = targets.slice(startIdx, startIdx + BATCH_SIZE);
