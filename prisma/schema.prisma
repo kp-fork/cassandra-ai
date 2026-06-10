@@ -282,3 +282,21 @@ model PageView {
   @@index([path, createdAt])
   @@index([createdAt])
 }
+
+// ─── 검색 캐시 인덱스 (GitHub ↔ DB 동기화) ───
+model SearchCache {
+  id          String   @id @default(uuid())
+  type        String   // "person" | "company" | "keyword"
+  query       String   // 검색어
+  githubPath  String   // Dart_Data/person-results/{name}.json
+  resultCount Int      // 결과 건수
+  searchCount Int      @default(1) // 누적 검색 횟수
+  period      Int      @default(12) // 검색 기간(개월)
+  lastSearched DateTime @default(now())
+  expiresAt   DateTime // 캐시 만료일
+  createdAt   DateTime @default(now())
+
+  @@unique([type, query, period])
+  @@index([type, query])
+  @@index([lastSearched])
+}

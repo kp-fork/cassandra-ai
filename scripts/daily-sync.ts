@@ -193,6 +193,11 @@ async function main() {
 
   // 7. DB 저장 (선택)
   try {
+    const { cleanExpiredCache } = await import("../src/lib/github-cache");
+    await cleanExpiredCache();
+  } catch {}
+  
+  try {
     const { PrismaClient } = require("@prisma/client");
     const prisma = new PrismaClient();
     let dbSaved = 0;

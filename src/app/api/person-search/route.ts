@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { toJSON } from "@/lib/serialize";
 import { getCache, setCache } from "@/lib/redis-cache";
+import { loadFromGitHubCache, saveToGitHubCache } from "@/lib/github-cache";
 import fs from "fs";
 import path from "path";
 
@@ -22,7 +23,13 @@ export async function POST(req: NextRequest) {
   const { name, period = 12, scrape } = await req.json();
   if (!name?.trim()) return NextResponse.json({ error: "이름을 입력하세요" }, { status: 400 });
 
-  // 캐시 확인
+  // 0. GitHub 캐시 확인 (가장 빠름)
+  const githubCache = await loadFromGitHubCache("person", name.trim(), period);
+  if (githubCache && !githubCache.stale) {
+    return NextResponse.json(toJSON({ ...githubCache.data.results, fromGitHub: true }));
+  }
+
+  // 0.5 Redis/메모리 캐시 확인
   const cacheKey = `person:${name.trim()}:${period}`;
   const cached = await getCache(cacheKey);
   if (cached) return NextResponse.json(toJSON({ ...cached.data, cached: true }));
@@ -177,7 +184,12 @@ export async function POST(req: NextRequest) {
     canScrape: !scrape && (dedupedResults.length + filingList.length === 0),
   };
 
+  // 캐시 저장 (Redis + GitHub)
   await setCache(cacheKey, result);
+  if (result.totalResults > 0) {
+    saveToGitHubCache("person", name.trim(), period, result).catch(() => {});
+  }
+
   return NextResponse.json(toJSON(result));
 }
 

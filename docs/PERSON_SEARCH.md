@@ -73,6 +73,15 @@ SameNameGroup {
 
 ## 캐싱 전략
 
+### 0. GitHub 레포 캐시 (가장 빠름)
+```
+Dart_Data/person-results/{이름}.json
+- 빈도 3회 이상 → 영구 저장
+- GitHub 레포가 CDN 역할
+- DB SearchCache 테이블이 인덱스
+- 만료 30일 → daily-sync에서 정리
+```
+
 ### 1. 인메모리 캐시 (Redis 준비)
 ```
 src/lib/redis-cache.ts → getCache() / setCache()
