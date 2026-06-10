@@ -205,11 +205,15 @@ function buildResult(name: string, code: string, filings: any[], source: string)
   const cats: Record<string, number> = {};
   filings.forEach((f: any) => {
     const t = f.title || f.report_nm || "";
-    if (/전환사채|사채|CB/.test(t)) cats['CB'] = (cats['CB'] || 0) + 1;
-    else if (/소송|판결|가처분/.test(t)) cats['소송'] = (cats['소송'] || 0) + 1;
-    else if (/최대주주/.test(t)) cats['대주주'] = (cats['대주주'] || 0) + 1;
-    else if (/유상증자|무상증자|감자/.test(t)) cats['증자/감자'] = (cats['증자/감자'] || 0) + 1;
+    if (/전환사채|신주인수권|사채/.test(t)) cats['CB/BW'] = (cats['CB/BW'] || 0) + 1;
+    else if (/소송|판결|가처분|회생/.test(t)) cats['소송/분쟁'] = (cats['소송/분쟁'] || 0) + 1;
+    else if (/최대주주/.test(t)) cats['대주주변경'] = (cats['대주주변경'] || 0) + 1;
+    else if (/유상증자|무상증자|감자|주식병합|액면분할/.test(t)) cats['증자/감자'] = (cats['증자/감자'] || 0) + 1;
     else if (/합병/.test(t)) cats['합병'] = (cats['합병'] || 0) + 1;
+    else if (/상호변경|사명변경/.test(t)) cats['사명변경'] = (cats['사명변경'] || 0) + 1;
+    else if (/매매.*정지|거래정지/.test(t)) cats['매매정지'] = (cats['매매정지'] || 0) + 1;
+    else if (/임원|이사|감사/.test(t)) cats['임원변경'] = (cats['임원변경'] || 0) + 1;
+    else if (/대량보유|주요주주/.test(t)) cats['지분공시'] = (cats['지분공시'] || 0) + 1;
     else cats['기타'] = (cats['기타'] || 0) + 1;
   });
   return {
