@@ -300,3 +300,23 @@ model SearchCache {
   @@index([type, query])
   @@index([lastSearched])
 }
+
+// ─── 인물 이력 (DART 지분공시 기반) ───
+model PersonHistory {
+  id             String   @id @default(uuid())
+  personUid      String   // 참조 Person.personUid (DB에 없을 수 있음)
+  name           String
+  birthDate      String?  // DART에서 추출한 생년월일 (YYYYMMDD)
+  companyName    String
+  stockCode      String?
+  role           String   // "대표이사" | "사내이사" | "사외이사" | "감사" | "주요주주"
+  eventType      String   // "APPOINTED" | "RESIGNED" | "HOLDING" | "REPORTED"
+  eventDate      DateTime
+  sourceRceptNo  String   // DART 접수번호
+  sourceTitle    String?  // 공시 제목
+  createdAt      DateTime @default(now())
+
+  @@index([personUid, eventDate])
+  @@index([name, birthDate])
+  @@index([companyName])
+}
