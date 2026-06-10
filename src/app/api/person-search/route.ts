@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const filingList = [...filingResults.values()].map((r) => ({
+  filingList = [...filingResults.values()].map((r) => ({
     ...r,
     totalFilings: r.filings.length,
     filings: r.filings.slice(0, 5),
