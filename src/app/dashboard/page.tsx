@@ -410,6 +410,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* 서버 상태 모니터 */}
+      <MonitorSection />
+
       <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] space-y-2">
         <p className="text-xs text-[var(--text-muted)] leading-relaxed">
           <strong className="text-[var(--warning)]">※ 데이터 출처</strong> — Naver Finance API (시세) + DART OpenAPI (공시)
@@ -478,6 +481,47 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+function MonitorSection() {
+  const [monitor, setMonitor] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/monitor").then(r => r.json()).then(setMonitor).catch(() => {});
+  }, []);
+
+  if (!monitor) return null;
+
+  const items = [
+    { label: "Neon DB", used: monitor.database?.percent + "%", max: "125,000건", status: monitor.database?.status },
+    { label: "Redis", used: "1.5K/500K", max: "256MB", status: monitor.redis?.status },
+    { label: "Vercel", used: "<1%", max: "1M func/월", status: monitor.vercel?.status },
+  ];
+
+  const anyWarning = items.some(i => i.status === "WARNING");
+
+  return (
+    <div className={`rounded-xl border p-4 ${anyWarning ? "bg-[var(--warning)]/5 border-[var(--warning)]/20" : "bg-[var(--surface)] border-[var(--border)]"}`}>
+      <h3 className="text-xs font-semibold mb-3">🖥️ 서버 / Redis / DBMS 사용량</h3>
+      <div className="grid grid-cols-3 gap-3 text-[10px]">
+        {items.map((item) => (
+          <div key={item.label} className="text-center">
+            <div className="text-[var(--text-muted)] mb-1">{item.label}</div>
+            <div className={`font-bold ${item.status === "WARNING" ? "text-[var(--warning)]" : "text-[var(--text)]"}`}>
+              {item.used}
+            </div>
+            <div className="text-[var(--text-muted)]">/ {item.max}</div>
+            <div className={`mt-1 text-[9px] ${item.status === "WARNING" ? "text-[var(--warning)]" : "text-[var(--person-color)]"}`}>
+              {item.status === "WARNING" ? "⚠️" : "✅"}
+            </div>
+          </div>
+        ))}
+      </div>
+      {monitor.cached && (
+        <p className="text-[9px] text-[var(--text-muted)] text-center mt-2">1시간 캐시</p>
       )}
     </div>
   );
