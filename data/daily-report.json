@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-09T14:36:27.208Z",
+  "generatedAt": "2026-06-10T01:15:38.186Z",
   "period": {
-    "from": "20260602",
-    "to": "20260609"
+    "from": "20260603",
+    "to": "20260610"
   },
-  "totalCompanies": 40,
-  "totalDisclosures": 72,
+  "totalCompanies": 34,
+  "totalDisclosures": 59,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -177,7 +177,7 @@
       "stockCode": "123010",
       "corpCode": "00615723",
       "name": "알엔티엑스",
-      "totalDisclosures": 4,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "대주주변경",
@@ -188,21 +188,15 @@
         {
           "rule": "CB발행",
           "weight": 10,
-          "count": 2,
-          "latestDate": "20260602"
+          "count": 1,
+          "latestDate": "20260604"
         }
       ],
-      "riskScore": 40,
+      "riskScore": 30,
       "recentDisclosures": [
         {
           "date": "20260604",
           "rceptNo": "20260604000428",
-          "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602000124",
           "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
           "type": "B"
         },
@@ -350,7 +344,7 @@
       "stockCode": "123010",
       "corpCode": "00615723",
       "name": "알엔티엑스",
-      "totalDisclosures": 4,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "대주주변경",
@@ -361,21 +355,15 @@
         {
           "rule": "CB발행",
           "weight": 10,
-          "count": 2,
-          "latestDate": "20260602"
+          "count": 1,
+          "latestDate": "20260604"
         }
       ],
-      "riskScore": 40,
+      "riskScore": 30,
       "recentDisclosures": [
         {
           "date": "20260604",
           "rceptNo": "20260604000428",
-          "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602000124",
           "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
           "type": "B"
         },
@@ -389,29 +377,6 @@
           "date": "20260605",
           "rceptNo": "20260605900598",
           "title": "전환청구권행사              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "015590",
-      "corpCode": "00108746",
-      "name": "DKME",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "소송/분쟁",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260602"
-        }
-      ],
-      "riskScore": 25,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602800354",
-          "title": "소송등의판결ㆍ결정              ",
           "type": "I"
         }
       ]
@@ -544,29 +509,6 @@
       ]
     },
     {
-      "stockCode": "012170",
-      "corpCode": "00145437",
-      "name": "아센디오",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "20260602"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602800624",
-          "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "032680",
       "corpCode": "00204226",
       "name": "소프트센",
@@ -671,53 +613,6 @@
       ]
     },
     {
-      "stockCode": "290690",
-      "corpCode": "00605522",
-      "name": "소룩스",
-      "totalDisclosures": 5,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "20260602"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602000411",
-          "title": "주요사항보고서(자기전환사채매도결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260605",
-          "rceptNo": "20260605900755",
-          "title": "증권발행결과(자율공시)              (제9회차 CB)",
-          "type": "I"
-        },
-        {
-          "date": "20260605",
-          "rceptNo": "20260605900614",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260605",
-          "rceptNo": "20260605900618",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602900568",
-          "title": "전환청구권행사              (제3회차 CB)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "000210",
       "corpCode": "00109693",
       "name": "DL",
@@ -753,7 +648,7 @@
       "stockCode": "210120",
       "corpCode": "00550082",
       "name": "캔버스엔",
-      "totalDisclosures": 3,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -761,18 +656,6 @@
           "date": "20260605",
           "rceptNo": "20260605900653",
           "title": "주권매매거래정지              (주식의 병합, 분할 등 전자등록 변경, 말소)",
-          "type": "I"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602900427",
-          "title": "주주명부폐쇄기간또는기준일설정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602900428",
-          "title": "주주총회소집결의              (임시주주총회)",
           "type": "I"
         }
       ]
@@ -914,22 +797,6 @@
       ]
     },
     {
-      "stockCode": "064400",
-      "corpCode": "00139834",
-      "name": "LG씨엔에스",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602800191",
-          "title": "기업설명회(IR)개최(안내공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "317400",
       "corpCode": "00367844",
       "name": "자이에스앤디",
@@ -962,22 +829,6 @@
       ]
     },
     {
-      "stockCode": "000880",
-      "corpCode": "00160588",
-      "name": "한화",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602800027",
-          "title": "중대재해발생(종속회사의주요경영사항)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "033290",
       "corpCode": "00155948",
       "name": "로젠",
@@ -1003,7 +854,7 @@
       "stockCode": "062970",
       "corpCode": "00403766",
       "name": "한국첨단소재",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -1012,12 +863,6 @@
           "rceptNo": "20260604000001",
           "title": "주요사항보고서(타법인주식및출자증권양수결정)",
           "type": "B"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602900924",
-          "title": "타법인주식및출자증권취득결정              ",
-          "type": "I"
         }
       ]
     },
@@ -1049,22 +894,6 @@
           "date": "20260605",
           "rceptNo": "20260605800388",
           "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "051600",
-      "corpCode": "00159218",
-      "name": "한전KPS",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602800466",
-          "title": "풍문또는보도에대한해명(미확정)              ",
           "type": "I"
         }
       ]
@@ -1111,7 +940,7 @@
       "stockCode": "008500",
       "corpCode": "00146542",
       "name": "일정실업",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -1119,12 +948,6 @@
           "date": "20260605",
           "rceptNo": "20260605800738",
           "title": "기업가치제고계획(자율공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260602",
-          "rceptNo": "20260602800783",
-          "title": "투자유의안내              ",
           "type": "I"
         }
       ]
@@ -1141,22 +964,6 @@
           "date": "20260608",
           "rceptNo": "20260608900257",
           "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "017000",
-      "corpCode": "00136925",
-      "name": "신원종합개발",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260602",
-          "rceptNo": "20260602900350",
-          "title": "[기재정정]단일판매ㆍ공급계약체결(자율공시)              ",
           "type": "I"
         }
       ]
@@ -1179,6 +986,34 @@
           "date": "20260605",
           "rceptNo": "20260605900216",
           "title": "기업설명회(IR)개최              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "290690",
+      "corpCode": "00605522",
+      "name": "소룩스",
+      "totalDisclosures": 3,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260605",
+          "rceptNo": "20260605900755",
+          "title": "증권발행결과(자율공시)              (제9회차 CB)",
+          "type": "I"
+        },
+        {
+          "date": "20260605",
+          "rceptNo": "20260605900614",
+          "title": "단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        },
+        {
+          "date": "20260605",
+          "rceptNo": "20260605900618",
+          "title": "단일판매ㆍ공급계약체결              ",
           "type": "I"
         }
       ]
