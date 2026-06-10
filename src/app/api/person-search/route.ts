@@ -19,7 +19,7 @@ function saveRanking(ranking: any[]) {
 }
 
 export async function POST(req: NextRequest) {
-  const { name, period = 12 } = await req.json();
+  const { name, period = 12, scrape } = await req.json();
   if (!name?.trim()) return NextResponse.json({ error: "이름을 입력하세요" }, { status: 400 });
 
   // 캐시 확인
@@ -107,8 +107,8 @@ export async function POST(req: NextRequest) {
     filings: r.filings.slice(0, 5),
   }));
 
-  // 2.5 결과 부족 시 Puppeteer DART 스크래핑
-  if (dedupedResults.length === 0 && filingList.length === 0) {
+  // 2.5 사용자 요청 시에만 Puppeteer DART 스크래핑
+  if (scrape && dedupedResults.length === 0 && filingList.length === 0) {
     try {
       const { searchDartPerson } = await import("@/lib/dart-scraper");
       const today = new Date();
@@ -149,6 +149,7 @@ export async function POST(req: NextRequest) {
     filings: filingList,
     ranking: ranking.slice(0, 10),
     totalResults: dedupedResults.length + filingList.length,
+    canScrape: !scrape && (dedupedResults.length + filingList.length === 0),
   };
 
   await setCache(cacheKey, result);

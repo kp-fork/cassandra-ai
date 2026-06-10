@@ -14,17 +14,20 @@ export default function PersonSearchPage() {
   const [period, setPeriod] = useState(12);
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [scraping, setScraping] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSearch = async (doScrape = false) => {
     if (!name.trim()) return;
-    setLoading(true);
+    if (doScrape) setScraping(true);
+    else setLoading(true);
     const res = await fetch("/api/person-search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), period }),
+      body: JSON.stringify({ name: name.trim(), period, scrape: doScrape }),
     });
     setResults(await res.json());
     setLoading(false);
+    setScraping(false);
   };
 
   return (
@@ -75,9 +78,29 @@ export default function PersonSearchPage() {
       {/* 결과 */}
       {results && (
         <div className="space-y-4">
+          {results.canScrape && (
+            <div className="p-4 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-center">
+              <p className="text-xs text-[var(--warning)] mb-2">
+                DB 캐시(541개사)에서 결과가 없습니다
+              </p>
+              <button
+                onClick={() => handleSearch(true)}
+                disabled={scraping}
+                className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-xs font-medium hover:opacity-90 disabled:opacity-50"
+              >
+                {scraping ? (
+                  <span className="flex items-center gap-2"><Loader2 className="w-3 h-3 animate-spin" /> DART 웹사이트 검색 중...</span>
+                ) : (
+                  "추가로 확장 검색할까요? (DART 웹사이트 직접 검색)"
+                )}
+              </button>
+            </div>
+          )}
+
           <div className="text-sm text-[var(--text-muted)]">
             총 {results.totalResults || 0}건 발견
-            {results.totalResults === 0 && " — DART OpenAPI는 3개월 제한, 장기 검색은 DB 캐시 기반"}
+            {results.totalResults === 0 && !results.canScrape && " — 검색 결과가 없습니다"}
+            {results.filings?.some((f: any) => f.source === "DART 스크래핑") && " (DART 웹사이트 스크래핑 결과 포함)"}
           </div>
 
           {/* DB 인물 */}
