@@ -158,30 +158,40 @@ export default function ChatPanel() {
             )}
 
             {/* 회사 공시 요약 */}
-            {msg.data?.results && msg.data.results[0]?.categories && (
+            {msg.data?.results && msg.data.results.some((r: any) => r.categories) && (
               <div className="mt-2 ml-8 space-y-2">
                 {msg.data.results.map((r: any, j: number) => (
-                  <div key={j} className="p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)]">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold">{r.companyName}</span>
-                      <span className="text-[10px] text-[var(--text-muted)]">{r.totalDisclosures}건 공시</span>
-                    </div>
-                    {r.categories && (
+                  r.categories && Object.keys(r.categories).length > 0 ? (
+                    <div key={j} className="p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)]">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold">{r.companyName}</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">{r.totalDisclosures}건 공시</span>
+                      </div>
                       <div className="flex flex-wrap gap-1 mb-2">
                         {Object.entries(r.categories).map(([cat, count]) => (
                           <span key={cat} className="px-1.5 py-0.5 rounded text-[9px] bg-[var(--accent)]/10 text-[var(--accent-glow)]">{cat} {count as number}건</span>
                         ))}
                       </div>
-                    )}
-                    <div className="space-y-0.5 max-h-32 overflow-y-auto">
-                      {r.dartDisclosures?.slice(0, 5).map((d: any, di: number) => (
-                        <div key={di} className="text-[10px] text-[var(--text-muted)] flex gap-2">
-                          <span className="shrink-0">{d.date?.slice(0,4)}.{d.date?.slice(4,6)}.{d.date?.slice(6,8)}</span>
-                          <span className="truncate">{d.title}</span>
+                      {r.dartDisclosures?.length > 0 && (
+                        <div className="space-y-0.5 max-h-32 overflow-y-auto">
+                          {r.dartDisclosures.slice(0, 5).map((d: any, di: number) => (
+                            <div key={di} className="text-[10px] text-[var(--text-muted)] flex gap-2">
+                              <span className="shrink-0">{String(d.date||'').slice(0,10).slice(5)}</span>
+                              <span className="truncate">{d.title?.slice(0,40)}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  </div>
+                  ) : (
+                    <div key={j} className="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)]">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="w-3 h-3 text-[var(--corp-color)] shrink-0" />
+                        <span className="text-xs font-medium">{r.companyName}</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">{r.role}</span>
+                      </div>
+                    </div>
+                  )
                 ))}
               </div>
             )}
