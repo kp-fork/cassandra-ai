@@ -58,6 +58,28 @@ export async function buildClusterGraph(query: string): Promise<GraphData> {
     for (const rel of corp.personRelations) { addPersonNode(nodes, rel.person); edges.push({ data: { id: `pc-${rel.id}`, source: `person-${rel.personId}`, target: `corp-${corp.id}`, label: rel.role, type: "person_corp" } }); }
     for (const rel of corp.fundRelations) { addFundNode(nodes, rel.fund); edges.push({ data: { id: `fc-${rel.id}`, source: `fund-${rel.fundId}`, target: `corp-${corp.id}`, label: rel.relationType, type: "fund_corp" } }); }
     
+    // DB 관계가 없으면 PersonHistory에서 검색
+    if (corp.personRelations.length === 0 && corp.fundRelations.length === 0) {
+      const personHistories = await prisma.personHistory.findMany({
+        where: { companyName: corp.companyName },
+        select: { name: true, role: true, personUid: true, eventDate: true },
+        orderBy: { eventDate: "desc" },
+        take: 10,
+      });
+      const addedPersons = new Set<string>();
+      for (const ph of personHistories) {
+        if (addedPersons.has(ph.name)) continue;
+        addedPersons.add(ph.name);
+        const personNodeId = `person-history-${ph.personUid}`;
+        nodes.set(personNodeId, {
+          data: { id: personNodeId, label: ph.name, type: "person" },
+        });
+        edges.push({
+          data: { id: `ph-${ph.personUid}-${corp.id}`, source: personNodeId, target: `corp-${corp.id}`, label: ph.role, type: "person_corp" },
+        });
+      }
+    }
+
     // 관계가 없으면 공시 요약
     if (corp.personRelations.length === 0 && corp.fundRelations.length === 0) {
       const dbFilings = await prisma.filing.findMany({ where: { corpId: corp.id }, orderBy: { filedAt: "desc" }, take: 20 });

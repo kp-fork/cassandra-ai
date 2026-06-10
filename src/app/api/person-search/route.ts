@@ -78,6 +78,29 @@ export async function POST(req: NextRequest) {
   }
   const dedupedResults = [...deduped.values()];
 
+  // 1.5 PersonHistory에서도 검색 (이력 데이터)
+  if (dedupedResults.length === 0) {
+    const historyRecords = await prisma.personHistory.findMany({
+      where: { name: { contains: name.trim(), mode: "insensitive" } },
+      select: { name: true, companyName: true, role: true, eventDate: true, eventType: true },
+      orderBy: { eventDate: "desc" },
+      take: 20,
+    });
+    const companyMap = new Map<string, { role: string; date: string }[]>();
+    for (const h of historyRecords) {
+      if (!companyMap.has(h.companyName)) companyMap.set(h.companyName, []);
+      companyMap.get(h.companyName)!.push({ role: h.role, date: h.eventDate?.toISOString()?.slice(0, 10) || "" });
+    }
+    for (const [company, roles] of companyMap) {
+      filingList.push({
+        companyName: company,
+        totalFilings: roles.length,
+        source: "인물이력",
+        filings: roles.map(r => ({ title: `${r.role}`, date: r.date, type: "PERSON_HISTORY" })),
+      });
+    }
+  }
+
   // 동명이인 그룹 정보 추가
   for (const r of dedupedResults) {
     const group = await prisma.sameNameGroup.findFirst({ where: { name: r.name } });
