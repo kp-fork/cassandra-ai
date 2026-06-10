@@ -167,6 +167,13 @@ export default function ChatPanel() {
                         <span className="text-xs font-bold">{r.companyName}</span>
                         <span className="text-[10px] text-[var(--text-muted)]">{r.totalDisclosures}건 공시</span>
                       </div>
+                      {r.signals?.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {r.signals.map((s: string, si: number) => (
+                            <span key={si} className="text-[9px] text-[var(--warning)]">{s}</span>
+                          ))}
+                        </div>
+                      )}
                       <div className="flex flex-wrap gap-1 mb-2">
                         {Object.entries(r.categories).map(([cat, count]) => (
                           <span key={cat} className="px-1.5 py-0.5 rounded text-[9px] bg-[var(--accent)]/10 text-[var(--accent-glow)]">{cat} {count as number}건</span>

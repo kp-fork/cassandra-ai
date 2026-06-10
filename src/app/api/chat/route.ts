@@ -216,9 +216,21 @@ function buildResult(name: string, code: string, filings: any[], source: string)
     else if (/대량보유|주요주주/.test(t)) cats['지분공시'] = (cats['지분공시'] || 0) + 1;
     else cats['기타'] = (cats['기타'] || 0) + 1;
   });
+
+  // 주요 신호 분석
+  const signals: string[] = [];
+  if ((cats['증자/감자'] || 0) >= 3) signals.push(`⚠️ 증자/감자 ${cats['증자/감자']}회 — 빈번한 자본 변동`);
+  if ((cats['매매정지'] || 0) >= 2) signals.push(`⚠️ 매매정지 ${cats['매매정지']}회 — 주식병합·분할 반복`);
+  if (cats['사명변경']) signals.push(`🔄 사명변경 — 기업 이미지 변경 시도`);
+  if ((cats['CB/BW'] || 0) >= 2) signals.push(`💰 CB/BW ${cats['CB/BW']}회 — 과도한 자금조달 의존`);
+  if (cats['소송/분쟁']) signals.push(`⚖️ 소송/분쟁 ${cats['소송/분쟁']}건 — 법적 리스크`);
+  if (cats['대주주변경']) signals.push(`👤 대주주변경 ${cats['대주주변경']}회 — 경영권 불안정`);
+  if (cats['합병']) signals.push(`🔄 합병 ${cats['합병']}건 — 구조조정 진행 중`);
+  if (cats['임원변경']) signals.push(`👥 임원변경 — 경영진 교체`);
+
   return {
     companyName: name, corpCode: code, role: `${source} ${filings.length}건`,
-    totalDisclosures: filings.length, categories: cats,
+    totalDisclosures: filings.length, categories: cats, signals,
     dartDisclosures: filings.slice(0, 10).map((f: any) => ({
       title: f.title || f.report_nm || "", date: f.filedAt ? new Date(f.filedAt).toISOString().slice(0, 10) : (f.rcept_dt || ""), rceptNo: f.rceptNo || ""
     })),
