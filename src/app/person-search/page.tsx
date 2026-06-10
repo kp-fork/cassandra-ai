@@ -39,10 +39,16 @@ export default function PersonSearchPage() {
         body: JSON.stringify({ ref: "main", inputs: { name: name.trim(), period: String(period) } }),
       });
     } catch {}
+    // 90초 후 재조회
     setTimeout(async () => {
-      setResults(await fetch("/api/person-search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: name.trim(), period, scrape: true }) }).then(r => r.json()));
+      const res = await fetch("/api/person-search", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: name.trim(), period: 12, scrape: true }) }).then(r => r.json());
+      if (res.error === "DOM_CHANGED" || res.totalResults === 0) {
+        setResults({ ...res, domError: true });
+      } else {
+        setResults(res);
+      }
       setScraping(false);
-    }, 60000);
+    }, 90000);
   };
 
   return (
@@ -93,6 +99,13 @@ export default function PersonSearchPage() {
       {/* 결과 */}
       {results && (
         <div className="space-y-4">
+          {results.domError && (
+            <div className="p-4 rounded-lg bg-[var(--danger)]/10 border border-[var(--danger)]/20 text-center">
+              <p className="text-sm text-[var(--danger-glow)] font-bold mb-1">⚠️ DART DOM 변경</p>
+              <p className="text-xs text-[var(--danger-glow)]">관리자에게 알려주세요. (DART 웹사이트 구조가 변경되었습니다)</p>
+            </div>
+          )}
+
           {results.canScrape && (
             <div className="p-4 rounded-lg bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-center">
               <p className="text-xs text-[var(--warning)] mb-2">

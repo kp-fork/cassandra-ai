@@ -65,6 +65,18 @@ if (!name) { console.log("Usage: node scrape-person.js <name> [period]"); proces
       return rows;
     });
 
+    // DOM 변경 감지: 결과가 없으면 selector 실패 가능성
+    if (results.length === 0) {
+      const pageText = await page.evaluate(() => document.body?.innerText || "");
+      if (!pageText.includes("검색건수")) {
+        console.log("  ⚠️ DART DOM 변경 감지 — 선택자 업데이트 필요");
+        fs.writeFileSync(
+          path.join(__dirname, "..", "Dart_Data", "person-results", `${name}-error.json`),
+          JSON.stringify({ error: "DOM_CHANGED", name, message: "DART DOM 변경. 관리자에게 알려주세요.", checkedAt: new Date().toISOString() })
+        );
+      }
+    }
+
     console.log(`  발견: ${results.length}건`);
 
     // 저장
@@ -95,6 +107,15 @@ if (!name) { console.log("Usage: node scrape-person.js <name> [period]"); proces
     console.log(`  ✅ 저장 완료: Dart_Data/person-results/${name}.json`);
   } catch (err) {
     console.error("❌", err.message);
+    // DOM 변경 가능성 저장
+    const fs2 = require("fs");
+    const errFile = path.join(__dirname, "..", "Dart_Data", "person-results", `${name}-error.json`);
+    fs2.writeFileSync(errFile, JSON.stringify({
+      error: "SCRAPE_FAILED", name,
+      message: "DART DOM 변경. 관리자에게 알려주세요.",
+      detail: err.message,
+      checkedAt: new Date().toISOString(),
+    }));
     process.exit(1);
   } finally {
     await browser.close();
