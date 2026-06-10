@@ -1,5 +1,12 @@
 # CASSANDRA AI
 
+> [!IMPORTANT]
+> **이 프로젝트는 [vibe-investing](https://github.com/gameworkerkim/vibe-investing) 모노레포의 일부입니다.**
+> 더 많은 퀀트 전략 · 칼럼 · 논문 · 보안 도구(LAON VaultGuard) · 투자 대시보드를 보려면 메인 레포를 방문하세요.
+>
+> **This project is part of the [vibe-investing](https://github.com/gameworkerkim/vibe-investing) monorepo.**
+> Visit the main repo for more quant strategies, columns, papers, security tools (LAON VaultGuard), and investment dashboards.
+
 > **Toss × DART × LLM 리스크 모니터링**
 >
 > 코스닥 1,822개 종목 DART 공시 실시간 분석 + 주식셀럽 관계망
