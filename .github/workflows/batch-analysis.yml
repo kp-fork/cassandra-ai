@@ -1,0 +1,29 @@
+name: Batch Analysis
+
+on:
+  schedule:
+    - cron: "0 * * * *"     # 매시간 정각
+    - cron: "0 12 * * *"    # 오후 9시 KST (UTC 12:00)
+  workflow_dispatch:
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install && npx prisma generate
+      - name: Process batch
+        run: npx tsx scripts/process-batch.ts
+        env:
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
+          DART_API_KEY: ${{ vars.DART_API_KEY }}
+      - name: Commit results
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data/ Dart_Data/
+          git diff --staged --quiet || git commit -m "chore: batch analysis results"
+          git push

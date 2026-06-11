@@ -187,6 +187,17 @@ model BoardPost {
   @@index([status])
 }
 
+// ─── 배치 분석 작업 ───
+model BatchJob {
+  id          String   @id @default(uuid())
+  targetName  String   // 분석 대상 (기업명 또는 인물명)
+  targetType  String   @default("CORP") // CORP | PERSON
+  status      String   @default("QUEUED") // QUEUED | PROCESSING | DONE | FAILED
+  result      String?  // 분석 결과 리포트
+  processedAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
 // ─── 집단 평가 투표 ───
 model EntityVote {
   id         String   @id @default(uuid())
