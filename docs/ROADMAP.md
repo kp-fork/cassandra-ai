@@ -40,16 +40,13 @@
 
 ### LLM 파이프라인
 - [ ] DeepSeek V3 NER (개체명 인식) 연동
-- [ ] Claude Sonnet 4 이상 패턴 분석
+- [x] Upstash Redis 연동 (검색·그래프·챗봇 72시간 캐시)
+- [ ] Claude Fable 5 이상 패턴 분석
 - [ ] 다중 LLM 앙상블 → 신호 발화
 - [ ] 주식셀럽 → 시스템 프롬프트 주입
 
 ### 인프라
 - [ ] CDN 캐싱 레이어
-- [ ] Upstash Redis 연동 (일일 사용자 50명 이상 시)  
-  - 현재: 인메모리 Map 폴백 (서버리스에서 초기화됨)  
-  - Upstash Free: 256MB, REST API, 10,000 command/일  
-  - 설정: Vercel Variables에 `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` 추가
 - [ ] OCI Always Free 크롤러 서버
 - [ ] CI/CD 자동화
 
