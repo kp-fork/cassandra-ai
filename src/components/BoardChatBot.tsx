@@ -16,24 +16,25 @@ export default function BoardChatBot() {
   }, []);
 
   const handleSubmit = async () => {
-    if (!input.trim() || loading) return;
+    if (!input.trim()) return;
     setLoading(true);
     setMessage("");
-    const res = await fetch("/api/batch", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ targetName: input.trim(), targetType: "CORP" }),
-    });
-    const data = await res.json();
-    if (!data.error) {
-      setMessage(`✅ '${input.trim()}' 분석 요청이 등록되었습니다. (대기열 ${queueCount + 1}건) 10건 모이면 1시간 내, 아니면 오후 9시에 일괄 처리됩니다.`);
+    try {
+      await fetch("/api/batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetName: input.trim(), targetType: "CORP" }),
+      });
+      setMessage(`✅ '${input.trim()}' 분석 요청이 게시판에 등록되었습니다.`);
       setQueueCount(prev => prev + 1);
-    } else {
-      setMessage("❌ " + data.error);
+      setInput("");
+      // 결과 목록 새로고침
+      fetch("/api/batch?type=done").then(r => r.json()).then(d => setResults(d.jobs || []));
+    } catch {
+      setMessage("❌ 등록 실패. 다시 시도해주세요.");
     }
-    setInput("");
     setLoading(false);
-    setTimeout(() => setMessage(""), 8000);
+    setTimeout(() => setMessage(""), 5000);
   };
 
   const copyReport = (text: string) => {

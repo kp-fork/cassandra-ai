@@ -86,6 +86,18 @@ async function main() {
         where: { id: job.id },
         data: { status: "DONE", result, processedAt: new Date() },
       });
+
+      // 게시판 글도 업데이트
+      const boardPost = await prisma.boardPost.findFirst({
+        where: { title: { contains: job.targetName }, category: "ANALYSIS_REQUEST" },
+        orderBy: { createdAt: "desc" },
+      });
+      if (boardPost) {
+        await prisma.boardPost.update({
+          where: { id: boardPost.id },
+          data: { analysis: result, status: "RESOLVED" },
+        });
+      }
     } catch (e: any) {
       await prisma.batchJob.update({
         where: { id: job.id },

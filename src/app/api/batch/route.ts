@@ -11,6 +11,20 @@ export async function POST(req: NextRequest) {
     data: { targetName: targetName.trim(), targetType: targetType || "CORP" },
   });
 
+  // 게시판에도 등록
+  await prisma.boardPost.create({
+    data: {
+      authorName: "분석요청",
+      password: "batch",
+      title: `[분석요청] ${targetName.trim()}`,
+      content: `'${targetName.trim()}'에 대한 심층 분석을 요청합니다.`,
+      category: "ANALYSIS_REQUEST",
+      targetCorp: targetType === "CORP" ? targetName.trim() : null,
+      targetPerson: targetType === "PERSON" ? targetName.trim() : null,
+      status: "PENDING",
+    },
+  });
+
   return NextResponse.json(toJSON(job), { status: 201 });
 }
 
