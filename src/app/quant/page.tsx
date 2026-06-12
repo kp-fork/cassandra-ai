@@ -130,8 +130,8 @@ export default function QuantDashboard() {
           <h2 className="text-sm font-bold flex items-center gap-2 mb-3"><BarChart3 className="w-4 h-4 text-[var(--accent-glow)]" /> 시장 국면 판단 (ARDS-X)</h2>
           <ResponsiveContainer width="100%" height={100}>
             <LineChart data={regimeData}>
-              <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#888" }} />
-              <YAxis domain={[0, 4]} tick={{ fontSize: 9, fill: "#888" }} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#888" }} />
+              <YAxis domain={[0, 4]} tick={{ fontSize: 10, fill: "#888" }} />
               <Tooltip />
               <Line type="monotone" dataKey="regime" stroke="#6c5ce7" strokeWidth={2} dot={false} />
             </LineChart>
@@ -144,9 +144,9 @@ export default function QuantDashboard() {
           <div className="mt-3">
             <h4 className="text-[10px] font-semibold text-[var(--text-muted)] mb-1">📊 개별 종목 시그널</h4>
             <ResponsiveContainer width="100%" height={100}>
-              <BarChart data={regimeStocks} layout="vertical" margin={{ left: 80 }}>
-                <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 9 }} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 9 }} width={80} />
+              <BarChart data={regimeStocks} layout="vertical" margin={{ left: 90 }}>
+                <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "#888" }} />
+                <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "#e4e4f0" }} width={85} />
                 <Tooltip />
                 <Bar dataKey="score" radius={[0, 4, 4, 0]}>
                   {regimeStocks.map((s, i) => <Cell key={i} fill={s.color} />)}
