@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T10:37:25.454Z",
+  "generatedAt": "2026-06-12T01:20:11.134Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 3,
-    "totalSignals": 23,
+    "highRiskCount": 2,
+    "totalSignals": 17,
     "topRisks": [
       {
         "name": "알로이스",
@@ -25,15 +25,6 @@
       {
         "name": "알엔티엑스",
         "score": 70,
-        "signals": [
-          "대주주변경",
-          "CB발행",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "애드바이오텍",
-        "score": 40,
         "signals": [
           "대주주변경",
           "CB발행",
