@@ -161,7 +161,14 @@ export async function POST(req: NextRequest) {
   const rankEntry = ranking.find((r) => r.query === name.trim());
   if (rankEntry && rankEntry.count >= 3) {
     try {
-      const persistPath = path.join(process.cwd(), "Dart_Data", "person-results", `${name.trim()}.json`);
+      const safeName = name.trim().replace(/[\\/!@#$%^&*()\s]+/g, "_").replace(/\.{2,}/g, "_").slice(0, 60);
+      const persistPath = path.join(process.cwd(), "Dart_Data", "person-results", `${safeName}.json`);
+      // 경로 이탈 방어: 결과 경로가 의도한 디렉토리 내인지 검증
+      const allowedBase = path.resolve(process.cwd(), "Dart_Data", "person-results");
+      if (!path.resolve(persistPath).startsWith(allowedBase)) {
+        console.warn("Path traversal blocked for name:", name.trim());
+        return;
+      }
       fs.mkdirSync(path.dirname(persistPath), { recursive: true });
       fs.writeFileSync(persistPath, JSON.stringify({
         name: name.trim(),

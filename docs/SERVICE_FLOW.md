@@ -91,7 +91,33 @@ Naver Finance API (m.stock.naver.com)
   · 코멘트 / 수정 (집단 지성)
 ```
 
-## 5. 데이터 파이프라인
+## 5. 퀀트 대시보드 (`/quant` — 비로그인)
+
+```
+Naver Finance API (m.stock.naver.com)
+  │
+  ├─ KOSDAQ 등락 종목 비율 → 시장 심리 (공포·중립·과열)
+  ├─ NASDAQ 6종목 실시간 가격 (NVDA, AAPL, MSFT, TSLA, META, AMZN)
+  └─ Redis 10분 캐시 → 새로고침 시 강제 갱신 (?force=true)
+        │
+        ▼
+  [ARDS-X] NASDAQ Top 100 시장 국면 판단 (0~3)
+  [AMQS] AI 반도체 모멘텀 — M7 7종목 집중
+  [ARDS] AMQS-M7 대칭 헤지 + 안전자산
+  [백테스트] docs/QUANT_BACKTEST.md
+```
+
+## 6. 페이지뷰 추적
+
+```
+사용자 방문 → POST /api/pageview → Prisma(Neon DB) 저장
+                  ↓                    ↓
+           Redis 캐시 무효화        Redis 10분 캐시 적재
+                  ↓                    ↓
+            GET /api/pageview  →  Redis hit (빠름) / DB fallback
+```
+
+## 7. 데이터 파이프라인
 
 ```
 DART OpenAPI

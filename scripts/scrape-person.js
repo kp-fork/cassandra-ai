@@ -71,7 +71,7 @@ if (!name) { console.log("Usage: node scrape-person.js <name> [period]"); proces
       if (!pageText.includes("검색건수")) {
         console.log("  ⚠️ DART DOM 변경 감지 — 선택자 업데이트 필요");
         fs.writeFileSync(
-          path.join(__dirname, "..", "Dart_Data", "person-results", `${name}-error.json`),
+          path.join(__dirname, "..", "Dart_Data", "person-results", `${safeName}-error.json`),
           JSON.stringify({ error: "DOM_CHANGED", name, message: "DART DOM 변경. 관리자에게 알려주세요.", checkedAt: new Date().toISOString() })
         );
       }
@@ -80,10 +80,11 @@ if (!name) { console.log("Usage: node scrape-person.js <name> [period]"); proces
     console.log(`  발견: ${results.length}건`);
 
     // 저장
+    const safeName = (name || "unknown").replace(/[\\/!@#$%^&*()\s]+/g, "_").replace(/\.{2,}/g, "_").slice(0, 60);
     const dir = path.join(__dirname, "..", "Dart_Data", "person-results");
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(
-      path.join(dir, `${name}.json`),
+      path.join(dir, `${safeName}.json`),
       JSON.stringify({
         name, period, generatedAt: new Date().toISOString(),
         totalResults: results.length,
