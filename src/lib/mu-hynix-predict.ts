@@ -30,7 +30,7 @@ async function fetchYahoo(ticker: string, range = "60d"): Promise<YHData | null>
 // ─── 베타(상관도) 계산 ───
 function calcBeta(xReturns: number[], yReturns: number[]): number {
     const n = Math.min(xReturns.length, yReturns.length);
-    if (n < 5) return 1.2; // 기본값
+    if (n < 5) return 0.15; // 기본값 (양의 상관관계 가정)
     const x = xReturns.slice(-n), y = yReturns.slice(-n);
     const xMean = x.reduce((a, b) => a + b, 0) / n;
     const yMean = y.reduce((a, b) => a + b, 0) / n;
@@ -39,7 +39,7 @@ function calcBeta(xReturns: number[], yReturns: number[]): number {
         num += (x[i] - xMean) * (y[i] - yMean);
         den += (x[i] - xMean) ** 2;
     }
-    return den === 0 ? 1.2 : num / den;
+    return den === 0 ? 1.2 : Math.abs(num / den); // 절대값 (MU·하이닉스 동일 방향 가정)
 }
 
 // ─── 수익률 계산 ───

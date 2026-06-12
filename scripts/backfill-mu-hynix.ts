@@ -80,21 +80,27 @@ async function main() {
     let hits = 0, totalEval = 0;
 
     // day -14 to -1 (어제까지)
+    // 중요: MU(t-1) 종가 → 하이닉스(t) 종가로 정렬
+    // MU Day d-1 종가(미국) → 한국시간 Day d 새벽 → 하이닉스 Day d 종가
     for (let d = days - 15; d < days - 1; d++) {
-        // 데이터: 직전 21일 사용하여 베타 계산
-        const lookbackStart = d - 21 > 0 ? d - 21 : 0;
-        const muSlice = muC.slice(lookbackStart, d + 1);
-        const hySlice = hynixC.slice(lookbackStart, d + 1);
+        // MU: 전일(d-1) 종가를 사용하여 당일(d) 하이닉스 예측
+        const muPrev = muC[d - 1];
+        const muPrev2 = d >= 2 ? muC[d - 2] : muC[d - 1];
+        const muChangePct = ((muPrev - muPrev2) / muPrev2) * 100;
 
+        // 직전 21일 데이터로 베타 계산 (MU 0..d-1, Hynix 0..d)
+        const lookbackStart = Math.max(0, d - 22);
+        const muSlice = muC.slice(lookbackStart, d);      // MU d-1 까지
+        const hySlice = hynixC.slice(lookbackStart, d);   // Hynix d-1 까지
+        // 베타: MU 수익률 → Hynix 수익률 (같은 캘린더일 기준)
         const muRet = returns(muSlice);
         const hyRet = returns(hySlice);
-        const beta = calcBeta(muRet, hyRet);
-
-        const muChangePct = ((muC[d] - muC[d - 1]) / muC[d - 1]) * 100;
+        const beta = Math.abs(calcBeta(muRet, hyRet)); // 절대값 (방향은 MU 따름)
         const predictedChangePct = beta * muChangePct;
-        const hynixPrev = hynixC[d];
+        const hynixPrev = hynixC[d - 1];   // 하이닉스 전일 종가
         const hynixPredicted = hynixPrev * (1 + predictedChangePct / 100);
-        const hynixActual = hynixC[d + 1]; // 다음날 종가
+        const hynixActual = hynixC[d];      // 하이닉스 당일 실제 종가
+
         const actualChangePct = ((hynixActual - hynixPrev) / hynixPrev) * 100;
 
         // 방향 적중 판정
@@ -108,15 +114,12 @@ async function main() {
 
         results.push({
             date: new Date(mu.timestamp[d] * 1000).toISOString().slice(0, 10),
-            muClose: Math.round(muC[d] * 100) / 100,
-            muChangePct: Math.round(muChangePct * 100) / 100,
+            muClose: muPrev, muChangePct: Math.round(muChangePct * 100) / 100,
             hynixPrev: Math.round(hynixPrev),
-            hynixPredicted: hynixPredicted,
-            hynixActual: hynixActual,
+            hynixPredicted, hynixActual,
             predictedChangePct: Math.round(predictedChangePct * 100) / 100,
             actualChangePct: Math.round(actualChangePct * 100) / 100,
-            hit,
-            diffWon,
+            hit, diffWon,
             beta: Math.round(beta * 1000) / 1000,
         });
 
@@ -124,15 +127,13 @@ async function main() {
         try {
             await prisma.muHynixPrediction.create({
                 data: {
-                    muCurrentPrice: muC[d],
+                    muCurrentPrice: muPrev,
                     muChangePct,
                     hynixPrevClose: hynixPrev,
                     hynixPredictedOpen: hynixPredicted,
                     hynixPredictedChangePct: predictedChangePct,
                     hynixActualClose: hynixActual,
-                    beta,
-                    r2: 0,
-                    dataPoints: muSlice.length,
+                    beta, r2: 0, dataPoints: muSlice.length,
                     createdAt: new Date(mu.timestamp[d] * 1000),
                 },
             });
