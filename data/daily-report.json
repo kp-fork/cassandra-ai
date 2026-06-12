@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-12T01:20:11.134Z",
+  "generatedAt": "2026-06-12T10:36:23.196Z",
   "period": {
     "from": "20260605",
     "to": "20260612"
   },
-  "totalCompanies": 48,
-  "totalDisclosures": 80,
+  "totalCompanies": 52,
+  "totalDisclosures": 91,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -53,8 +53,14 @@
       "stockCode": "297570",
       "corpCode": "01309795",
       "name": "알로이스",
-      "totalDisclosures": 7,
+      "totalDisclosures": 9,
       "signals": [
+        {
+          "rule": "사명변경",
+          "weight": 25,
+          "count": 1,
+          "latestDate": "20260612"
+        },
         {
           "rule": "대주주변경",
           "weight": 20,
@@ -68,8 +74,20 @@
           "latestDate": "20260608"
         }
       ],
-      "riskScore": 95,
+      "riskScore": 100,
       "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900563",
+          "title": "상호변경안내              ",
+          "type": "I"
+        },
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900547",
+          "title": "임시주주총회결과              ",
+          "type": "I"
+        },
         {
           "date": "20260611",
           "rceptNo": "20260611900600",
@@ -197,8 +215,14 @@
       "stockCode": "297570",
       "corpCode": "01309795",
       "name": "알로이스",
-      "totalDisclosures": 7,
+      "totalDisclosures": 9,
       "signals": [
+        {
+          "rule": "사명변경",
+          "weight": 25,
+          "count": 1,
+          "latestDate": "20260612"
+        },
         {
           "rule": "대주주변경",
           "weight": 20,
@@ -212,8 +236,20 @@
           "latestDate": "20260608"
         }
       ],
-      "riskScore": 95,
+      "riskScore": 100,
       "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900563",
+          "title": "상호변경안내              ",
+          "type": "I"
+        },
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900547",
+          "title": "임시주주총회결과              ",
+          "type": "I"
+        },
         {
           "date": "20260611",
           "rceptNo": "20260611900600",
@@ -331,6 +367,117 @@
           "date": "20260605",
           "rceptNo": "20260605900598",
           "title": "전환청구권행사              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "015590",
+      "corpCode": "00108746",
+      "name": "DKME",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "소송/분쟁",
+          "weight": 25,
+          "count": 1,
+          "latestDate": "20260612"
+        }
+      ],
+      "riskScore": 25,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612800292",
+          "title": "소송등의판결ㆍ결정              ",
+          "type": "I"
+        },
+        {
+          "date": "20260611",
+          "rceptNo": "20260611800236",
+          "title": "단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "258830",
+      "corpCode": "00959229",
+      "name": "세종메디칼",
+      "totalDisclosures": 7,
+      "signals": [
+        {
+          "rule": "소송/분쟁",
+          "weight": 25,
+          "count": 1,
+          "latestDate": "20260612"
+        }
+      ],
+      "riskScore": 25,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612901024",
+          "title": "[기재정정]불성실공시법인지정예고              (공시번복)",
+          "type": "I"
+        },
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900673",
+          "title": "주권매매거래정지              (투자자 보호)",
+          "type": "I"
+        },
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900665",
+          "title": "기타시장안내              (정리매매 보류 관련)",
+          "type": "I"
+        },
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900656",
+          "title": "기타경영사항(자율공시)              (상장폐지결정 효력정지 가처분 신청)",
+          "type": "I"
+        },
+        {
+          "date": "20260611",
+          "rceptNo": "20260611900905",
+          "title": "주권매매거래정지해제              (상장폐지에 따른 정리매매 개시)",
+          "type": "I"
+        },
+        {
+          "date": "20260611",
+          "rceptNo": "20260611900896",
+          "title": "기타시장안내              (코스닥시장위원회 개최 결과 및 상장폐지 결정 안내)",
+          "type": "I"
+        },
+        {
+          "date": "20260605",
+          "rceptNo": "20260605900646",
+          "title": "불성실공시법인지정예고              (공시번복)",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "000430",
+      "corpCode": "00111847",
+      "name": "대원강업",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 20,
+          "count": 1,
+          "latestDate": "20260612"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612800850",
+          "title": "최대주주등소유주식변동신고서              ",
           "type": "I"
         }
       ]
@@ -527,6 +674,29 @@
       ]
     },
     {
+      "stockCode": "000880",
+      "corpCode": "00160588",
+      "name": "한화",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "증자/감자",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "20260612"
+        }
+      ],
+      "riskScore": 10,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612800541",
+          "title": "[기재정정]유상증자결정(종속회사의주요경영사항)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "145210",
       "corpCode": "00453488",
       "name": "다이나믹디자인",
@@ -690,22 +860,6 @@
       ]
     },
     {
-      "stockCode": "015590",
-      "corpCode": "00108746",
-      "name": "DKME",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611800236",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "070300",
       "corpCode": "00683007",
       "name": "엑스큐어",
@@ -762,34 +916,6 @@
           "rceptNo": "20260605000040",
           "title": "채무인수결정",
           "type": "B"
-        }
-      ]
-    },
-    {
-      "stockCode": "258830",
-      "corpCode": "00959229",
-      "name": "세종메디칼",
-      "totalDisclosures": 3,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900905",
-          "title": "주권매매거래정지해제              (상장폐지에 따른 정리매매 개시)",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900896",
-          "title": "기타시장안내              (코스닥시장위원회 개최 결과 및 상장폐지 결정 안내)",
-          "type": "I"
-        },
-        {
-          "date": "20260605",
-          "rceptNo": "20260605900646",
-          "title": "불성실공시법인지정예고              (공시번복)",
-          "type": "I"
         }
       ]
     },
@@ -877,6 +1003,22 @@
           "date": "20260610",
           "rceptNo": "20260610800474",
           "title": "[기재정정]단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "086790",
+      "corpCode": "00547583",
+      "name": "하나금융지주",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612800535",
+          "title": "기업설명회(IR)개최(안내공시)              ",
           "type": "I"
         }
       ]
@@ -1005,6 +1147,22 @@
           "date": "20260611",
           "rceptNo": "20260611900800",
           "title": "단일판매ㆍ공급계약체결(자율공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "380540",
+      "corpCode": "01506990",
+      "name": "옵티코어",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900554",
+          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
           "type": "I"
         }
       ]
