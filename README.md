@@ -1,8 +1,8 @@
 # CASSANDRA AI
 
-> **Toss × DART × LLM 리스크 모니터링**
+> **DART × 퀀트 × LLM 리스크 모니터링**
 >
-> 코스닥 1,822개 종목 DART 공시 실시간 분석 + 주식셀럽 관계망
+> 코스닥 1,822개 종목 DART 공시 실시간 분석 + 섹터 공포·탐욕 지수 + MU→하이닉스 예측
 >
 > **$0/월 완전 무료 운영** — Vercel + Neon + Upstash + GitHub Actions
 
@@ -21,6 +21,42 @@
 ├── GitHub Actions    → 크롤러/스크래퍼 (공개 레포 무제한)
 └── GitHub Storage    → JSON 데이터 CDN (1GB 한도)
 ```
+
+## 퀀트 대시보드
+
+**비로그인 공개**: `https://dart-monitor-pi.vercel.app/quant`
+
+![퀀트 대시보드](images/QunatDashboard.png)
+
+### 섹터별 공포·탐욕 지수
+Yahoo Finance 실시간 데이터로 10개 미국 섹터 ETF의 투자 심리를 측정합니다.
+RSI(14)·이동평균·변동성·섹터모멘텀·거래량 5개 시그널을 가중평균하여 0(공포)~100(탐욕) 점수로 시각화합니다.
+
+| 섹터 | 티커 | 방식 |
+|------|------|------|
+| Technology | XLK | 5시그널 가중평균 |
+| Financials | XLF | RSI 25% + MA 20% + 변동성 20% + 모멘텀 20% + 거래량 15% |
+| Healthcare | XLV | 0~39 극단적 공포, 40~49 공포, 50~59 중립, 60~79 탐욕, 80~100 극단적 탐욕 |
+| Consumer Disc | XLY | Redis 10분 캐시, 강제 갱신 버튼 |
+| ... 외 6개 섹터 | | |
+
+### 개별 종목 시그널 (ARDS-X)
+
+![개별 종목 시그널](images/Quant_Signal.png)
+
+NASDAQ Top 100 기반 VIX·이동평균·RSI·거래량으로 시장 국면을 4단계 판단.
+실시간 Naver Finance 가격 데이터로 개별 종목(엔비디아·애플·MS·테슬라·메타·아마존) 스코어를 산출합니다.
+
+### MU(마이크론) → 하이닉스 예측
+
+![MU→하이닉스 예측](images/Quant_mu_hynix.png)
+
+미국장 마이크론 종가를 기반으로 한국장 하이닉스 시가를 예측하는 크로스마켓 퀀트 모델입니다.
+회귀 베타(β)로 두 종목 간 상관도를 계산하고, 14일 백테스트로 적중률을 검증합니다.
+
+- 예측 공식: `Hynix_시가 = Hynix_전일종가 × (1 + |β| × MU_등락률)`
+- 백테스트: **71% 적중률 (10/14)**, 14일 히스토리 리스트
+- 데이터: Yahoo Finance → Redis 10분 캐시 → DB + GitHub JSON
 
 ## 주요 기능
 
@@ -54,14 +90,14 @@
 
 | 서비스 | 사용량 | 한도 |
 |---|---|---|
-| Neon DB | 4,223건 (3.4%) | 0.5GB |
-| Redis | 1.5K commands | 500K/월 |
+| Neon DB | 4,700건 (3.8%) | 0.5GB |
+| Redis | 2K commands | 500K/월 |
 | Vercel | <1% | 1M func/월 |
 | GitHub | <50MB | 1GB |
 
 ## 기술 스택
 
-Next.js 15 + TypeScript · Neon PostgreSQL · Prisma 6 · Upstash Redis · React 19 · Tailwind CSS 4 · Cytoscape.js · GitHub Actions
+Next.js 15 + TypeScript · Neon PostgreSQL · Prisma 6 · Upstash Redis · React 19 · Tailwind CSS 4 · Cytoscape.js · Yahoo Finance · Naver Finance · GitHub Actions
 
 ## 실행
 
@@ -69,12 +105,13 @@ Next.js 15 + TypeScript · Neon PostgreSQL · Prisma 6 · Upstash Redis · React
 npm run dev          # 개발 서버
 npm run daily        # 일일 공시 동기화
 npm run person-sync  # 인물 이력
+npx tsx scripts/backfill-mu-hynix.ts  # MU→하이닉스 백테스트
 npm run logs         # 통계
 ```
 
 ## 문서
 
-[docs/](docs/) — 서비스 흐름도, 배포 전략, 기술 스택, 검색 아키텍처, 인물 검색, 인물 이력
+[docs/](docs/) — 서비스 흐름도, 배포 전략, 기술 스택, 검색 아키텍처, 인물 검색, 인물 이력, 퀀트 백테스트
 
 ## 라이선스
 
