@@ -6,7 +6,8 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("auth-token")?.value;
 
   // 공개 경로: /login, /api/auth, 정적 파일
-  if (path.startsWith("/api/") || path.startsWith("/_next") || path.startsWith("/favicon") || path.startsWith("/images")) {
+  // 공개 경로: 로그인 불필요
+  if (path === "/quant" || path === "/dashboard" || path.startsWith("/api/") || path.startsWith("/_next") || path.startsWith("/favicon") || path.startsWith("/images")) {
     return NextResponse.next();
   }
 
