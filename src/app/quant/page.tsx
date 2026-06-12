@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { TrendingUp, TrendingDown, Share2, Copy, Eye, ExternalLink, AlertTriangle, BarChart3, Activity, Clock, RefreshCw } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from "recharts";
 
-// ─── 더미 데이터 ───
-const gaugeData = [
+const TOOLTIP_STYLE = { backgroundColor: "#1a1a2e", border: "1px solid #333", borderRadius: 6, color: "#fff", fontSize: 12 };
+
+// ─── 더미 데이터 (fallback) ───
+const fallbackGauge = [
   { name: "공포", value: 35, color: "#ef4444" },
   { name: "중립", value: 40, color: "#f59e0b" },
   { name: "과열", value: 25, color: "#22c55e" },
@@ -16,23 +18,13 @@ const regimeData = [
   { date: "06/07", regime: 2 }, { date: "06/09", regime: 2 }, { date: "06/11", regime: 3 },
 ];
 
-// ARDS-X 개별 종목 평가 (NASDAQ Top 100 기반)
-const regimeStocks = [
-  { name: "엔비디아", score: 92, signal: "매수", color: "#22c55e" },
-  { name: "애플", score: 85, signal: "매수", color: "#22c55e" },
-  { name: "마이크로소프트", score: 78, signal: "매수", color: "#22c55e" },
-  { name: "테슬라", score: 65, signal: "관망", color: "#f59e0b" },
-  { name: "메타", score: 55, signal: "관망", color: "#f59e0b" },
-  { name: "아마존", score: 42, signal: "매도", color: "#ef4444" },
-];
-
 const momentumData = [
   { date: "06/01", amqs: 100, m7: 102 }, { date: "06/03", amqs: 103, m7: 105 },
   { date: "06/05", amqs: 107, m7: 110 }, { date: "06/07", amqs: 112, m7: 118 },
   { date: "06/09", amqs: 108, m7: 114 }, { date: "06/11", amqs: 115, m7: 122 },
 ];
 
-// AMQS-M7 개별 종목
+// AMQS-M7 개별 종목 (하드코딩 — 추후 API 연동)
 const amqsStocks = [
   { name: "엔비디아", score: 92, weight: "25%", signal: "매수" },
   { name: "TSMC", score: 88, weight: "20%", signal: "매수" },
@@ -42,7 +34,6 @@ const amqsStocks = [
   { name: "AMD", score: 62, weight: "10%", signal: "관망" },
 ];
 
-// ARDS 헤지 종목
 const ardsStocks = [
   { name: "AMQS-M7 Long", score: 65, signal: "매수", desc: "AI 반도체 모멘텀" },
   { name: "KOSDAQ150 인버스", score: 35, signal: "헤지", desc: "하락장 방어" },
@@ -50,12 +41,43 @@ const ardsStocks = [
   { name: "금 현물", score: 10, signal: "안전", desc: "인플레이션 헤지" },
 ];
 
+interface StockData {
+  name: string; code: string; price: string; change: string; changePercent: number;
+}
+
+interface QuantResponse {
+  generatedAt: string;
+  marketGauge: { fear: number; neutral: number; greed: number };
+  stocks: StockData[];
+  fromCache?: boolean;
+  cachedSecondsAgo?: number;
+  stale?: boolean;
+}
+
+function buildRegimeStocks(stocks: StockData[]) {
+  return stocks.map(s => {
+    const delta = s.changePercent;
+    let score = 50 + delta * 5; // base 50, ±등락
+    score = Math.max(0, Math.min(100, Math.round(score)));
+    const signal = delta > 1 ? "매수" : delta < -1 ? "매도" : "관망";
+    const color = delta > 1 ? "#22c55e" : delta < -1 ? "#ef4444" : "#f59e0b";
+    return { name: s.name, score, signal, color };
+  });
+}
+
 export default function QuantDashboard() {
   const [visitors, setVisitors] = useState({ today: 0, total: 0 });
   const [copied, setCopied] = useState(false);
   const [updatedAt, setUpdatedAt] = useState("");
   const [quantPopup, setQuantPopup] = useState<string | null>(null);
   const [hookMsg, setHookMsg] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // 실시간 데이터
+  const [gaugeData, setGaugeData] = useState(fallbackGauge);
+  const [regimeStocks, setRegimeStocks] = useState<{ name: string; score: number; signal: string; color: string }[]>([]);
+  const [cacheInfo, setCacheInfo] = useState("");
 
   const hookMessages = [
     "🚀 AI가 찾은 이번 주 유망 종목은?",
@@ -67,15 +89,52 @@ export default function QuantDashboard() {
     "🎯 이번 달 AMQS-M7 수익률 공개",
   ];
 
+  const fetchQuantData = useCallback(async (force: boolean) => {
+    setLoading(true);
+    setError("");
+    try {
+      const url = force ? "/api/quant-data?force=true" : "/api/quant-data";
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: QuantResponse = await res.json();
+
+      const g = data.marketGauge;
+      setGaugeData([
+        { name: "공포", value: g.fear, color: "#ef4444" },
+        { name: "중립", value: g.neutral, color: "#f59e0b" },
+        { name: "과열", value: g.greed, color: "#22c55e" },
+      ]);
+
+      if (data.stocks?.length) {
+        setRegimeStocks(buildRegimeStocks(data.stocks));
+      }
+
+      setUpdatedAt(new Date(data.generatedAt).toLocaleString("ko-KR"));
+
+      if (data.fromCache) {
+        const min = Math.floor((data.cachedSecondsAgo || 0) / 60);
+        const sec = (data.cachedSecondsAgo || 0) % 60;
+        const staleTag = data.stale ? " (만료)" : "";
+        setCacheInfo(`Redis 캐시${staleTag} · ${min}분 ${sec}초 전`);
+      } else {
+        setCacheInfo("실시간 · Naver Finance");
+      }
+    } catch (e: any) {
+      setError(e.message || "데이터 로드 실패");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetch("/api/pageview").then(r => r.json()).then(d => {
       setVisitors({ today: d.today || 0, total: d.total || 0 });
     }).catch(() => {});
     setUpdatedAt(new Date().toLocaleString("ko-KR"));
-    // 랜덤 후킹 메시지 (2~5개)
-    const count = 2 + Math.floor(Math.random() * 4); // 2~5
+    const count = 2 + Math.floor(Math.random() * 4);
     const shuffled = [...hookMessages].sort(() => Math.random() - 0.5);
     setHookMsg(shuffled.slice(0, count).join("\n"));
+    fetchQuantData(false);
   }, []);
 
   const shareText = `📊 CASSANDRA AI — 퀀트 대시보드\n\nAI×퀀트로 분석하는 코스닥 시장\nARS-X·AMQS·ARDS 전략\n\nhttps://dart-monitor-pi.vercel.app/quant`;
@@ -94,13 +153,18 @@ export default function QuantDashboard() {
             <Clock className="w-3 h-3" /> 데이터 갱신
           </div>
           <div className="text-xs text-[var(--accent-glow)]">{updatedAt}</div>
-          <button onClick={() => window.location.reload()} className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text)] mt-1 flex items-center gap-1">
-            <RefreshCw className="w-3 h-3" /> 새로고침
+          <button
+            onClick={() => fetchQuantData(true)}
+            disabled={loading}
+            className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text)] mt-1 flex items-center gap-1"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} /> {loading ? "갱신 중..." : "새로고침"}
           </button>
           <div className="flex gap-2 mt-1 text-[10px] text-[var(--text-muted)]">
             <span className="flex items-center gap-0.5"><Eye className="w-2.5 h-2.5" />{visitors.today}</span>
             <span>누적 {visitors.total}</span>
           </div>
+          <div className="text-[9px] text-[var(--text-muted)] mt-0.5">{cacheInfo}</div>
         </div>
       </div>
 
@@ -108,6 +172,7 @@ export default function QuantDashboard() {
         {/* 1. 시장 게이지 */}
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
           <h2 className="text-sm font-bold flex items-center gap-2 mb-3"><Activity className="w-4 h-4 text-[var(--warning)]" /> 시장 게이지</h2>
+          {error && <p className="text-red-400 text-[10px] mb-2">⚠ {error}</p>}
           <div className="flex items-center gap-0 h-8 rounded-full overflow-hidden">
             {gaugeData.map((g) => (
               <div key={g.name} className="h-full flex items-center justify-center text-[10px] font-bold text-white" style={{ width: `${g.value}%`, backgroundColor: g.color }}>
@@ -119,9 +184,7 @@ export default function QuantDashboard() {
             <span>🔴 공포</span><span>🟡 중립</span><span>🟢 과열</span>
           </div>
           <p className="text-[10px] text-[var(--text-muted)] mt-3 leading-relaxed">
-            <strong>시장 심리 지수</strong>는 Naver Finance의 거래량·등락률·검색어 데이터를 종합하여 산출합니다.
-            공포 구간에서는 방어적 투자, 과열 구간에서는 차익 실현을 고려하세요.
-            ※ Toss Securities API 활성화 시 실시간 데이터로 교체됩니다.
+            <strong>시장 심리 지수</strong>는 Naver Finance의 KOSDAQ 등락 종목 비율로 산출합니다. 10분 단위 Redis 캐시.
           </p>
         </div>
 
@@ -132,10 +195,7 @@ export default function QuantDashboard() {
             <LineChart data={regimeData}>
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#888" }} />
               <YAxis domain={[0, 4]} tick={{ fontSize: 10, fill: "#888" }} />
-              <Tooltip
-                contentStyle={{ backgroundColor: "#1a1a2e", border: "1px solid #333", borderRadius: 6, color: "#fff", fontSize: 12 }}
-                labelStyle={{ color: "#fff", fontWeight: 600 }}
-              />
+              <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={{ color: "#fff", fontWeight: 600 }} />
               <Line type="monotone" dataKey="regime" stroke="#6c5ce7" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
@@ -143,29 +203,29 @@ export default function QuantDashboard() {
             <span className="text-[#ef4444]">0:하락</span><span className="text-[var(--text-muted)]">1:횡보</span><span className="text-[var(--accent-glow)]">2:상승</span><span className="text-[#22c55e]">3:급등</span>
           </div>
 
-          {/* 개별 종목 평가 */}
+          {/* 개별 종목 평가 (실시간) */}
           <div className="mt-3">
             <h4 className="text-[10px] font-semibold text-[var(--text-muted)] mb-1">📊 개별 종목 시그널</h4>
-            <ResponsiveContainer width="100%" height={100}>
-              <BarChart data={regimeStocks} layout="vertical" margin={{ left: 90 }}>
-                <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "#888" }} />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "#e4e4f0" }} width={85} />
-                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1a1a2e",
-                    border: "1px solid #333",
-                    borderRadius: 6,
-                    color: "#fff",
-                    fontSize: 12,
-                  }}
-                  formatter={(value: number, name: string) => [`${value}점`, "스코어"]}
-                  labelStyle={{ color: "#fff", fontWeight: 600 }}
-                />
-                <Bar dataKey="score" radius={[0, 4, 4, 0]}>
-                  {regimeStocks.map((s, i) => <Cell key={i} fill={s.color} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {loading && !regimeStocks.length ? (
+              <p className="text-[10px] text-[var(--text-muted)]">로딩 중...</p>
+            ) : regimeStocks.length > 0 ? (
+              <ResponsiveContainer width="100%" height={100}>
+                <BarChart data={regimeStocks} layout="vertical" margin={{ left: 90 }}>
+                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "#888" }} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "#e4e4f0" }} width={85} />
+                  <Tooltip
+                    contentStyle={TOOLTIP_STYLE}
+                    formatter={(value: any) => [`${value}점`, "스코어"]}
+                    labelStyle={{ color: "#fff", fontWeight: 600 }}
+                  />
+                  <Bar dataKey="score" radius={[0, 4, 4, 0]}>
+                    {regimeStocks.map((s, i) => <Cell key={i} fill={s.color} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>
+            )}
           </div>
 
           <p className="text-[10px] text-[var(--text-muted)] mt-2 leading-relaxed">
@@ -184,16 +244,12 @@ export default function QuantDashboard() {
             <LineChart data={momentumData}>
               <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#888" }} />
               <YAxis domain={[95, 130]} tick={{ fontSize: 9, fill: "#888" }} />
-              <Tooltip
-                contentStyle={{ backgroundColor: "#1a1a2e", border: "1px solid #333", borderRadius: 6, color: "#fff", fontSize: 11 }}
-                labelStyle={{ color: "#fff", fontWeight: 600 }}
-              />
+              <Tooltip contentStyle={{ ...TOOLTIP_STYLE, fontSize: 11 }} labelStyle={{ color: "#fff", fontWeight: 600 }} />
               <Line type="monotone" dataKey="amqs" stroke="#6c5ce7" strokeWidth={2} dot={false} name="AMQS" />
               <Line type="monotone" dataKey="m7" stroke="#22c55e" strokeWidth={2} dot={false} name="M7" />
             </LineChart>
           </ResponsiveContainer>
 
-          {/* AMQS-M7 종목 테이블 */}
           <div className="mt-3 text-[10px]">
             <h4 className="font-semibold text-[var(--text-muted)] mb-1">📊 AMQS-M7 구성 종목</h4>
             <div className="space-y-1">
@@ -222,7 +278,6 @@ export default function QuantDashboard() {
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
           <h2 className="text-sm font-bold flex items-center gap-2 mb-3"><TrendingDown className="w-4 h-4 text-[#ef4444]" /> 방어·헤지 (ARDS)</h2>
 
-          {/* ARDS 구성 */}
           <div className="text-[10px] space-y-1 mb-3">
             {ardsStocks.map((s, i) => (
               <div key={i} className="flex items-center justify-between p-1.5 rounded bg-[var(--bg)]">
@@ -238,7 +293,6 @@ export default function QuantDashboard() {
             ))}
           </div>
 
-          {/* 비중 */}
           <div className="grid grid-cols-3 gap-2 text-xs mb-2">
             <div className="p-2 rounded bg-[var(--bg)] text-center">
               <div className="text-[var(--text-muted)]">AMQS-M7</div><div className="font-bold">65%</div>
@@ -277,33 +331,9 @@ export default function QuantDashboard() {
                 github.com/gameworkerkim/vibe-investing/tree/main/01.Trading Strategy
               </a>
               <div className="bg-[var(--surface)] rounded-lg p-4 text-xs font-mono whitespace-pre-wrap">
-                {quantPopup === "ardsx" && `# ARDS-X Regime Classifier
-# NASDAQ Top 100 기반 시장 국면 판단
-
-Regime 0: 하락 → 현금 비중 80% +
-Regime 1: 횡보 → 현금 50% + 롱 50%
-Regime 2: 상승 → 롱 80% + 현금 20%
-Regime 3: 급등 → 롱 100% (트레일링 스탑)
-
-지표: VIX, MA20/60, RSI(14), Volume SMA`}
-                {quantPopup === "amqs" && `# AMQS (AI Momentum Quant Strategy)
-# AI·반도체 섹터 모멘텀 추종
-
-AMQS-M7 구성: NVDA, TSMC, SK Hynix, Samsung, ASML, AMD, QCOM
-리밸런싱: 월 1회 (매월 1일)
-비중: 동일가중 (Equal Weight) → 모멘텀 가중
-진입: 20일 모멘텀 > 5% → 매수
-청산: 20일 모멘텀 < -5% → 매도`}
-                {quantPopup === "ards" && `# ARDS (AI Risk Diversification Strategy)
-# AMQS-M7 대칭 헤지 전략
-
-Long: AMQS-M7 (65%)
-Hedge: KOSDAQ150 Inverse (25%)
-Safe: 국고채 10년 (10%)
-
-헤지 트리거: ARDS-X Regime = 0 (하락)
-비중 캡: Median + 15% (과도한 레버리지 방지)
-리밸런싱: 주 1회 (매주 월요일)`}
+                {quantPopup === "ardsx" && `# ARDS-X Regime Classifier\n# NASDAQ Top 100 기반 시장 국면 판단\n\nRegime 0: 하락 → 현금 비중 80% +\nRegime 1: 횡보 → 현금 50% + 롱 50%\nRegime 2: 상승 → 롱 80% + 현금 20%\nRegime 3: 급등 → 롱 100% (트레일링 스탑)\n\n지표: VIX, MA20/60, RSI(14), Volume SMA`}
+                {quantPopup === "amqs" && `# AMQS (AI Momentum Quant Strategy)\n# AI·반도체 섹터 모멘텀 추종\n\nAMQS-M7 구성: NVDA, TSMC, SK Hynix, Samsung, ASML, AMD, QCOM\n리밸런싱: 월 1회 (매월 1일)\n비중: 동일가중 (Equal Weight) → 모멘텀 가중\n진입: 20일 모멘텀 > 5% → 매수\n청산: 20일 모멘텀 < -5% → 매도`}
+                {quantPopup === "ards" && `# ARDS (AI Risk Diversification Strategy)\n# AMQS-M7 대칭 헤지 전략\n\nLong: AMQS-M7 (65%)\nHedge: KOSDAQ150 Inverse (25%)\nSafe: 국고채 10년 (10%)\n\n헤지 트리거: ARDS-X Regime = 0 (하락)\n비중 캡: Median + 15% (과도한 레버리지 방지)\n리밸런싱: 주 1회 (매주 월요일)`}
               </div>
             </div>
           </div>
