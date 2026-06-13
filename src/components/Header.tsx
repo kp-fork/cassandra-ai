@@ -46,6 +46,9 @@ export default function Header() {
           <a href="/quant" className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors text-xs">
             퀀트 대시보드
           </a>
+          <a href="/saju" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors text-xs">
+            🔮 주식 사주
+          </a>
           {btn("/", "관계망 분석")}
           {btn("/board", "제보·분석")}
           {btn("/wiki", "WIKI")}

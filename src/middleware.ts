@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
 
   // 공개 경로: /login, /api/auth, 정적 파일
   // 공개 경로: 로그인 불필요
-  if (path === "/quant" || path === "/dashboard" || path.startsWith("/api/") || path.startsWith("/_next") || path.startsWith("/favicon") || path.startsWith("/images")) {
+  if (path === "/quant" || path === "/dashboard" || path === "/saju" || path.startsWith("/api/") || path.startsWith("/_next") || path.startsWith("/favicon") || path.startsWith("/images")) {
     return NextResponse.next();
   }
 
