@@ -397,8 +397,41 @@ const ILJU_PERSONALITY: Record<string, { trait: string; weakness: string }> = {
     "계해(癸亥)": { trait:"직관과 영감의 달인. 물처럼 유연", weakness:"현실 도피. 우유부단" },
 };
 
-export function getPersonality(iljuLabel: string): { trait: string; weakness: string } {
-    return ILJU_PERSONALITY[iljuLabel] || { trait:"균형 잡힌 성격의 소유자로, 상황에 따라 유연하게 대처하는 능력", weakness:"때로는 우유부단하고 결정을 미루는 경향이 있음" };
+export function getPersonality(iljuLabel: string, profile?: SajuProfile): { trait: string; weakness: string; investStrength: string; investWeakness: string } {
+    const base = ILJU_PERSONALITY[iljuLabel];
+    const stemIdx = profile?.dayStemIdx ?? 0;
+    const el = profile?.myElement ?? "wood";
+    const elKr = ELEMENT_KR[el];
+
+    const trait = base?.trait || `${elKr} 일간의 균형 잡힌 성격을 가지고 있어 상황에 따라 유연하게 대처하고 꾸준한 실행력이 돋보입니다.`;
+    const weakness = base?.weakness || "때로는 우유부단함과 결정을 미루는 경향이 있어 기회를 놓칠 수 있습니다.";
+
+    // 투자 성향 생성
+    const investMap: Record<string, { strength: string; weakness: string }> = {
+        wood: {
+            strength: "성장주와 혁신 기업에 대한 통찰력이 뛰어나며, 장기적인 안목으로 투자하는 스타일입니다. 초기 진입 타이밍을 잘 잡는 편이며, 복리 효과를 누리는 데 유리합니다.",
+            weakness: "지나친 확신으로 분산 투자를 소홀히 할 수 있고, 성장 가능성만 보고 리스크를 과소평가하는 경향이 있습니다."
+        },
+        fire: {
+            strength: "시장의 흐름을 빠르게 읽고 과감한 결단력으로 단기 트레이딩에 강점을 보입니다. 급등주 포착과 이슈 대응이 뛰어납니다.",
+            weakness: "충동 매매와 감정적 의사결정으로 손실을 키울 수 있으며, 차분한 분석보다 직감에 의존하는 경향이 있습니다."
+        },
+        earth: {
+            strength: "신중하고 안정적인 가치 투자자로, 재무제표 분석과 기업의 내재가치 평가에 강점이 있습니다. 장기 보유로 안정적 수익을 추구합니다.",
+            weakness: "지나친 보수성으로 성장주의 초기 진입 기회를 놓치고, 변화하는 시장 흐름에 뒤처질 수 있습니다."
+        },
+        metal: {
+            strength: "결단력 있고 손절이 빠른 투자자입니다. 논리적 분석과 데이터 기반 의사결정에 강하며, 리스크 관리 능력이 탁월합니다.",
+            weakness: "지나친 완벽주의로 매매 타이밍을 놓칠 수 있고, 때로는 냉철함이 지나쳐 기회를 보수적으로만 판단합니다."
+        },
+        water: {
+            strength: "유연한 사고로 시장 변화에 빠르게 적응하며, 트렌드를 먼저 읽는 통찰력이 있습니다. 다양한 섹터에 분산 투자하는 능력이 뛰어납니다.",
+            weakness: "확신 부족으로 큰 베팅을 망설이고, 잦은 전략 변경으로 일관성을 잃을 수 있습니다. 우유부단함이 단점입니다."
+        },
+    };
+    const invest = investMap[el] || investMap.wood;
+
+    return { trait, weakness, investStrength: invest.strength, investWeakness: invest.weakness };
 }
 
 // ─── 월간 운세 (30일 평균 + 트렌드) ───

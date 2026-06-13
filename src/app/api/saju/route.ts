@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         const profile = buildProfile(birthDate, hour);
         const today = todayFor(profile);
         const summary = summaryLines(profile, today);
-        const personality = getPersonality(profile.iljuLabel);
+        const personality = getPersonality(profile.iljuLabel, profile);
         const fourPillars = calculateFourPillars(birthDate, hour);
         const sipSin = calculateSipSin(fourPillars);
         const hapChung = calculateHapChung(fourPillars);

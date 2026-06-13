@@ -378,10 +378,28 @@ export default function SajuPage() {
 
                     {/* 성격·특징 */}
                     {result.personality && (
-                        <div className="bg-[var(--bg)] rounded p-3 space-y-1">
+                        <div className="bg-[var(--bg)] rounded p-3 space-y-2">
                             <h4 className="text-xs font-semibold text-[var(--accent-glow)]">🌟 내 사주의 특징</h4>
-                            <p className="text-xs text-[var(--text-muted)]">장점: {result.personality.trait}</p>
-                            <p className="text-xs text-[var(--text-muted)]">단점: {result.personality.weakness}</p>
+                            <div className="space-y-1">
+                                <div>
+                                    <span className="text-[11px] text-[#22c55e] font-semibold">장점</span>
+                                    <p className="text-xs text-[var(--text-muted)]">{result.personality.trait}</p>
+                                </div>
+                                <div>
+                                    <span className="text-[11px] text-[#ef4444] font-semibold">단점</span>
+                                    <p className="text-xs text-[var(--text-muted)]">{result.personality.weakness}</p>
+                                </div>
+                            </div>
+                            <div className="border-t border-[var(--border)] pt-2 mt-1">
+                                <div>
+                                    <span className="text-[11px] text-[var(--accent-glow)] font-semibold">📈 투자 장점</span>
+                                    <p className="text-xs text-[var(--text-muted)]">{result.personality.investStrength}</p>
+                                </div>
+                                <div className="mt-1">
+                                    <span className="text-[11px] text-[var(--warning)] font-semibold">⚠ 투자 단점</span>
+                                    <p className="text-xs text-[var(--text-muted)]">{result.personality.investWeakness}</p>
+                                </div>
+                            </div>
                         </div>
                     )}
 
