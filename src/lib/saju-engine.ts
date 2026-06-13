@@ -844,3 +844,91 @@ export function calculateDaeUn(fp: ReturnType<typeof calculateFourPillars>): Dae
     }
     return entries;
 }
+
+// ─── 종합 해설 (대운 + 십신 + 용신 → 친절한 설명) ───
+export interface SajuSummary {
+    age: number;
+    currentDaeUn: string;
+    nextDaeUn: string;
+    lifeStage: string;
+    narrative: string;
+    investmentAdvice: string;
+}
+
+export function generateSajuSummary(
+    birthDate: string,
+    fp: ReturnType<typeof calculateFourPillars>,
+    strength: ReturnType<typeof calculateStrength>,
+    yongSin: ReturnType<typeof calculateYongSin>,
+    daeUn: ReturnType<typeof calculateDaeUn>,
+    twelveStages: ReturnType<typeof calculateTwelveStages>
+): SajuSummary {
+    // 현재 나이 계산
+    const birth = new Date(birthDate);
+    const now = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+    let age = now.getFullYear() - birth.getFullYear();
+    if (now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    // 현재 대운 찾기
+    let currentIdx = 0;
+    for (let i = 0; i < daeUn.length; i++) {
+        const [start] = daeUn[i].age.split("-").map(Number);
+        if (age >= start && age < start + 10) { currentIdx = i; break; }
+    }
+    const current = daeUn[currentIdx];
+    const next = daeUn[currentIdx + 1];
+    const nextAge = next ? parseInt(next.age.split("-")[0]) : 0;
+
+    const dayKr = ELEMENT_KR[fp.day.element];
+    const yongsinKr = yongSin.yongsin.map(e => ELEMENT_KR[e]).join("·");
+    const dayStage = twelveStages.pillars["일주"] || "";
+
+    // 생애 주기 설명
+    const lifeStageMap: Record<string, string> = {
+        "장생":"새로운 시작의 시기", "목욕":"성장과 배움의 시기", "관대":"사회 진출과 확장의 시기",
+        "건록":"안정과 성취의 시기", "제왕":"최고의 전성기", "쇠":"내리막 준비의 시기",
+        "병":"건강 관리가 필요한 시기", "사":"변화와 전환의 시기", "묘":"내실을 다지는 시기",
+        "절":"인내와 준비의 시기", "태":"잠재력을 키우는 시기", "양":"기초를 다지는 시기"
+    };
+    const lifeStage = lifeStageMap[dayStage] || "성장의 시기";
+
+    // 나래이티브 생성
+    const strengthNarrative = strength.level === "신강"
+        ? `${dayKr} 기운이 강한 체질이라 추진력과 결단력이 뛰어나지만, 지나친 자신감을 경계해야 합니다.`
+        : strength.level === "신약"
+        ? `${dayKr} 기운이 다소 약한 편이라 주변의 도움을 잘 활용하는 지혜가 필요합니다.`
+        : `${dayKr} 기운이 균형 잡혀 있어 안정적인 흐름을 유지할 수 있습니다.`;
+
+    const daeUnNarrative = current
+        ? `현재 ${current.age} 대운을 지나고 있으며 ${current.label}의 영향을 받고 있습니다. ${current.sipSin}·${current.stage}의 기운이 작용하는 시기로, ${current.stage === "제왕" || current.stage === "건록" ? "인생의 중요한 전환점이 될 수 있습니다." : current.stage === "쇠" || current.stage === "병" ? "다소 어려운 시기일 수 있으나 내실을 다지면 좋습니다." : "안정적으로 성장할 수 있는 시기입니다."}`
+        : "";
+
+    const nextNarrative = next
+        ? `앞으로 ${nextAge}세에 ${next.label} 대운이 시작되며, ${next.sipSin}의 기운이 들어옵니다. ${nextAge - age}년 후에 큰 변화가 예상되니 미리 준비하세요.`
+        : "";
+
+    const yongsinNarrative = `${yongSin.explanation} 투자할 때 ${yongsinKr} 기운의 섹터와 종목이 유리합니다.`;
+
+    const investmentAdvice = strength.level === "신강"
+        ? `적극적인 투자가 유리하며, ${yongSin.yongsin.map(e=>ELEMENT_KR[e]).join("·")} 섹터의 성장주와 혁신 기업에 관심을 가져보세요.`
+        : `안정적인 가치 투자가 적합하며, ${yongSin.yongsin.map(e=>ELEMENT_KR[e]).join("·")} 기운의 방어주와 배당주를 추천합니다.`;
+
+    const narrative = [
+        `현재 만 ${age}세인 당신은 사주 ${dayKr} 일간으로, ${lifeStage}에 해당합니다.`,
+        strengthNarrative,
+        daeUnNarrative,
+        nextNarrative,
+        yongsinNarrative,
+    ].filter(Boolean).join(" ");
+
+    return {
+        age,
+        currentDaeUn: current?.label || "",
+        nextDaeUn: next?.label || "",
+        lifeStage: dayStage,
+        narrative,
+        investmentAdvice,
+    };
+}

@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCache, setCache } from "@/lib/redis-cache";
 import { prisma } from "@/lib/prisma";
-import { buildProfile, todayFor, summaryLines, FORTUNE_KEYS, FORTUNE_KR, getPersonality, calculateFourPillars, weeklyFortune, monthlyFortune, yearlyFortune, calculateSipSin, calculateHapChung, calculateDaeUn, calculateTwelveStages, calculateStrength, calculateYongSin } from "@/lib/saju-engine";
+import { buildProfile, todayFor, summaryLines, FORTUNE_KEYS, FORTUNE_KR, getPersonality, calculateFourPillars, weeklyFortune, monthlyFortune, yearlyFortune, calculateSipSin, calculateHapChung, calculateDaeUn, calculateTwelveStages, calculateStrength, calculateYongSin, generateSajuSummary } from "@/lib/saju-engine";
 
 export async function POST(req: NextRequest) {
     try {
@@ -53,6 +53,7 @@ export async function POST(req: NextRequest) {
         const twelveStages = calculateTwelveStages(fourPillars);
         const strength = calculateStrength(fourPillars);
         const yongSin = calculateYongSin(fourPillars);
+        const sajuSummary = generateSajuSummary(birthDate, fourPillars, strength, yongSin, daeUn, twelveStages);
         const weekly = weeklyFortune(profile);
         const monthly = monthlyFortune(profile);
         const yearly = yearlyFortune(profile, nickname);
@@ -91,6 +92,7 @@ export async function POST(req: NextRequest) {
             twelveStages: twelveStages.pillars,
             strength: { level: strength.level, detail: strength.detail },
             yongSin,
+            sajuSummary,
             weekly,
             monthly,
             yearly,

@@ -455,8 +455,38 @@ export default function SajuPage() {
                         </div>
                     )}
 
-                    {/* 고급 사주 분석 (접기) */}
-                    {(result.sipSin || result.hapChung || result.daeUn || result.twelveStages || result.strength || result.yongSin) && (
+                    {/* 고급 사주 분석 — 종합 해설 */}
+                    {result.sajuSummary && (
+                        <div className="bg-gradient-to-r from-[var(--bg)] to-[var(--accent)]/5 rounded p-3 space-y-2 border border-[var(--border)]">
+                            <h4 className="text-sm font-semibold text-[var(--accent-glow)]">📖 사주 종합 해설 (만 {result.sajuSummary.age}세)</h4>
+                            <p className="text-xs text-[var(--text-muted)] leading-relaxed">{result.sajuSummary.narrative}</p>
+                            <div className="border-t border-[var(--border)] pt-2">
+                                <span className="text-[11px] text-[var(--accent-glow)] font-semibold">💡 투자 조언</span>
+                                <p className="text-xs text-[var(--text-muted)]">{result.sajuSummary.investmentAdvice}</p>
+                            </div>
+                            <details className="text-[10px] text-[var(--text-muted)]">
+                                <summary className="cursor-pointer hover:text-[var(--text)]">원본 데이터 보기 (십신·대운·합충·12운성)</summary>
+                                <div className="mt-2 space-y-1.5 pl-1">
+                                    {result.sipSin && <div>십신: {result.sipSin.summary}</div>}
+                                    {result.strength && <div>체질: {result.strength.level} ({result.strength.detail})</div>}
+                                    {result.yongSin && <div>용신 설명: {result.yongSin.explanation}</div>}
+                                    {result.twelveStages && <div>12운성: {Object.entries(result.twelveStages).map(([k,v])=>`${k}:${v}`).join(" · ")}</div>}
+                                    {result.hapChung && <div>합충: {result.hapChung.join(" · ")}</div>}
+                                    {result.daeUn && result.daeUn.length > 0 && (
+                                        <div>
+                                            <div className="mb-0.5">대운:</div>
+                                            {result.daeUn.slice(0, 5).map((d: any, i: number) => (
+                                                <div key={i} className="pl-2">{d.age} {d.label} ({d.stage}·{d.sipSin})</div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </details>
+                        </div>
+                    )}
+
+                    {/* (기존 고급 분석 제거, 위 sajuSummary 로 대체) */}
+                    {!result.sajuSummary && (result.sipSin || result.hapChung || result.daeUn || result.twelveStages || result.strength || result.yongSin) && (
                         <details className="text-xs">
                             <summary className="cursor-pointer font-semibold text-sm text-[var(--accent-glow)] hover:text-[var(--text)] py-1">
                                 📖 고급 사주 분석 (십신·대운·용신·합충)
