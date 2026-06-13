@@ -5,6 +5,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getCache, setCache } from "@/lib/redis-cache";
+import { prisma } from "@/lib/prisma";
 import { buildProfile, todayFor, summaryLines, FORTUNE_KEYS, FORTUNE_KR } from "@/lib/saju-engine";
 
 export async function POST(req: NextRequest) {
@@ -45,6 +46,9 @@ export async function POST(req: NextRequest) {
         const today = todayFor(profile);
         const summary = summaryLines(profile, today);
 
+        // 활동 로그 기록 (비동기)
+        logSaju(nickname, birthDate, req).catch(() => {});
+
         const result = {
             profile: {
                 birthDate: profile.birthDate,
@@ -75,5 +79,39 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(result);
     } catch {
         return NextResponse.json({ error: "사주 계산 중 오류가 발생했습니다." }, { status: 500 });
+    }
+}
+
+// ─── 활동 로깅 ───
+async function logSaju(nickname: string | undefined, birthDate: string | undefined, req: NextRequest) {
+    if (!nickname || !birthDate) return;
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || undefined;
+    // 오늘 이미 같은 닉네임+생일로 기록했으면 스킵 (중복 방지)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const existing = await prisma.sajuLog.findFirst({
+        where: { nickname, birthDate, action: "saju_submit", createdAt: { gte: today } },
+    });
+    if (!existing) {
+        await prisma.sajuLog.create({
+            data: { nickname, birthDate, action: "saju_submit", ip },
+        });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    // 종목 질문 로깅
+    try {
+        const { nickname, birthDate, stock } = await req.json();
+        if (!nickname || !birthDate || !stock) {
+            return NextResponse.json({ error: "필수값 누락" }, { status: 400 });
+        }
+        const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || undefined;
+        await prisma.sajuLog.create({
+            data: { nickname, birthDate, action: "stock_query", stock: String(stock).toUpperCase(), ip },
+        });
+        return NextResponse.json({ ok: true });
+    } catch {
+        return NextResponse.json({ ok: false });
     }
 }

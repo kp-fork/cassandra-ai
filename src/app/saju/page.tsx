@@ -195,6 +195,10 @@ export default function SajuPage() {
         setStockResult({ stock: stock.ticker, analysis });
         setStockQuery("");
 
+        // 질문 로그 기록
+        const nick = nickname.trim() || "익명";
+        fetch("/api/saju", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ nickname: nick, birthDate, stock: stock.ticker }) }).catch(() => {});
+
         const newCnt = cnt + 1;
         localStorage.setItem(todayKey, String(newCnt));
         setQueryCount(newCnt);

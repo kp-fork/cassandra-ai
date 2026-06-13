@@ -360,3 +360,17 @@ model Referral {
   @@index([refCode, createdAt])
   @@index([createdAt])
 }
+
+// ─── 사주 활동 로그 ───
+model SajuLog {
+  id        String   @id @default(uuid())
+  nickname  String   // 닉네임
+  birthDate String   // 생년월일 (YYYY-MM-DD)
+  action    String   // "saju_submit" | "stock_query"
+  stock     String?  // 종목 티커 (stock_query일 때)
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([nickname, createdAt])
+  @@index([action, createdAt])
+}
