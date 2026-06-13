@@ -101,14 +101,7 @@ export default function SajuPage() {
         const urlParams = new URLSearchParams(window.location.search);
         const ref = urlParams.get("ref");
         if (ref) {
-            setInviteInput(ref.toUpperCase());
-            applyInviteCode(ref.toUpperCase());
-            // 레퍼럴 기록
-            fetch("/api/referral", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ refCode: ref.toUpperCase() }) }).catch(() => {});
-            // 레퍼럴 통계 조회
-            fetch(`/api/referral?refCode=${encodeURIComponent(ref.toUpperCase())}`).then(r => r.json()).then(d => {
-                if (d.total !== undefined) setRefStats(d);
-            }).catch(() => {});
+            applyInviteCode(ref.toUpperCase(), true);
         }
 
         // 방문자 카운터
@@ -118,14 +111,17 @@ export default function SajuPage() {
         }).catch(() => {});
     }, []);
 
-    const applyInviteCode = (code: string) => {
+    const applyInviteCode = (code: string, fromUrl = false) => {
         if (!code.trim()) return;
         const uc = code.trim().toUpperCase();
-        localStorage.setItem("saju-invite-bonus", "true");
-        localStorage.setItem("saju-inviter", uc);
-        setMaxQueries(6);
-        setInviteBonus(true);
         setInviteInput(uc);
+        // URL로 들어온 경우만 보너스 활성화
+        if (fromUrl) {
+            localStorage.setItem("saju-invite-bonus", "true");
+            localStorage.setItem("saju-inviter", uc);
+            setMaxQueries(6);
+            setInviteBonus(true);
+        }
         // 레퍼럴 기록
         fetch("/api/referral", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ refCode: uc }) }).catch(() => {});
         fetch(`/api/referral?refCode=${encodeURIComponent(uc)}`).then(r => r.json()).then(d => {
@@ -271,20 +267,6 @@ export default function SajuPage() {
                     </div>
                 </div>
 
-                {/* 추천인 코드 */}
-                <div>
-                    <label className="text-[10px] text-[var(--text-muted)]">추천인 코드 (선택)</label>
-                    <div className="flex gap-2 mt-1">
-                        <input type="text" value={inviteInput} onChange={e => setInviteInput(e.target.value)}
-                            placeholder="친구 코드 입력" className="flex-1 px-3 py-1.5 rounded bg-[var(--bg)] border border-[var(--border)] text-xs" />
-                        <button onClick={() => applyInviteCode(inviteInput)}
-                            className="px-3 py-1.5 rounded bg-[#22c55e]/20 text-[#22c55e] text-xs hover:bg-[#22c55e]/30">
-                            적용
-                        </button>
-                    </div>
-                    {inviteBonus && <p className="text-[#22c55e] text-[9px] mt-0.5">추천인 적용 완료! 오늘 질문 {maxQueries}회 가능</p>}
-                </div>
-
                 <label className="flex items-start gap-2 text-[10px] text-[var(--text-muted)] cursor-pointer">
                     <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="mt-0.5" />
                     <span>주의: 사주의 통변을 다 적용한 것이 아니며, 취미와 재미로 살펴보시기 바랍니다. 사주 기반 주식 투자는 과학·퀀트 영역이 아니며 리스크가 큽니다. 본 서비스는 결과에 대해 책임지지 않습니다.</span>
@@ -369,24 +351,49 @@ export default function SajuPage() {
                         )}
                     </div>
 
-                    {/* 친구 초대 + 후킹 */}
-                    {inviteCode && (
-                        <div className="border-t border-[var(--border)] pt-3">
-                            <h4 className="text-xs font-semibold flex items-center gap-1 mb-2"><Share2 className="w-3 h-3" /> 친구 초대 (+3회 보너스)</h4>
-                            <div className="bg-[var(--bg)] rounded p-2 text-[10px] text-left font-mono whitespace-pre-wrap mb-2 text-[var(--text-muted)]">{shareText}</div>
+                    {/* 레퍼럴 입력 + 친구 초대 */}
+                    <div className="border-t border-[var(--border)] pt-3 space-y-3">
+                        {/* 레퍼럴 코드 입력 */}
+                        <div>
+                            <h4 className="text-xs font-semibold flex items-center gap-1 mb-2"><User className="w-3 h-3" /> 추천인 코드 등록</h4>
                             <div className="flex gap-2">
-                                <button onClick={handleCopy} className="flex-1 py-1.5 rounded bg-[var(--accent)] text-white text-xs">
-                                    {copied ? "✅ 복사 완료!" : <span className="flex items-center justify-center gap-1"><Copy className="w-3 h-3" /> 초대 메시지 복사</span>}
+                                <input type="text" value={inviteInput} onChange={e => setInviteInput(e.target.value)}
+                                    placeholder="친구의 추천인 코드 입력"
+                                    className="flex-1 px-3 py-1.5 rounded bg-[var(--bg)] border border-[var(--border)] text-xs" />
+                                <button onClick={() => applyInviteCode(inviteInput, false)}
+                                    className="px-3 py-1.5 rounded bg-[var(--accent)]/20 text-[var(--accent-glow)] text-xs hover:bg-[var(--accent)]/30">
+                                    등록
                                 </button>
                             </div>
-                            <p className="text-[9px] text-[var(--text-muted)] mt-1 text-center">추천인 코드: <strong className="text-[var(--accent-glow)]">{inviteCode}</strong></p>
+                            {inviteBonus && (
+                                <p className="text-[#22c55e] text-[9px] mt-1">추천인 등록 완료! 오늘 질문 {maxQueries}회 가능</p>
+                            )}
                             {refStats && (
-                                <p className="text-[9px] text-[var(--text-muted)] text-center">
+                                <p className="text-[9px] text-[var(--text-muted)] mt-0.5">
                                     📊 오늘 {refStats.daily}명 · 누적 {refStats.total}명 유입
                                 </p>
                             )}
                         </div>
-                    )}
+
+                        {/* 친구 초대 + 후킹 */}
+                        {inviteCode && (
+                            <div>
+                                <h4 className="text-xs font-semibold flex items-center gap-1 mb-2"><Share2 className="w-3 h-3" /> 내 초대 링크</h4>
+                                <div className="bg-[var(--bg)] rounded p-2 text-[10px] text-left font-mono whitespace-pre-wrap mb-2 text-[var(--text-muted)]">{shareText}</div>
+                                <div className="flex gap-2">
+                                    <button onClick={handleCopy} className="flex-1 py-1.5 rounded bg-[var(--accent)] text-white text-xs">
+                                        {copied ? "✅ 복사 완료!" : <span className="flex items-center justify-center gap-1"><Copy className="w-3 h-3" /> 초대 메시지 복사</span>}
+                                    </button>
+                                </div>
+                                <p className="text-[9px] text-[var(--text-muted)] mt-1 text-center">내 코드: <strong className="text-[var(--accent-glow)]">{inviteCode}</strong></p>
+                                {refStats && (
+                                    <p className="text-[9px] text-[var(--text-muted)] text-center">
+                                        📊 오늘 {refStats.daily}명 · 누적 {refStats.total}명 유입
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
