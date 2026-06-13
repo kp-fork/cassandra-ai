@@ -17,7 +17,12 @@ if (URL && TOKEN) redis = new Redis({ url: URL, token: TOKEN });
 const memCache = new Map<string, { v: number; ts: number }>();
 const MEM_TTL = 5 * 60 * 1000; // 5분
 
-function todayUTC() { return new Date(new Date().setHours(0, 0, 0, 0)); }
+function todayKST() {
+    const now = new Date();
+    // KST = UTC+9 → UTC 자정으로 보정 후 9시간 빼기
+    const utc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+    return new Date(utc - 9 * 60 * 60 * 1000); // KST 00:00의 UTC timestamp
+}
 
 async function getRedis(key: string): Promise<number | null> {
     if (redis) try { return await redis.get<number>(key); } catch { return null; }
@@ -34,7 +39,7 @@ async function setRedis(key: string, v: number, ttlSec = 600) {
 
 export async function GET() {
     try {
-        const today = todayUTC();
+        const today = todayKST();
         const cacheToday = await getRedis("pv:today");
         const cacheTotal = await getRedis("pv:total");
 
