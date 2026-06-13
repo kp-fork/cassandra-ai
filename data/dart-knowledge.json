@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T15:17:33.737Z",
+  "generatedAt": "2026-06-13T01:18:14.961Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,7 +12,7 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 2,
-    "totalSignals": 22,
+    "totalSignals": 18,
     "topRisks": [
       {
         "name": "알로이스",
@@ -25,9 +25,8 @@
       },
       {
         "name": "알엔티엑스",
-        "score": 70,
+        "score": 50,
         "signals": [
-          "대주주변경",
           "CB발행",
           "증자/감자"
         ]
