@@ -48,5 +48,15 @@
     "hynixPredictedChangePct": 0.01,
     "beta": 0.042,
     "r2": 0
+  },
+  {
+    "generatedAt": "2026-06-13T10:14:36.156Z",
+    "muPrice": 981.61,
+    "muChangePct": -1.43,
+    "hynixPrevClose": 2150000,
+    "hynixPredicted": 2145554.66,
+    "hynixPredictedChangePct": -0.21,
+    "beta": 0.144,
+    "r2": 0.022
   }
 ]

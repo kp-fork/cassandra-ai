@@ -75,7 +75,16 @@ async function main() {
   const pv = await p.pageView.count();
   const pvToday = await p.pageView.count({ where: { createdAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) } } });
   const topPages = await p.pageView.groupBy({ by: ["path"], _count: { path: true }, orderBy: { _count: { path: "desc" } }, take: 5 });
-  console.log(`  📊 페이지 방문자: 총 ${pv}건 | 오늘 ${pvToday}건`);
+
+  // 유니크 방문자 (IP 기준)
+  const todayStart = new Date(new Date().setHours(0, 0, 0, 0));
+  const [uniqueTotal, uniqueToday] = await Promise.all([
+    p.pageView.groupBy({ by: ["ip"], where: { ip: { not: null } } }).then(r => r.length),
+    p.pageView.groupBy({ by: ["ip"], where: { ip: { not: null }, createdAt: { gte: todayStart } } }).then(r => r.length),
+  ]);
+
+  console.log(`  📊 페이지 요청: 총 ${pv}건 | 오늘 ${pvToday}건`);
+  console.log(`  👤 유니크 방문자(IP): 총 ${uniqueTotal}명 | 오늘 ${uniqueToday}명`);
   topPages.forEach(pp => console.log(`     ${pp.path.padEnd(20)} ${pp._count.path}건`));
   console.log("");
 
