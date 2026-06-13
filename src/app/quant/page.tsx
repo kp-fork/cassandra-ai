@@ -73,6 +73,8 @@ export default function QuantDashboard() {
   const [cacheInfo, setCacheInfo] = useState("");
   const [sectorData, setSectorData] = useState<{ marketAvg: number; marketStatus: string; sectors: any[] } | null>(null);
   const [muHynixData, setMuHynixData] = useState<{ prediction: any; backtest: any } | null>(null);
+  const [nasdaqMovers, setNasdaqMovers] = useState<any>(null);
+  const [moversTab, setMoversTab] = useState<"daily" | "weekly">("daily");
 
   const hookMessages = [
     "🚀 AI가 찾은 이번 주 유망 종목은?",
@@ -132,6 +134,10 @@ export default function QuantDashboard() {
     // MU → 하이닉스 예측
     fetch("/api/mu-hynix").then(r => r.json()).then(d => {
       if (d.prediction || d.backtest) setMuHynixData(d);
+    }).catch(() => {});
+    // NASDAQ 상승/하락 TOP
+    fetch("/api/nasdaq-movers").then(r => r.json()).then(d => {
+      if (d.daily || d.weekly) setNasdaqMovers(d);
     }).catch(() => {});
   }, []);
 
@@ -403,6 +409,98 @@ export default function QuantDashboard() {
           <button onClick={() => setQuantPopup("ards")} className="mt-2 text-[10px] text-[var(--accent-glow)] hover:underline">
             📂 퀀트 원본 보기 (GitHub)
           </button>
+        </div>
+
+        {/* 5. NASDAQ 데일리/주간 상승·하락 TOP */}
+        <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#22c55e]" /> NASDAQ 상승·하락 TOP</h2>
+            <div className="flex gap-1">
+              <button onClick={() => setMoversTab("daily")} className={`px-2 py-0.5 rounded text-[10px] ${moversTab === "daily" ? "bg-[var(--accent)] text-white" : "text-[var(--text-muted)] hover:text-[var(--text)]"}`}>데일리</button>
+              <button onClick={() => setMoversTab("weekly")} className={`px-2 py-0.5 rounded text-[10px] ${moversTab === "weekly" ? "bg-[var(--accent)] text-white" : "text-[var(--text-muted)] hover:text-[var(--text)]"}`}>주간</button>
+            </div>
+          </div>
+          {nasdaqMovers ? (
+            moversTab === "daily" ? (
+              <>
+                {/* 데일리 상승 Top10 */}
+                <div className="text-[10px] mb-2">
+                  <div className="flex justify-between text-[var(--text-muted)] border-b border-[var(--border)] pb-0.5 mb-1">
+                    <span className="w-12">티커</span><span className="flex-1">종목명</span><span className="w-12 text-right">등락률</span><span className="w-8 text-right">이유</span>
+                  </div>
+                  {nasdaqMovers.daily.gainers.map((s: any, i: number) => (
+                    <details key={i} className="group">
+                      <summary className="flex justify-between items-center py-0.5 cursor-pointer hover:bg-[var(--bg)] rounded px-0.5">
+                        <span className="w-12 font-semibold">{s.ticker}</span>
+                        <span className="flex-1 truncate">{s.name}</span>
+                        <span className="w-12 text-right font-bold text-[#22c55e]">+{s.changePct}%</span>
+                        <span className="w-8 text-center text-[9px] text-[var(--text-muted)]">▼</span>
+                      </summary>
+                      <p className="text-[9px] text-[var(--text-muted)] pl-0.5 pb-0.5">💡 {s.reason}</p>
+                    </details>
+                  ))}
+                </div>
+                {/* 데일리 하락 Top10 */}
+                <div className="text-[10px]">
+                  <div className="flex justify-between text-[var(--text-muted)] border-b border-[var(--border)] pb-0.5 mb-1">
+                    <span className="w-12">티커</span><span className="flex-1">종목명</span><span className="w-12 text-right">등락률</span><span className="w-8 text-right">이유</span>
+                  </div>
+                  {nasdaqMovers.daily.losers.map((s: any, i: number) => (
+                    <details key={i} className="group">
+                      <summary className="flex justify-between items-center py-0.5 cursor-pointer hover:bg-[var(--bg)] rounded px-0.5">
+                        <span className="w-12 font-semibold">{s.ticker}</span>
+                        <span className="flex-1 truncate">{s.name}</span>
+                        <span className="w-12 text-right font-bold text-[#ef4444]">{s.changePct}%</span>
+                        <span className="w-8 text-center text-[9px] text-[var(--text-muted)]">▼</span>
+                      </summary>
+                      <p className="text-[9px] text-[var(--text-muted)] pl-0.5 pb-0.5">💡 {s.reason}</p>
+                    </details>
+                  ))}
+                </div>
+                <div className="text-right text-[8px] text-[var(--text-muted)] mt-1">
+                  갱신: {new Date(nasdaqMovers.daily.generatedAt).toLocaleString("ko-KR")}
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 주간 상승 Top20 */}
+                <div className="text-[10px] mb-2">
+                  <div className="text-[var(--text-muted)] border-b border-[var(--border)] pb-0.5 mb-1">주간 상승 Top 20 (6/8 — 6/13)</div>
+                  {nasdaqMovers.weekly.gainers.map((s: any, i: number) => (
+                    <details key={i} className="group">
+                      <summary className="flex justify-between items-center py-0.5 cursor-pointer hover:bg-[var(--bg)] rounded px-0.5">
+                        <span className="w-10 font-semibold text-[9px]">{s.ticker}</span>
+                        <span className="flex-1 truncate text-[9px]">{s.name}</span>
+                        <span className="w-14 text-right font-bold text-[#22c55e] text-[9px]">+{s.changePct}%</span>
+                        <span className="w-6 text-center text-[8px] text-[var(--text-muted)]">▼</span>
+                      </summary>
+                      <p className="text-[8px] text-[var(--text-muted)] pl-0.5 pb-0.5">💡 {s.reason}</p>
+                    </details>
+                  ))}
+                </div>
+                {/* 주간 하락 Top10 */}
+                <div className="text-[10px]">
+                  <div className="text-[var(--text-muted)] border-b border-[var(--border)] pb-0.5 mb-1">주간 하락 Top 10 (6/8 — 6/13)</div>
+                  {nasdaqMovers.weekly.losers.map((s: any, i: number) => (
+                    <details key={i} className="group">
+                      <summary className="flex justify-between items-center py-0.5 cursor-pointer hover:bg-[var(--bg)] rounded px-0.5">
+                        <span className="w-10 font-semibold text-[9px]">{s.ticker}</span>
+                        <span className="flex-1 truncate text-[9px]">{s.name}</span>
+                        <span className="w-14 text-right font-bold text-[#ef4444] text-[9px]">{s.changePct}%</span>
+                        <span className="w-6 text-center text-[8px] text-[var(--text-muted)]">▼</span>
+                      </summary>
+                      <p className="text-[8px] text-[var(--text-muted)] pl-0.5 pb-0.5">💡 {s.reason}</p>
+                    </details>
+                  ))}
+                </div>
+                <div className="text-right text-[8px] text-[var(--text-muted)] mt-1">
+                  기준일: 2026-06-13
+                </div>
+              </>
+            )
+          ) : (
+            <p className="text-[10px] text-[var(--text-muted)]">로딩 중...</p>
+          )}
         </div>
       </div>
 
