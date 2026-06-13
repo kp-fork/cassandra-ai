@@ -221,22 +221,16 @@ await supabase.auth.admin.createUser({
 ```
 
 ### 개발 완료 후
-1. SMTP 서비스 연결 (Resend 추천 — 월 3,000건 무료)
+1. Supabase 기본 이메일 발송 사용 (별도 SMTP 불필요)
 2. Supabase → Authentication → Email Templates 커스터마이징
 3. `email_confirm: false`로 전환 (실제 이메일 인증 활성화)
 4. Confirm email: ON
 
-### SMTP 연결 (Resend 예시)
-```bash
-# Supabase 대시보드 → Authentication → Settings → SMTP
-Host: smtp.resend.com
-Port: 465
-User: resend
-Password: re_xxxxx (Resend API Key)
-Sender: CASSANDRA AI <noreply@dart-monitor.xyz>
-```
-
----
+### Supabase 이메일 발송
+Supabase는 기본 이메일 발송 기능을 내장하고 있습니다. 별도 SMTP 연결 없이도 인증 메일 발송이 가능합니다.
+- 무료 티어: 월 50,000건까지
+- 템플릿 커스터마이징: Authentication → Email Templates에서 HTML 편집
+- 발신자 주소: Supabase 기본 도메인 또는 커스텀 도메인 설정 가능---
 
 ## 9. 오늘 작업 요약 (2026-06-14)
 
@@ -270,7 +264,6 @@ Sender: CASSANDRA AI <noreply@dart-monitor.xyz>
 - [x] 주간·월간·연간 운세 + 종합 해설
 
 ### 진행 대기
-- [ ] SMTP 서비스 결정 (Resend 추천)
 - [ ] Supabase 실제 연동 (Google OAuth 우선)
 - [ ] Expert 승인 관리자 대시보드
 - [ ] 기존 사용자 마이그레이션
