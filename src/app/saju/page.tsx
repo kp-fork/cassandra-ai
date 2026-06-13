@@ -439,8 +439,8 @@ export default function SajuPage() {
 
                     {/* 고급 사주 분석 (접기) */}
                     {(result.sipSin || result.hapChung || result.daeUn || result.twelveStages || result.strength || result.yongSin) && (
-                        <details className="text-[10px]">
-                            <summary className="cursor-pointer font-semibold text-[var(--accent-glow)] hover:text-[var(--text)] py-1">
+                        <details className="text-xs">
+                            <summary className="cursor-pointer font-semibold text-sm text-[var(--accent-glow)] hover:text-[var(--text)] py-1">
                                 📖 고급 사주 분석 (십신·대운·용신·합충)
                             </summary>
                             <div className="mt-2 space-y-2 pl-1">
@@ -469,7 +469,7 @@ export default function SajuPage() {
                                     <div className="bg-[var(--bg)] rounded p-2">
                                         <span className="font-semibold text-[var(--accent-glow)]">합충형해:</span>
                                         {result.hapChung.map((p: string, i: number) => (
-                                            <span key={i} className="text-[var(--text-muted)] block text-[9px]">{p}</span>
+                                            <span key={i} className="text-[var(--text-muted)] block text-[11px]">{p}</span>
                                         ))}
                                     </div>
                                 )}
@@ -486,7 +486,7 @@ export default function SajuPage() {
                                         <div className="font-semibold text-[var(--accent-glow)] mb-1">대운(大運):</div>
                                         <div className="space-y-0.5">
                                             {result.daeUn.slice(0, 6).map((d: any, i: number) => (
-                                                <div key={i} className="flex justify-between text-[9px]">
+                                                <div key={i} className="flex justify-between text-[11px]">
                                                     <span className="text-[var(--text-muted)]">{d.age}</span>
                                                     <span className="font-semibold">{d.label}</span>
                                                     <span className="text-[var(--text-muted)]">{d.stage}·{d.sipSin}</span>
