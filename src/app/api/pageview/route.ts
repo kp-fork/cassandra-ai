@@ -19,9 +19,9 @@ const MEM_TTL = 5 * 60 * 1000; // 5분
 
 function todayKST() {
     const now = new Date();
-    // KST = UTC+9 → UTC 자정으로 보정 후 9시간 빼기
-    const utc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
-    return new Date(utc - 9 * 60 * 60 * 1000); // KST 00:00의 UTC timestamp
+    // KST로 변환 → 해당 KST 날짜의 UTC 00:00
+    const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    return new Date(Date.UTC(kst.getUTCFullYear(), kst.getUTCMonth(), kst.getUTCDate(), 0, 0, 0, 0));
 }
 
 async function getRedis(key: string): Promise<number | null> {
