@@ -29,7 +29,27 @@
 
 ---
 
-## 2. 회원 등급 설계
+## 2. 데이터 저장 범위
+
+| 저장소 | 데이터 | 용도 |
+|--------|--------|------|
+| **Supabase** `auth.users` | 이메일·비밀번호·인증 상태 | 회원가입·로그인·이메일 인증 |
+| **Neon DB** (Prisma) | 프로필·등급·추천인·공시·사주 등 | 모든 비즈니스 데이터 |
+
+```
+Supabase (인증)                    Neon DB (데이터)
+┌──────────────┐                  ┌──────────────────┐
+│ auth.users   │ ──id(email)──→   │ User (기존 유지)   │
+│ - email      │                  │ - tier            │
+│ - password   │                  │ - nickname        │
+│ - confirmed  │                  │ - loginHistory    │
+└──────────────┘                  │ profiles          │
+                                  │ referral_codes    │
+                                  │ expert_apps       │
+                                  └──────────────────┘
+```
+
+## 3. 회원 등급 설계
 
 ### 2.1 등급별 권한
 
@@ -39,47 +59,44 @@
 | **Expert** | 전체 기능 (관계망·제보·WIKI·인명검색) | 회사 메일 인증 + 관리자 승인 + 추천인 코드 |
 | **관리자** | 전체 기능 + 관리자 패널 | 지정 이메일 계정 (수동 등록) |
 
-### 2.2 DB 스키마 확장
+### 2.2 DB 스키마 (Neon DB — Prisma)
 
-```sql
--- Supabase auth.users에 메타데이터 추가
--- user_metadata: { tier: 'normal' | 'expert' | 'admin', referrer: 'REFCODE' }
+```prisma
+// 기존 User 모델에 필드 추가
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  // Supabase auth.users.id와 매핑 (supabaseId)
+  supabaseId    String?  @unique  // Supabase UUID
+  name          String?
+  tier          String   @default("normal")  // normal | expert | admin
+  // ... 기존 필드 유지
+  loginHistories LoginHistory[]
+}
 
--- 프로필 테이블
-CREATE TABLE public.profiles (
-  id UUID REFERENCES auth.users(id) PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  tier TEXT DEFAULT 'normal' CHECK (tier IN ('normal','expert','admin')),
-  nickname TEXT,
-  company_email TEXT,          -- Expert 전용: 회사 이메일
-  company_email_verified BOOLEAN DEFAULT FALSE,
-  referrer_code TEXT,          -- 본인의 추천인 코드
-  referred_by TEXT,            -- 가입 시 사용한 추천인 코드
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+// Expert 신청
+model ExpertApplication {
+  id           String   @id @default(uuid())
+  userId       String
+  companyEmail String
+  companyName  String?
+  reason       String?
+  status       String   @default("pending")  // pending | approved | rejected
+  reviewedBy   String?
+  appliedAt    DateTime @default(now())
+  reviewedAt   DateTime?
+}
 
--- Expert 추천인 코드 관리
-CREATE TABLE public.referral_codes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  owner_id UUID REFERENCES auth.users(id),
-  code TEXT UNIQUE NOT NULL,
-  used_count INT DEFAULT 0,   -- 이번 주 사용 횟수
-  max_per_week INT DEFAULT 5,
-  week_start DATE DEFAULT CURRENT_DATE,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Expert 승인 대기
-CREATE TABLE public.expert_applications (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id),
-  company_email TEXT NOT NULL,
-  company_name TEXT,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
-  applied_at TIMESTAMPTZ DEFAULT NOW(),
-  reviewed_at TIMESTAMPTZ,
-  reviewed_by UUID REFERENCES auth.users(id)
-);
+// 추천인 코드
+model ReferralCode {
+  id          String   @id @default(uuid())
+  ownerId     String
+  code        String   @unique
+  usedCount   Int      @default(0)
+  maxPerWeek  Int      @default(5)
+  weekStart   DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
 ```
 
 ---
@@ -143,21 +160,22 @@ CREATE TABLE public.expert_applications (
 
 | 현재 (Neon + 자체 Auth) | Supabase 대체 |
 |-------------------------|--------------|
-| `prisma User` 테이블 | `auth.users` + `public.profiles` |
+| `prisma User` 테이블 | 유지 (supabaseId 컬럼 추가) |
 | JWT 발급 (bcryptjs) | Supabase JWT (GoTrue) |
 | 로그인 API | Supabase `signInWithPassword()` |
 | 세션 관리 (쿠키) | Supabase 세션 (자동 갱신) |
 | 미들웨어 인증 검사 | Supabase SSR 미들웨어 |
-| LoginHistory 추적 | Supabase Audit Logs (Pro) 또는 커스텀 |
+| LoginHistory 추적 | 기존 Prisma 테이블 유지 |
 
-### 4.2 유지할 것
+### 4.2 유지할 것 (Supabase 미사용)
 
-| 항목 | 이유 |
-|------|------|
-| Prisma + Neon DB | 기존 데이터 유지 (공시·인물·관계망) |
-| Redis 캐시 | Upstash 계속 사용 |
+| 항목 | 저장소 |
+|------|--------|
+| User·Profile·ExpertApplication·ReferralCode | Neon DB (Prisma) |
+| Corp·Person·Filing·PersonHistory | Neon DB |
+| PageView·LoginHistory·SearchLog | Neon DB |
+| Redis 캐시 | Upstash |
 | 사주 엔진 | 자체 로직 |
-| 페이지뷰·레퍼럴 | 기존 DB 테이블 유지 |
 
 ### 4.3 환경 변수
 
