@@ -89,6 +89,64 @@ export default function AdminPage() {
                     )) : <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
                 </div>
             </div>
+
+            {/* Expert 승인 관리 */}
+            <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+                <h2 className="text-sm font-bold mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-[#f59e0b]" /> Expert 승인 대기</h2>
+                <AdminExpertList />
+            </div>
+        </div>
+    );
+}
+
+function AdminExpertList() {
+    const [apps, setApps] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [adminEmail, setAdminEmail] = useState("");
+
+    useEffect(() => {
+        const supabase = createSupabaseBrowser();
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setAdminEmail(session?.user?.email || "");
+            if (session?.user?.email) {
+                fetch("/api/auth/expert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "list", adminEmail: session.user.email }) })
+                    .then(r => r.json()).then(d => { setApps(d.applications || []); setLoading(false); });
+            }
+        });
+    }, []);
+
+    const handleAction = async (email: string, action: "approve" | "reject") => {
+        await fetch("/api/auth/expert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action, email, adminEmail }) });
+        setApps(apps.map(a => a.email === email ? { ...a, status: action === "approve" ? "approved_unverified" : "rejected" } : a));
+    };
+
+    if (loading) return <p className="text-[10px] text-[var(--text-muted)]">로딩 중...</p>;
+    if (!apps.length) return <p className="text-[10px] text-[var(--text-muted)]">신청 내역 없음</p>;
+
+    return (
+        <div className="space-y-1">
+            <div className="flex justify-between text-[10px] text-[var(--text-muted)] border-b border-[var(--border)] pb-1.5 mb-1">
+                <span className="w-48">이메일</span><span className="w-12">유형</span><span className="w-16">상태</span><span className="text-right">관리</span>
+            </div>
+            {apps.map((a: any) => (
+                <div key={a.email} className="flex justify-between items-center text-[10px] py-1 border-b border-[var(--border)] last:border-0">
+                    <span className="w-48 truncate">{a.email}</span>
+                    <span className="w-12 text-[var(--text-muted)]">{a.category === "media" ? "언론" : "공공"}</span>
+                    <span className={`w-16 ${a.status === "verified" ? "text-[#22c55e]" : a.status === "approved_unverified" ? "text-[#3b82f6]" : "text-[#f59e0b]"}`}>
+                        {a.status === "verified" ? "인증완료" : a.status === "approved_unverified" ? "승인됨" : "대기"}
+                    </span>
+                    <span className="flex gap-1">
+                        {a.status === "pending" && (
+                            <>
+                                <button onClick={() => handleAction(a.email, "approve")} className="px-2 py-0.5 rounded bg-[#22c55e]/10 text-[#22c55e] hover:bg-[#22c55e]/20 text-[9px]">승인</button>
+                                <button onClick={() => handleAction(a.email, "reject")} className="px-2 py-0.5 rounded bg-[#ef4444]/10 text-[#ef4444] hover:bg-[#ef4444]/20 text-[9px]">거절</button>
+                            </>
+                        )}
+                        {a.status === "approved_unverified" && <span className="text-[#3b82f6] text-[9px]">OTP 발송됨</span>}
+                        {a.status === "verified" && <span className="text-[var(--text-muted)] text-[9px]">인증: {a.verifiedAt?.slice(0, 10)}</span>}
+                    </span>
+                </div>
+            ))}
         </div>
     );
 }
