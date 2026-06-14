@@ -9,11 +9,13 @@
 ## 전체 플로우
 
 ```
-사용자 로그인 (Google/Naver 이메일)
+사용자 로그인 (Supabase: Google·이메일)
         │
         ▼
 ┌───────────────────────────────────────────┐
-│  경제 지표 대시보드 (첫 화면)              │
+│  시장 오버뷰 (ETF·섹터·지수·VIX)          │
+│  퀀트 대시보드 (상단 고정)                │
+└───────────────────────────────────────────┘
 │  · 코스닥 시가총액·등락률·거래량 상위      │
 │  · DART 사명변경·대주주·소송·CB 리스트      │
 │  · 실시간 검색어 (24시간)                   │
@@ -178,7 +180,7 @@ DART OpenAPI
 | 캐시 | Upstash Redis |
 | 프론트엔드 | React 19 + Tailwind CSS 4 + Cytoscape.js |
 | 외부 API | DART OpenAPI, Naver Finance |
-| 인증 | JWT + bcryptjs (3시간 세션) |
+| 인증 | Supabase Auth (Google OAuth + 이메일) |
 | 배포 | Vercel (Hobby, $0) + Neon (Free, $0) |
 | LLM | DeepSeek V3 + Claude (예정) |
 

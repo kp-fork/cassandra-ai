@@ -1,5 +1,62 @@
 # CASSANDRA AI — 작업 로드맵 & 히스토리
 
+## v1.4.0 (2026-06-14) — Supabase Google 로그인 + 권한 + 시장 오버뷰
+
+### 인증 시스템
+- [x] Supabase Auth 연동 (Google OAuth + 이메일)
+- [x] 로그인 페이지: Google·Apple·이메일 버튼 + 회원가입
+- [x] Supabase SSR 미들웨어 (세션 자동 갱신)
+- [x] 로그인/로그아웃 상태 연동 (Header)
+- [x] Expert 권한 제어: 지정 이메일만 딥서치 접근
+- [x] `/access-denied` 페이지 (일반회원 차단 메시지)
+- [x] 관리자 페이지 (`/admin`): 가입자·로그인·레퍼럴·질문 통계
+- [x] 추천인 TOP10 + 사주 질문 종목 TOP10
+- [x] `scripts/setup-supabase.sh` 키 등록 스크립트
+
+### 퀀트 대시보드
+- [x] 시장 오버뷰 (인기 ETF·섹터·주요지수·VIX)
+- [x] ETF 배지·섹터 바·지수 삼각형 UI 디자인
+
+### KST + 통계
+- [x] 페이지뷰 KST(UTC+9) 계산 오류 수정
+- [x] `npm run logs` — 유니크 IP 방문자 통계
+- [x] `npm run saju-stats` — 사주 활동 로그 (SajuLog)
+- [x] `/api/pageview` 경로별 집계 분리 (?path=)
+
+### 문서
+- [x] `docs/AUTH_SYSTEM.md` — Supabase 인증 설계
+- [x] `docs/SOCIAL_LOGIN.md` — OAuth 상세 설계
+
+---
+
+## 차기 로드맵
+
+### 🥇 1순위
+| 작업 | 상태 |
+|------|------|
+| Apple 로그인 연동 | ⬜ 설계 완료, 구현 대기 |
+| Expert 승인 관리자 대시보드 | ⬜ |
+| 관계망 그래프 실제 데이터 연동 개선 | ⬜ |
+| Supabase 이메일 인증 활성화 | ⬜ |
+
+### 🥈 2순위
+| 작업 | 상태 |
+|------|------|
+| Toss Securities API 연동 | ⬜ |
+| ARDS 자동 리밸런싱 GitHub Actions | ⬜ |
+| Expert 회사메일 인증 + 추천인 가입 | ⬜ |
+| LLM 사주 분석 (DeepSeek) | ⬜ |
+
+### 🥉 3순위
+| 작업 | 상태 |
+|------|------|
+| 사주 음력 변환 | ⬜ |
+| 종목 오행 LLM 자동 분류 | ⬜ |
+| CDN 캐싱 레이어 | ⬜ |
+| Board SHA-256 → bcrypt | ⬜ |
+
+---
+
 ## v1.3.0 (2026-06-14) — 사주 엔진 완성 + 인증 설계
 
 ### 사주 엔진 고도화
@@ -124,30 +181,6 @@
 - [x] Upstash Redis 연동 (검색·그래프·챗봇)
 
 ---
-
-## 진행 중
-
-### 인증 마이그레이션
-- [ ] Supabase 실제 연동 (Google OAuth)
-- [ ] SMTP 연결 (Resend)
-- [ ] Expert 승인 관리자 대시보드
-- [ ] 기존 Neon → Supabase 사용자 마이그레이션
-
-### 데이터 확장
-- [ ] 전체 코스닥 상시 공시 캐싱
-- [ ] 공시-뉴스 크로스레퍼런스
-
-### LLM 파이프라인
-- [ ] DeepSeek V3 NER (개체명 인식) 연동
-- [ ] Claude Fable 5 이상 패턴 분석
-
-### 퀀트 고도화
-- [ ] Toss Securities API 연동
-- [ ] ARDS 자동 리밸런싱 GitHub Actions
-
-### 사주 엔진 고도화
-- [ ] 음력 변환 지원
-- [ ] 종목 오행 LLM 자동 분류 (20→200+)
 
 ## 가설
 
