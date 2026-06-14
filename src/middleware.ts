@@ -9,30 +9,36 @@ import { createServerClient } from "@supabase/ssr";
 const PUBLIC_PATHS = ["/quant", "/dashboard", "/saju", "/login", "/signup"];
 const API_PREFIXES = ["/api/", "/_next", "/favicon", "/images"];
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // 공개 경로 + API → 통과
   if (PUBLIC_PATHS.includes(path) || API_PREFIXES.some(p => path.startsWith(p))) {
     const res = NextResponse.next();
-    // 세션 갱신만 수행
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { cookies: { getAll: () => request.cookies.getAll(), setAll: (cookiesToSet) => cookiesToSet.forEach(({ name, value }) => res.cookies.set(name, value)) } }
-    );
-    await supabase.auth.getSession();
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      const supabase = createServerClient(SUPABASE_URL, SUPABASE_KEY, { cookies: { getAll: () => request.cookies.getAll(), setAll: (cookiesToSet) => cookiesToSet.forEach(({ name, value }) => res.cookies.set(name, value)) } });
+      await supabase.auth.getSession();
+    }
     return res;
+  }
+
+  // Supabase 미설정 → 기존 JWT 방식으로 fallback
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    const token = request.cookies.get("auth-token")?.value;
+    if (token) {
+      if (path === "/login") return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.next();
+    }
+    if (path !== "/login") return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.next();
   }
 
   // Supabase 세션 확인
   const res = NextResponse.next();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => request.cookies.getAll(), setAll: (cookiesToSet) => cookiesToSet.forEach(({ name, value }) => res.cookies.set(name, value)) } }
-  );
-
+  const supabase = createServerClient(SUPABASE_URL, SUPABASE_KEY, { cookies: { getAll: () => request.cookies.getAll(), setAll: (cookiesToSet) => cookiesToSet.forEach(({ name, value }) => res.cookies.set(name, value)) } });
   const { data: { session } } = await supabase.auth.getSession();
 
   if (session) {
