@@ -105,11 +105,20 @@ export default function SajuPage() {
         // 로그인 상태 확인 → 기본 횟수 설정
         checkLoginAndQuota(todayKey, cnt);
 
+        // URL 또는 sessionStorage에서 추천인 코드 처리
+        const pendingRef = sessionStorage.getItem("saju-pending-ref");
+        if (pendingRef) {
+            sessionStorage.removeItem("saju-pending-ref");
+            // 로그인 확인 후에만 apply (로그인 되어 있을 때)
+            checkLoginAndApplyRef(pendingRef);
+        }
+
         // URL에서 추천인 코드 파싱 + 기록
         const urlParams = new URLSearchParams(window.location.search);
         const ref = urlParams.get("ref");
         if (ref) {
-            applyInviteCode(ref.toUpperCase(), true);
+            // ref 코드 임시 저장 (로그인 후 처리)
+            sessionStorage.setItem("saju-pending-ref", ref.toUpperCase());
         }
 
         // 방문자 카운터
@@ -161,6 +170,23 @@ export default function SajuPage() {
         } catch {
             setLoggedIn(false);
             setMaxQueries(3);
+        }
+    };
+
+    // 로그인 확인 후 레퍼럴 처리
+    const checkLoginAndApplyRef = async (refCode: string) => {
+        try {
+            const supabase = createSupabaseBrowser();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // 로그인 확인됨 → 레퍼럴 적용
+                applyInviteCode(refCode, true);
+            } else {
+                // 아직 로그인 안 됨 → 다시 저장
+                sessionStorage.setItem("saju-pending-ref", refCode);
+            }
+        } catch {
+            sessionStorage.setItem("saju-pending-ref", refCode);
         }
     };
 

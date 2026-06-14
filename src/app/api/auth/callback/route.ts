@@ -3,6 +3,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");

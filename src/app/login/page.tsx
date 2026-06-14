@@ -35,9 +35,11 @@ function LoginForm() {
   };
 
   const handleOAuth = async (provider: "google" | "apple") => {
+    const pendingRef = sessionStorage.getItem("saju-pending-ref");
+    const redirectPath = pendingRef ? "/saju" : "/dashboard";
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/api/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/api/auth/callback?next=${redirectPath}` },
     });
     if (error) setError(error.message);
   };
