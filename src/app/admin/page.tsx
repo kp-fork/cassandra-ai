@@ -47,7 +47,7 @@ export default function AdminPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatCard icon={<Users />} label="총 가입자" value={stats?.totalUsers ?? "-"} color="#3b82f6" />
                 <StatCard icon={<Eye />} label="오늘 로그인" value={stats?.todayLogins ?? "-"} color="#22c55e" />
-                <StatCard icon={<TrendingUp />} label="오늘 방문" value={stats?.todayPageviews ?? "-"} color="#f59e0b" />
+                <StatCard icon={<TrendingUp />} label="초대 유입(오늘)" value={`${stats?.todayRef ?? 0} / ${stats?.totalRef ?? 0}`} color="#f59e0b" />
                 <StatCard icon={<Clock />} label="최근 가입" value={stats?.recentSignups ?? "-"} color="#a855f7" />
             </div>
 
@@ -69,6 +69,24 @@ export default function AdminPage() {
                             <span className="text-[10px]">{new Date(u.created_at).toLocaleDateString("ko-KR")}</span>
                         </div>
                     )) || <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
+                </div>
+                <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+                    <h2 className="text-sm font-bold mb-3">🔗 추천인 TOP 10</h2>
+                    {stats?.topRefs?.length > 0 ? stats.topRefs.map((r: any, i: number) => (
+                        <div key={i} className="flex justify-between text-xs py-1 border-b border-[var(--border)] last:border-0">
+                            <span className="text-[var(--text-muted)]">{i+1}. {r.code}</span>
+                            <span className="font-semibold">{r.count}명</span>
+                        </div>
+                    )) : <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
+                </div>
+                <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+                    <h2 className="text-sm font-bold mb-3">💬 사주 질문 종목 TOP 10</h2>
+                    {stats?.topStocks?.length > 0 ? stats.topStocks.map((s: any, i: number) => (
+                        <div key={i} className="flex justify-between text-xs py-1 border-b border-[var(--border)] last:border-0">
+                            <span className="text-[var(--text-muted)]">{i+1}. {s.stock}</span>
+                            <span className="font-semibold">{s.count}회</span>
+                        </div>
+                    )) : <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
                 </div>
             </div>
         </div>

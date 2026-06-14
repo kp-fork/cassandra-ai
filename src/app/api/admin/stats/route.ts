@@ -38,12 +38,36 @@ export async function GET() {
             return d >= todayStart;
         }).length || 0;
 
+        // 레퍼럴 통계
+        const [totalRef, todayRef] = await Promise.all([
+            prisma.referral.count(),
+            prisma.referral.count({ where: { createdAt: { gte: todayStart } } }),
+        ]);
+        const topRefs = await prisma.referral.groupBy({
+            by: ["refCode"],
+            _count: { refCode: true },
+            orderBy: { _count: { refCode: "desc" } },
+            take: 10,
+        });
+
+        // 사주 질문 TOP10
+        const topStocks = await prisma.sajuLog.groupBy({
+            by: ["stock"],
+            where: { action: "stock_query", stock: { not: null } },
+            _count: { stock: true },
+            orderBy: { _count: { stock: "desc" } },
+            take: 10,
+        });
+
         return NextResponse.json({
             totalUsers: users?.length || 0,
             todayLogins,
             todayPageviews,
             recentSignups,
+            totalRef, todayRef,
             topPages: topPages.map(p => ({ path: p.path, count: p._count.path })),
+            topRefs: topRefs.map(r => ({ code: r.refCode, count: r._count.refCode })),
+            topStocks: topStocks.map(s => ({ stock: s.stock, count: s._count.stock })),
             supabaseUsers: users?.slice(0, 10).map((u: any) => ({
                 email: u.email,
                 created_at: u.created_at,
