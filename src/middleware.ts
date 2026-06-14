@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PUBLIC_PATHS = ["/quant", "/dashboard", "/saju", "/login", "/signup"];
+const PUBLIC_PATHS = ["/quant", "/dashboard", "/saju", "/login", "/signup", "/admin"];
 const API_PREFIXES = ["/api/", "/_next", "/favicon", "/images"];
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;

@@ -2,34 +2,46 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
+import { createSupabaseBrowser } from "@/lib/supabase/client";
+
+const ADMIN_EMAILS = ["gameworker@gmail.com"];
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [usageWarning, setUsageWarning] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const checkAuth = useCallback(() => {
-    setLoggedIn(document.cookie.includes("session="));
+  const checkAuth = useCallback(async () => {
+    const supabase = createSupabaseBrowser();
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      setLoggedIn(!!session);
+      if (session?.user?.email) {
+        setIsAdmin(ADMIN_EMAILS.includes(session.user.email));
+      }
+    } catch {
+      setLoggedIn(false);
+    }
   }, []);
 
   useEffect(() => {
     checkAuth();
     window.addEventListener("focus", checkAuth);
-    // 페이지뷰 기록
     fetch("/api/pageview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: window.location.pathname }) }).catch(() => {});
     return () => window.removeEventListener("focus", checkAuth);
   }, [pathname, checkAuth]);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    const supabase = createSupabaseBrowser();
+    await supabase.auth.signOut();
     setLoggedIn(false);
-    document.cookie = "session=; max-age=0; path=/";
+    setIsAdmin(false);
     router.push("/login");
   };
 
   const btn = (href: string, label: string) => (
-    <a href={href} className={`px-3 py-1.5 rounded-lg border transition-colors ${
+    <a href={href} className={`px-3 py-1.5 rounded-lg border transition-colors text-xs ${
       pathname === href ? "bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--accent-glow)]" : "bg-[var(--bg)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)]"
     }`}>{label}</a>
   );
@@ -53,9 +65,11 @@ export default function Header() {
           {btn("/board", "제보·분석")}
           {btn("/wiki", "WIKI")}
           {btn("/person-search", "인명검색")}
-          <a href="/dashboard" className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
-            이 서비스에 대해
-          </a>
+          {isAdmin && (
+            <a href="/admin" className="px-3 py-1.5 rounded-lg bg-[#f59e0b]/10 border border-[#f59e0b]/30 text-[#f59e0b] hover:bg-[#f59e0b]/20 transition-colors text-xs">
+              ⚙ 관리자
+            </a>
+          )}
           {loggedIn ? (
             <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--danger)] hover:text-[var(--danger-glow)] transition-colors">
               로그아웃
