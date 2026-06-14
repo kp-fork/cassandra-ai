@@ -180,54 +180,81 @@ export default function QuantDashboard() {
       {/* 시장 오버뷰 */}
       {marketOverview && (
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {/* 인기 ETF */}
             <div>
-              <h3 className="text-[10px] font-semibold text-[var(--text-muted)] mb-2">인기 ETF</h3>
-              <div className="space-y-0.5">
-                {marketOverview.etfs?.slice(0, 10).map((e: any) => (
-                  <div key={e.ticker} className="flex justify-between items-center text-[10px]">
-                    <div>
-                      <span className="font-semibold">{e.ticker}</span>
-                      <span className="text-[var(--text-muted)] ml-1">{e.name}</span>
+              <h3 className="text-[11px] font-bold mb-3 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-[#22c55e]"></span> 인기 ETF
+              </h3>
+              <div className="space-y-1.5">
+                {marketOverview.etfs?.slice(0, 10).map((e: any) => {
+                  const isUp = e.changePct >= 0;
+                  return (
+                    <div key={e.ticker} className="flex items-center justify-between group">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-semibold w-12">{e.ticker}</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">{e.name}</span>
+                      </div>
+                      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${isUp ? "bg-[#22c55e]/10 text-[#22c55e]" : "bg-[#ef4444]/10 text-[#ef4444]"}`}>
+                        {isUp ? "+" : ""}{e.changePct}%
+                      </span>
                     </div>
-                    <span className={e.changePct >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}>{e.changePct >= 0 ? "+" : ""}{e.changePct}%</span>
-                  </div>
-                )) || <div className="text-[10px] text-[var(--text-muted)]">로딩 중...</div>}
+                  );
+                })}
               </div>
             </div>
             {/* 섹터 */}
             <div>
-              <h3 className="text-[10px] font-semibold text-[var(--text-muted)] mb-2">섹터별 등락률</h3>
-              <div className="space-y-0.5">
-                {marketOverview.sectors?.map((s: any) => (
-                  <div key={s.ticker} className="flex justify-between items-center text-[10px]">
-                    <span className="text-[var(--text-muted)]">{s.name}</span>
-                    <span className={s.changePct >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}>{s.changePct >= 0 ? "+" : ""}{s.changePct}%</span>
-                  </div>
-                )) || <div className="text-[10px] text-[var(--text-muted)]">로딩 중...</div>}
+              <h3 className="text-[11px] font-bold mb-3 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-[#6c5ce7]"></span> 섹터별 등락률
+              </h3>
+              <div className="space-y-1.5">
+                {marketOverview.sectors?.map((s: any) => {
+                  const isUp = s.changePct >= 0;
+                  const barColor = isUp ? "#22c55e" : "#ef4444";
+                  return (
+                    <div key={s.ticker} className="flex items-center gap-2">
+                      <span className="text-[10px] text-[var(--text-muted)] w-16 truncate">{s.name}</span>
+                      <div className="flex-1 h-1.5 rounded-full bg-[var(--bg)] overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, Math.abs(s.changePct) * 6)}%`, backgroundColor: barColor, opacity: 0.7 }} />
+                      </div>
+                      <span className={`text-[10px] font-semibold w-14 text-right ${isUp ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                        {isUp ? "+" : ""}{s.changePct}%
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            {/* 주요 지수 + VIX */}
+            {/* 지수 + VIX */}
             <div>
-              <h3 className="text-[10px] font-semibold text-[var(--text-muted)] mb-2">주요 지수</h3>
-              <div className="space-y-0.5">
-                {marketOverview.indices?.map((idx: any) => (
-                  <div key={idx.ticker} className="flex justify-between items-center text-[10px]">
-                    <div>
-                      <span className="font-semibold">{idx.ticker}</span>
-                      <span className="text-[var(--text-muted)] ml-1">{idx.name}</span>
+              <h3 className="text-[11px] font-bold mb-3 flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-[#f59e0b]"></span> 주요 지수
+              </h3>
+              <div className="space-y-1.5">
+                {marketOverview.indices?.map((idx: any) => {
+                  const isUp = idx.changePct >= 0;
+                  return (
+                    <div key={idx.ticker} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-semibold w-10">{idx.ticker}</span>
+                        <span className="text-[10px] text-[var(--text-muted)]">{idx.name}</span>
+                      </div>
+                      <span className={`text-[11px] font-semibold ${isUp ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                        {isUp ? "▲" : "▼"} {Math.abs(idx.changePct)}%
+                      </span>
                     </div>
-                    <span className={idx.changePct >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}>{idx.changePct >= 0 ? "+" : ""}{idx.changePct}%</span>
-                  </div>
-                )) || <div className="text-[10px] text-[var(--text-muted)]">로딩 중...</div>}
+                  );
+                })}
                 {marketOverview.vix !== null && (
-                  <div className="flex justify-between items-center text-[10px] mt-1 pt-1 border-t border-[var(--border)]">
-                    <div>
-                      <span className="font-semibold text-[#ef4444]">VIX</span>
-                      <span className="text-[var(--text-muted)] ml-1">변동성</span>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-[var(--border)]">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-semibold w-10 text-[#ef4444]">VIX</span>
+                      <span className="text-[10px] text-[var(--text-muted)]">변동성 지수</span>
                     </div>
-                    <span className={marketOverview.vix > 25 ? "text-[#ef4444]" : marketOverview.vix > 20 ? "text-[#f59e0b]" : "text-[#22c55e]"}>{marketOverview.vix}</span>
+                    <span className={`text-sm font-bold px-2 py-0.5 rounded ${marketOverview.vix > 25 ? "bg-[#ef4444]/10 text-[#ef4444]" : marketOverview.vix > 20 ? "bg-[#f59e0b]/10 text-[#f59e0b]" : "bg-[#22c55e]/10 text-[#22c55e]"}`}>
+                      {marketOverview.vix}
+                    </span>
                   </div>
                 )}
               </div>
