@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T01:23:03.044Z",
+  "generatedAt": "2026-06-15T11:12:29.991Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 2,
-    "totalSignals": 18,
+    "highRiskCount": 3,
+    "totalSignals": 22,
     "topRisks": [
       {
         "name": "알로이스",
@@ -29,6 +29,13 @@
         "signals": [
           "CB발행",
           "증자/감자"
+        ]
+      },
+      {
+        "name": "일정실업",
+        "score": 40,
+        "signals": [
+          "대주주변경"
         ]
       }
     ]
