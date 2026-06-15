@@ -46,9 +46,9 @@ export default function AdminPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatCard icon={<Users />} label="총 가입자" value={stats?.totalUsers ?? "-"} color="#3b82f6" />
-                <StatCard icon={<Eye />} label="오늘 로그인" value={stats?.todayLogins ?? "-"} color="#22c55e" />
-                <StatCard icon={<TrendingUp />} label="초대 유입(오늘)" value={`${stats?.todayRef ?? 0} / ${stats?.totalRef ?? 0}`} color="#f59e0b" />
-                <StatCard icon={<Clock />} label="최근 가입" value={stats?.recentSignups ?? "-"} color="#a855f7" />
+                <StatCard icon={<Eye />} label="오늘 유니크 방문" value={`${stats?.uniqueToday ?? 0} / ${stats?.uniqueTotal ?? 0}`} color="#22c55e" />
+                <StatCard icon={<TrendingUp />} label="구글 로그인(오늘/누적)" value={`${stats?.todayLogins ?? 0} / ${stats?.totalLogins ?? 0}`} color="#f59e0b" />
+                <StatCard icon={<Clock />} label="초대 유입(오늘/누적)" value={`${stats?.todayRef ?? 0} / ${stats?.totalRef ?? 0}`} color="#a855f7" />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">

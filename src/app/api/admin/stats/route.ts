@@ -29,9 +29,13 @@ export async function GET() {
             prisma.pageView.groupBy({ by: ["path"], _count: { path: true }, orderBy: { _count: { path: "desc" } }, take: 5 }),
         ]);
 
-        const todayLogins = await prisma.loginHistory.count({
-            where: { createdAt: { gte: todayStart }, success: true },
-        });
+        // 유니크 방문자 (IP 기준)
+        const uniqueTotal = await prisma.pageView.groupBy({ by: ["ip"], where: { ip: { not: null } } }).then(r => r.length);
+        const uniqueToday = await prisma.pageView.groupBy({ by: ["ip"], where: { ip: { not: null }, createdAt: { gte: todayStart } } }).then(r => r.length);
+
+        // 로그인 통계
+        const totalLogins = await prisma.loginHistory.count({ where: { success: true } });
+        const todayLogins = await prisma.loginHistory.count({ where: { success: true, createdAt: { gte: todayStart } } });
 
         const recentSignups = users?.filter((u: any) => {
             const d = new Date(u.created_at);
@@ -62,7 +66,11 @@ export async function GET() {
         return NextResponse.json({
             totalUsers: users?.length || 0,
             todayLogins,
+            totalLogins,
             todayPageviews,
+            totalPageviews,
+            uniqueToday,
+            uniqueTotal,
             recentSignups,
             totalRef, todayRef,
             topPages: topPages.map(p => ({ path: p.path, count: p._count.path })),
