@@ -71,6 +71,7 @@ export default function SajuPage() {
     const [inviteCode, setInviteCode] = useState("");
     const [inviteInput, setInviteInput] = useState("");
     const [inviteBonus, setInviteBonus] = useState(false);
+    const [referralNotify, setReferralNotify] = useState(""); // 추천인 알림
     const [visitors, setVisitors] = useState({ today: 0, total: 0 });
     const [copied, setCopied] = useState(false);
     const [nickDup, setNickDup] = useState("");
@@ -126,6 +127,9 @@ export default function SajuPage() {
         fetch("/api/pageview?path=/saju").then(r => r.json()).then(d => {
             setVisitors({ today: d.today || 0, total: d.total || 0 });
         }).catch(() => {});
+
+        // 추천인 알림 확인 (로그인 사용자)
+        checkReferralNotify();
     }, []);
 
     const applyInviteCode = (code: string, fromUrl = false) => {
@@ -188,6 +192,27 @@ export default function SajuPage() {
         } catch {
             sessionStorage.setItem("saju-pending-ref", refCode);
         }
+    };
+
+    // 추천인 알림 확인
+    const checkReferralNotify = async () => {
+        try {
+            const supabase = createSupabaseBrowser();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session?.user?.email) return;
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const notifiedKey = `saju-referral-notified-${todayStr}`;
+            if (localStorage.getItem(notifiedKey)) return;
+
+            const res = await fetch(`/api/referral?refCode=${makeRefCode(session.user.email)}`);
+            const data = await res.json();
+            if (data.daily > 0) {
+                setReferralNotify(`🎉 오늘 ${data.daily}명이 회원님의 추천으로 가입하셨습니다! 매주 최대 추천인에게 3만원 상당의 선물을 드립니다.`);
+                localStorage.setItem(notifiedKey, "true");
+                setTimeout(() => setReferralNotify(""), 8000);
+            }
+        } catch {}
     };
 
     const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -301,7 +326,7 @@ export default function SajuPage() {
         localStorage.setItem("saju-stock-history", JSON.stringify(newHist));
     };
 
-    const shareText = `🔮 사주로 보는 주식 궁합 — 무료!\n\n사주 팔자로 나스닥·코스닥 종목과의 궁합을 분석해드립니다.\n\n내 사주와 맞는 종목은?\n👉 https://dart-monitor-pi.vercel.app/saju?ref=${inviteCode}`;
+    const shareText = `🔮 사주로 보는 주식 궁합 — 무료!\n\n사주 팔자로 나스닥·코스닥 종목과의 궁합을 분석해드립니다.\n내 사주와 맞는 종목은?\n\n🏆 매주 최대 추천인에게 3만원 상당의 선물 증정!\n👉 https://dart-monitor-pi.vercel.app/saju?ref=${inviteCode}`;
     const handleCopy = () => { navigator.clipboard.writeText(shareText); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
     const fortuneKeys = ["재물운","사업운","학업운","연애운","건강운"];
@@ -323,6 +348,13 @@ export default function SajuPage() {
                     <div className="text-[10px] text-[var(--text-muted)]">누적 {visitors.total}명</div>
                 </div>
             </div>
+
+            {/* 추천인 알림 */}
+            {referralNotify && (
+                <div className="rounded-xl bg-gradient-to-r from-[#f59e0b]/10 to-[#22c55e]/10 border border-[#f59e0b]/30 p-3 text-center animate-pulse">
+                    <p className="text-sm font-bold text-[#f59e0b]">{referralNotify}</p>
+                </div>
+            )}
 
             {/* 입력 폼 */}
             <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4 space-y-3">
