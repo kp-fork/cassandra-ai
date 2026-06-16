@@ -129,7 +129,7 @@ export default function PersonaPage() {
                         </div>
                         <div>
                             <h3 className="font-bold">{stockInfo.name} ({stockInfo.ticker})</h3>
-                            <p className="text-[10px] text-[var(--text-muted)]">{active.name}의 {active.style}</p>
+                            <p className="text-[10px] text-[var(--text-muted)]">{active.name}의 {active.desc}</p>
                         </div>
                         {(results[activePersona] as any)?.fromCache && (
                             <span className="ml-auto text-[9px] text-[var(--text-muted)]">📦 Redis 캐시</span>
