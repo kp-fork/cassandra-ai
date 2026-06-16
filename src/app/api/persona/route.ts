@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
     if (cached && !cached.stale) return NextResponse.json({ ...cached.data, fromCache: true });
 
     // 실시간 가격 조회
-    const yahooTicker = stock.includes(".") ? stock : /^\d+$/.test(stock) ? `${stock}.KS` : stock;
+    const yahooTicker = stock!.includes(".") ? stock : /^\d+$/.test(stock) ? `${stock}.KS` : stock;
     const quote = await fetchPrice(yahooTicker);
 
     const p = PERSONAS[persona] || PERSONAS.buffett;
