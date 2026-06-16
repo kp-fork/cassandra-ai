@@ -16,9 +16,11 @@ const CACHE_TTL = 72 * 60 * 60; // 72시간 (초)
 export async function getCache(key: string): Promise<{ data: any; age: number; stale: boolean } | null> {
   try {
     if (redis) {
-      const raw = await redis.get<string>(key);
+      const raw = await redis.get(key);
       if (!raw) return null;
-      const { data, ts } = JSON.parse(raw);
+      // Upstash Redis는 JSON을 자동으로 파싱할 수 있음
+      const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+      const { data, ts } = parsed;
       const age = Math.floor((Date.now() - ts) / 1000);
       return { data, age, stale: age > CACHE_TTL };
     }
