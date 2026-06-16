@@ -134,7 +134,8 @@ export async function GET(req: NextRequest) {
             const ch = quote?.changePct || 0;
             for (const pid of Object.keys(PERSONAS)) {
                 const per = PERSONAS[pid];
-                const cacheKey = `persona:${s.ticker}:${pid}`;
+                const normTicker = s.ticker.includes(".") ? s.ticker.split(".")[0] : s.ticker;
+                const cacheKey = `persona:${normTicker}:${pid}`;
                 const r = { stock: s.ticker, name: s.name, ...per.analyze(p, ch, s.name, s.ticker, classifyStock(s.ticker, s.name)), generatedAt: new Date().toISOString() };
                 await setCache(cacheKey, r);
                 results.push({ ticker: s.ticker, persona: pid, score: r.score, cached: true });
