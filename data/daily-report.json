@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-15T11:12:29.990Z",
+  "generatedAt": "2026-06-16T01:24:21.477Z",
   "period": {
-    "from": "20260608",
-    "to": "20260615"
+    "from": "20260609",
+    "to": "20260616"
   },
-  "totalCompanies": 48,
-  "totalDisclosures": 85,
+  "totalCompanies": 43,
+  "totalDisclosures": 71,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -53,7 +53,7 @@
       "stockCode": "297570",
       "corpCode": "01309795",
       "name": "알로이스",
-      "totalDisclosures": 9,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "사명변경",
@@ -62,19 +62,13 @@
           "latestDate": "20260612"
         },
         {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "20260608"
-        },
-        {
           "rule": "소송/분쟁",
           "weight": 25,
-          "count": 6,
-          "latestDate": "20260608"
+          "count": 1,
+          "latestDate": "20260611"
         }
       ],
-      "riskScore": 100,
+      "riskScore": 50,
       "recentDisclosures": [
         {
           "date": "20260612",
@@ -93,42 +87,6 @@
           "rceptNo": "20260611900600",
           "title": "소송등의판결ㆍ결정              ",
           "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900794",
-          "title": "[기재정정]최대주주변경을수반하는주식양수도계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900703",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900698",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900693",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900691",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900685",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
         }
       ]
     },
@@ -136,7 +94,7 @@
       "stockCode": "123010",
       "corpCode": "00615723",
       "name": "알엔티엑스",
-      "totalDisclosures": 8,
+      "totalDisclosures": 9,
       "signals": [
         {
           "rule": "CB발행",
@@ -182,6 +140,12 @@
           "rceptNo": "20260611000433",
           "title": "[기재정정]주요사항보고서(유상증자결정)",
           "type": "B"
+        },
+        {
+          "date": "20260616",
+          "rceptNo": "20260616900003",
+          "title": "[기재정정]주주명부폐쇄기간또는기준일설정              ",
+          "type": "I"
         },
         {
           "date": "20260615",
@@ -238,7 +202,7 @@
       "stockCode": "297570",
       "corpCode": "01309795",
       "name": "알로이스",
-      "totalDisclosures": 9,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "사명변경",
@@ -247,19 +211,13 @@
           "latestDate": "20260612"
         },
         {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "20260608"
-        },
-        {
           "rule": "소송/분쟁",
           "weight": 25,
-          "count": 6,
-          "latestDate": "20260608"
+          "count": 1,
+          "latestDate": "20260611"
         }
       ],
-      "riskScore": 100,
+      "riskScore": 50,
       "recentDisclosures": [
         {
           "date": "20260612",
@@ -278,42 +236,6 @@
           "rceptNo": "20260611900600",
           "title": "소송등의판결ㆍ결정              ",
           "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900794",
-          "title": "[기재정정]최대주주변경을수반하는주식양수도계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900703",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900698",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900693",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900691",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900685",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
         }
       ]
     },
@@ -321,7 +243,7 @@
       "stockCode": "123010",
       "corpCode": "00615723",
       "name": "알엔티엑스",
-      "totalDisclosures": 8,
+      "totalDisclosures": 9,
       "signals": [
         {
           "rule": "CB발행",
@@ -367,6 +289,12 @@
           "rceptNo": "20260611000433",
           "title": "[기재정정]주요사항보고서(유상증자결정)",
           "type": "B"
+        },
+        {
+          "date": "20260616",
+          "rceptNo": "20260616900003",
+          "title": "[기재정정]주주명부폐쇄기간또는기준일설정              ",
+          "type": "I"
         },
         {
           "date": "20260615",
@@ -529,29 +457,6 @@
       ]
     },
     {
-      "stockCode": "033310",
-      "corpCode": "00143226",
-      "name": "엠투엔",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "20260608"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900925",
-          "title": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "127120",
       "corpCode": "00642541",
       "name": "제이에스링크",
@@ -582,29 +487,6 @@
           "date": "20260611",
           "rceptNo": "20260611900299",
           "title": "기업설명회(IR)개최              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "023440",
-      "corpCode": "00148531",
-      "name": "제이스코홀딩스",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "20260608"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900974",
-          "title": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
           "type": "I"
         }
       ]
@@ -795,29 +677,6 @@
       ]
     },
     {
-      "stockCode": "290120",
-      "corpCode": "01182578",
-      "name": "DH오토리드",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "20260608"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900912",
-          "title": "전환사채(해외전환사채포함)발행후만기전사채취득              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "222420",
       "corpCode": "01091054",
       "name": "쎄노텍",
@@ -883,7 +742,7 @@
       "stockCode": "900100",
       "corpCode": "00781202",
       "name": "파이온엑스",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -891,12 +750,6 @@
           "date": "20260615",
           "rceptNo": "20260615900360",
           "title": "[기재정정]주주총회소집결의              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900387",
-          "title": "조회공시요구(현저한시황변동)에대한답변(미확정)              ",
           "type": "I"
         }
       ]
@@ -934,26 +787,10 @@
       ]
     },
     {
-      "stockCode": "148780",
-      "corpCode": "00980043",
-      "name": "비큐AI",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900667",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "291810",
       "corpCode": "01524507",
       "name": "핀텔",
-      "totalDisclosures": 3,
+      "totalDisclosures": 2,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -968,12 +805,6 @@
           "rceptNo": "20260609900753",
           "title": "조회공시요구(현저한시황변동)에대한답변(미확정)              ",
           "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900967",
-          "title": "조회공시요구(현저한시황변동)              ",
-          "type": "I"
         }
       ]
     },
@@ -981,19 +812,13 @@
       "stockCode": "026910",
       "corpCode": "00104120",
       "name": "광진실업",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
         {
           "date": "20260611",
           "rceptNo": "20260611900752",
-          "title": "[기재정정]주주총회소집결의              ",
-          "type": "I"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900817",
           "title": "[기재정정]주주총회소집결의              ",
           "type": "I"
         }
@@ -1185,7 +1010,7 @@
       "stockCode": "224110",
       "corpCode": "01099861",
       "name": "에이텍모빌리티",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -1194,12 +1019,6 @@
           "rceptNo": "20260611000338",
           "title": "주요사항보고서(자기주식취득신탁계약체결결정)",
           "type": "B"
-        },
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900257",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
         }
       ]
     },
@@ -1263,22 +1082,6 @@
           "date": "20260611",
           "rceptNo": "20260611800393",
           "title": "단기차입금증가결정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "321370",
-      "corpCode": "01593668",
-      "name": "센서뷰",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260608",
-          "rceptNo": "20260608900458",
-          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
           "type": "I"
         }
       ]
