@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T10:42:24.829Z",
+  "generatedAt": "2026-06-16T04:49:15.673Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,13 +12,14 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 3,
-    "totalSignals": 21,
+    "totalSignals": 23,
     "topRisks": [
       {
         "name": "알로이스",
-        "score": 50,
+        "score": 100,
         "signals": [
           "사명변경",
+          "대주주변경",
           "소송/분쟁"
         ]
       },
