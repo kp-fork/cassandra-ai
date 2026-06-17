@@ -55,7 +55,7 @@ async function fetchStocks(
   sortType: string,
   pageSize: number
 ): Promise<StockItem[]> {
-  const url = `https://m.stock.naver.com/api/stocks/marketValue/KOSDAQ?page=1&pageSize=${pageSize}&sortType=${sortType}`;
+  const url = `https://m.stock.naver.com/api/stocks/marketValue/KOSDAQ?page=1&pageSize=${pageSize}&sortType=${sortType}&t=${Date.now()}`;
   const res = await fetch(url, {
     headers: { "User-Agent": UA, "Accept": "application/json" },
   });
