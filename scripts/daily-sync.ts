@@ -230,7 +230,7 @@ async function main() {
           data: {
             corpId: dbCorp.id,
             ruleName: s.rule,
-            score: s.weight / 100,
+            score: riskScore,
             detail: `${s.rule} ${s.count}건 (최근: ${s.latestDate})`,
             firedAt: new Date(),
           },
