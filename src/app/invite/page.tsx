@@ -16,6 +16,20 @@ function InviteForm() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [done, setDone] = useState(false);
+    const [checking, setChecking] = useState(true);
+    const [alreadyExists, setAlreadyExists] = useState(false);
+
+    // 중복 가입 체크
+    useEffect(() => {
+        if (!email) return;
+        const supabase = createSupabaseBrowser();
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user?.email === email) {
+                setAlreadyExists(true);
+            }
+            setChecking(false);
+        }).catch(() => setChecking(false));
+    }, [email]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,12 +40,29 @@ function InviteForm() {
         setLoading(true); setError("");
         try {
             const supabase = createSupabaseBrowser();
+
+            // 중복 가입 체크
+            const { data: existing } = await supabase.auth.getSession();
+            if (existing?.session?.user?.email === email) {
+                setAlreadyExists(true);
+                setLoading(false);
+                return;
+            }
+
             const { error: signUpError } = await supabase.auth.signUp({
                 email, password,
                 options: { data: { name: name.trim(), organization: org.trim() } },
             });
 
-            if (signUpError) { setError(signUpError.message); setLoading(false); return; }
+            if (signUpError) {
+                if (signUpError.message.includes("already") || signUpError.message.includes("exist")) {
+                    setAlreadyExists(true);
+                } else {
+                    setError(signUpError.message);
+                }
+                setLoading(false);
+                return;
+            }
 
             // Export 회원 등록 API 호출
             await fetch("/api/auth/export-register", {
@@ -44,6 +75,19 @@ function InviteForm() {
         } catch { setError("가입 중 오류가 발생했습니다."); }
         setLoading(false);
     };
+
+    if (alreadyExists) {
+        return (
+            <div className="min-h-screen flex items-center justify-center px-4">
+                <div className="w-full max-w-sm text-center space-y-4">
+                    <Shield className="w-12 h-12 mx-auto text-[#f59e0b]" />
+                    <h1 className="text-lg font-bold">이미 가입된 계정입니다</h1>
+                    <p className="text-xs text-[var(--text-muted)]">{email}은 이미 등록된 이메일입니다.</p>
+                    <a href="/login" className="block py-2 rounded-lg bg-[var(--accent)] text-white text-sm">로그인하기</a>
+                </div>
+            </div>
+        );
+    }
 
     if (done) {
         return (
