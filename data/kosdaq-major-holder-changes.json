@@ -11,7 +11,9 @@
     "name": "핌스",
     "changePercent": 2.75,
     "code": "347770",
-    "price": "275억"
+    "price": "275억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "048470",
@@ -39,7 +41,9 @@
     "name": "모아라이프플러스",
     "changePercent": 2.85,
     "code": "142760",
-    "price": "285억"
+    "price": "285억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "291810",
@@ -53,7 +57,9 @@
     "name": "핀텔",
     "changePercent": 2.7,
     "code": "291810",
-    "price": "270억"
+    "price": "270억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "142760",
@@ -67,7 +73,9 @@
     "name": "모아라이프플러스",
     "changePercent": 2.85,
     "code": "142760",
-    "price": "285억"
+    "price": "285억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "142760",
@@ -81,7 +89,9 @@
     "name": "모아라이프플러스",
     "changePercent": 2.85,
     "code": "142760",
-    "price": "285억"
+    "price": "285억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "036480",
@@ -151,7 +161,9 @@
     "name": "대성미생물",
     "changePercent": 2.48,
     "code": "036480",
-    "price": "248억"
+    "price": "248억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "225220",
@@ -179,7 +191,9 @@
     "name": "제놀루션",
     "changePercent": 2.87,
     "code": "225220",
-    "price": "287억"
+    "price": "287억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "291810",
@@ -193,7 +207,9 @@
     "name": "핀텔",
     "changePercent": 2.7,
     "code": "291810",
-    "price": "270억"
+    "price": "270억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "016100",
@@ -207,7 +223,9 @@
     "name": "리더스코스메틱",
     "changePercent": 2.39,
     "code": "016100",
-    "price": "239억"
+    "price": "239억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "016100",
@@ -221,7 +239,9 @@
     "name": "리더스코스메틱",
     "changePercent": 2.39,
     "code": "016100",
-    "price": "239억"
+    "price": "239억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "016100",
@@ -235,7 +255,9 @@
     "name": "리더스코스메틱",
     "changePercent": 2.39,
     "code": "016100",
-    "price": "239억"
+    "price": "239억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "225220",
@@ -249,7 +271,9 @@
     "name": "제놀루션",
     "changePercent": 2.87,
     "code": "225220",
-    "price": "287억"
+    "price": "287억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "142760",
@@ -263,7 +287,9 @@
     "name": "모아라이프플러스",
     "changePercent": 2.85,
     "code": "142760",
-    "price": "285억"
+    "price": "285억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "021880",
@@ -277,7 +303,9 @@
     "name": "메이슨캐피탈",
     "changePercent": 2.89,
     "code": "021880",
-    "price": "289억"
+    "price": "289억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "021880",
@@ -291,7 +319,9 @@
     "name": "메이슨캐피탈",
     "changePercent": 2.89,
     "code": "021880",
-    "price": "289억"
+    "price": "289억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "317240",
@@ -319,7 +349,9 @@
     "name": "핌스",
     "changePercent": 2.75,
     "code": "347770",
-    "price": "275억"
+    "price": "275억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "290560",
@@ -347,7 +379,9 @@
     "name": "핌스",
     "changePercent": 2.75,
     "code": "347770",
-    "price": "275억"
+    "price": "275억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "290560",
@@ -361,7 +395,9 @@
     "name": "파라택시스이더리움",
     "changePercent": 2.45,
     "code": "290560",
-    "price": "245억"
+    "price": "245억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "016100",
@@ -375,7 +411,9 @@
     "name": "리더스코스메틱",
     "changePercent": 2.39,
     "code": "016100",
-    "price": "239억"
+    "price": "239억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "317240",
@@ -473,7 +511,9 @@
     "name": "핌스",
     "changePercent": 2.75,
     "code": "347770",
-    "price": "275억"
+    "price": "275억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "291810",
@@ -487,7 +527,9 @@
     "name": "핀텔",
     "changePercent": 2.7,
     "code": "291810",
-    "price": "270억"
+    "price": "270억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "290560",
@@ -501,7 +543,9 @@
     "name": "파라택시스이더리움",
     "changePercent": 2.45,
     "code": "290560",
-    "price": "245억"
+    "price": "245억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "291810",
@@ -515,7 +559,9 @@
     "name": "핀텔",
     "changePercent": 2.7,
     "code": "291810",
-    "price": "270억"
+    "price": "270억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "016670",
@@ -585,7 +631,9 @@
     "name": "윙스풋",
     "changePercent": 2.37,
     "code": "335870",
-    "price": "237억"
+    "price": "237억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "073570",
@@ -613,7 +661,9 @@
     "name": "메이슨캐피탈",
     "changePercent": 2.89,
     "code": "021880",
-    "price": "289억"
+    "price": "289억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "347770",
@@ -627,7 +677,9 @@
     "name": "핌스",
     "changePercent": 2.75,
     "code": "347770",
-    "price": "275억"
+    "price": "275억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "354200",
@@ -655,7 +707,9 @@
     "name": "윙스풋",
     "changePercent": 2.37,
     "code": "335870",
-    "price": "237억"
+    "price": "237억",
+    "riskLevel": "고위험",
+    "riskFlag": true
   },
   {
     "stockCode": "037400",

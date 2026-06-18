@@ -13,7 +13,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260604900610",
       "date": "20260604",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "048470",
@@ -33,7 +35,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260415900580",
       "date": "20260415",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "291810",
@@ -43,7 +47,9 @@
       "reportName": "최대주주변경을수반하는주식양수도계약해제ㆍ취소등              ",
       "rceptNo": "20260413900153",
       "date": "20260413",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "142760",
@@ -53,7 +59,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260409901069",
       "date": "20260409",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "142760",
@@ -63,7 +71,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260407901224",
       "date": "20260407",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "036480",
@@ -113,7 +123,9 @@
       "reportName": "최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20260309900966",
       "date": "20260309",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "225220",
@@ -133,7 +145,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20260219900654",
       "date": "20260219",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "291810",
@@ -143,7 +157,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20260203900719",
       "date": "20260203",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "016100",
@@ -153,7 +169,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260202901727",
       "date": "20260202",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "016100",
@@ -163,7 +181,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260130901274",
       "date": "20260130",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "016100",
@@ -173,7 +193,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260128900899",
       "date": "20260128",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "225220",
@@ -183,7 +205,9 @@
       "reportName": "최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20260120900359",
       "date": "20260120",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "142760",
@@ -193,7 +217,9 @@
       "reportName": "최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260109900732",
       "date": "20260109",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "021880",
@@ -203,7 +229,9 @@
       "reportName": "최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260109900545",
       "date": "20260109",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "021880",
@@ -213,7 +241,9 @@
       "reportName": "최대주주변경을수반하는주식담보제공계약해제ㆍ취소등              ",
       "rceptNo": "20260109900495",
       "date": "20260109",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "317240",
@@ -233,7 +263,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260106900423",
       "date": "20260106",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "290560",
@@ -253,7 +285,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20260105900627",
       "date": "20260105",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "290560",
@@ -263,7 +297,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20251230901180",
       "date": "20251230",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "016100",
@@ -273,7 +309,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20251229900836",
       "date": "20251229",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "317240",
@@ -343,7 +381,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20251205900499",
       "date": "20251205",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "291810",
@@ -353,7 +393,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20251204900295",
       "date": "20251204",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "290560",
@@ -363,7 +405,9 @@
       "reportName": "최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20251201900892",
       "date": "20251201",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "291810",
@@ -373,7 +417,9 @@
       "reportName": "최대주주변경을수반하는주식양수도계약체결              ",
       "rceptNo": "20251103900758",
       "date": "20251103",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "016670",
@@ -423,7 +469,9 @@
       "reportName": "최대주주변경을수반하는주식담보제공계약해제ㆍ취소등              ",
       "rceptNo": "20250728900294",
       "date": "20250728",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "073570",
@@ -443,7 +491,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20250709900182",
       "date": "20250709",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "347770",
@@ -453,7 +503,9 @@
       "reportName": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20250702900381",
       "date": "20250702",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "354200",
@@ -473,7 +525,9 @@
       "reportName": "최대주주변경을수반하는주식담보제공계약체결              ",
       "rceptNo": "20250627900737",
       "date": "20250627",
-      "category": "대주주변경"
+      "category": "대주주변경",
+      "riskLevel": "고위험",
+      "riskFlag": true
     },
     {
       "stockCode": "037400",
