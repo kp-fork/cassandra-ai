@@ -37,8 +37,8 @@ const CATEGORIES = [
 const DART_SECTIONS = [
   { key: "dart-nameChanges-12m", label: "DART 사명변경", file: "dart-nameChanges-12m" },
   { key: "dart-majorHolderChanges-12m", label: "DART 대주주변경", file: "dart-majorHolderChanges-12m" },
-  { key: "dart-purposeAdditions-12m", label: "DART 사업목적추가", file: "dart-purposeAdditions-12m" },
   { key: "dart-lawsuits-12m", label: "DART 소송/분쟁", file: "dart-lawsuits-12m" },
+  { key: "dart-cb-issuances", label: "CB 발행·리픽싱", file: "kosdaq-cb-issuances" },
 ];
 
 export default function DashboardPage() {
