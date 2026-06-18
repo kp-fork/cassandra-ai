@@ -184,7 +184,7 @@ export async function GET(req: NextRequest) {
         const weekly = weeklyData();
 
         const payload = { daily, weekly, fromCache: false };
-        await setCache(CACHE_KEY, payload);
+        await setCache(CACHE_KEY, payload, 7200);
         return NextResponse.json(payload);
     } catch {
         const stale = await getCache(CACHE_KEY);

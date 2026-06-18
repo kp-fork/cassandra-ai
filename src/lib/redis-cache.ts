@@ -34,11 +34,11 @@ export async function getCache(key: string): Promise<{ data: any; age: number; s
   }
 }
 
-export async function setCache(key: string, data: any): Promise<void> {
+export async function setCache(key: string, data: any, ttlSec?: number): Promise<void> {
   try {
     const payload = JSON.stringify({ data, ts: Date.now() });
     if (redis) {
-      await redis.set(key, payload, { ex: CACHE_TTL * 2 });
+      await redis.set(key, payload, { ex: ttlSec || CACHE_TTL * 2 });
       return;
     }
     // 폴백

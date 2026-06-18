@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
             sectors,
         };
 
-        await setCache(CACHE_KEY, payload);
+        await setCache(CACHE_KEY, payload, 600);
         return NextResponse.json(payload);
     } catch {
         // 폴백: 캐시 있으면 stale이라도 반환

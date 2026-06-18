@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
             ...fresh,
             totalAnalyzed: 100,
         };
-        await setCache(Q_CACHE_KEY, payload);
+        await setCache(Q_CACHE_KEY, payload, 600);
         return NextResponse.json(payload);
     } catch {
         // 폴백: 캐시 있으면 stale이라도 반환

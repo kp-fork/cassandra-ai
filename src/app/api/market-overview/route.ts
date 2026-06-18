@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
         const vix = await fetchQuote("^VIX");
 
         const payload = { etfs, sectors, indices, vix: vix ? Math.round(vix.price * 10) / 10 : null, generatedAt: new Date().toISOString() };
-        await setCache(CACHE_KEY, payload);
+        await setCache(CACHE_KEY, payload, 600);
         return NextResponse.json(payload);
     } catch {
         const stale = await getCache(CACHE_KEY);
