@@ -96,7 +96,7 @@ export default function DashboardPage() {
     ...Object.values(categories).flat().map((s: any) => ({ type: "signal", ...s })),
     ...DART_SECTIONS.flatMap((ds) => {
       const data = dartSections[ds.key];
-      const events = data?.data || [];
+      const events = Array.isArray(data) ? data : (data?.data || []);
       if (!Array.isArray(events)) return [];
       return events.map((e: any) => ({ type: "dart", section: ds.label, ...e }));
     }),
@@ -107,9 +107,13 @@ export default function DashboardPage() {
         (s.code||s.stockCode||"").includes(searchQuery) ||
         (s.reportName||s.title||"").includes(searchQuery)
       ).slice(0, 50)
-    : allStocks;
+    : [];
+  const stockResults = filtered.filter((s:any) => s.type === "stock");
+  const dartResults = filtered.filter((s:any) => s.type === "dart" || s.type === "signal");
 
-  const activeData = activeTab === "all" ? filtered : (categories[activeTab] || []);
+  const activeData = searchQuery 
+    ? stockResults 
+    : (activeTab === "all" ? allStocks : (categories[activeTab] || []));
 
   // DART 이벤트를 시간순으로 통합
   const timelineEvents = DART_SECTIONS.flatMap((ds) => {
@@ -424,6 +428,28 @@ export default function DashboardPage() {
           </table>
         </div>
       </div>
+
+      {/* 검색 시 DART 이벤트 결과 */}
+      {searchQuery && dartResults.length > 0 && (
+        <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+          <h3 className="text-sm font-bold mb-2">📋 DART 이벤트 검색 결과 ({dartResults.length}건)</h3>
+          <div className="max-h-[300px] overflow-y-auto divide-y divide-[var(--border)]">
+            {dartResults.map((e: any, i: number) => (
+              <div key={i} className="py-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-[var(--accent-glow)] font-medium">{e.companyName||e.name}</span>
+                  <span className="text-[10px] px-1 py-0.5 rounded bg-[var(--bg)]">{e.section||e.category||""}</span>
+                  <span className="text-[var(--text-muted)]">{(e.date||"").replace(/-/g,"").slice(0,4)}.{(e.date||"").replace(/-/g,"").slice(4,6)}.{(e.date||"").replace(/-/g,"").slice(6,8)}</span>
+                  {e.riskLevel && (
+                    <span className={`text-[9px] px-1 py-0.5 rounded ${e.riskLevel==='고위험'?'bg-[#ef4444]/10 text-[#ef4444]':'bg-[var(--warning)]/10 text-[var(--warning)]'}`}>{e.riskLevel}</span>
+                  )}
+                </div>
+                <p className="text-[var(--text-muted)] truncate mt-0.5">{(e.reportName||e.title||"").slice(0,80)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 서버 상태 모니터 */}
       <MonitorSection />
