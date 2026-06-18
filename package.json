@@ -24,6 +24,7 @@
     "crawl-persons": "tsx scripts/crawl-persons.ts",
     "logs": "node scripts/view-logs.js",
     "saju-stats": "npx tsx scripts/saju-stats.ts",
+    "extract-cb": "npx tsx scripts/extract-cb.ts",
     "test-graph": "tsx scripts/test-graph.ts",
     "extract-dart": "tsx scripts/extract-dart-events.ts"
   },
