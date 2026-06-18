@@ -263,7 +263,7 @@ export default function DashboardPage() {
                   <div key={i} className="px-4 py-2.5 flex items-start gap-3 text-xs">
                     <div className="shrink-0 w-20 text-right">
                       <span className="text-[var(--text-muted)]">
-                        {e.date?.slice(0,4)}.{e.date?.slice(4,6)}.{e.date?.slice(6,8)}
+                        {e.date?.replace(/-/g,"").slice(0,4)}.{e.date?.replace(/-/g,"").slice(4,6)}.{e.date?.replace(/-/g,"").slice(6,8)}
                       </span>
                     </div>
                     <div className="w-[1px] self-stretch bg-[var(--border)] shrink-0" />
@@ -301,7 +301,7 @@ export default function DashboardPage() {
                         <div key={i} className="px-4 py-2 text-xs">
                           <div className="flex items-center gap-2">
                             <span className="text-[var(--accent-glow)] font-medium">{e.companyName}</span>
-                            <span className="text-[var(--text-muted)]">{e.date?.slice(0,4)}.{e.date?.slice(4,6)}.{e.date?.slice(6,8)}</span>
+                            <span className="text-[var(--text-muted)]">{(e.date||"").replace(/-/g,"").slice(0,4)}.{(e.date||"").replace(/-/g,"").slice(4,6)}.{(e.date||"").replace(/-/g,"").slice(6,8)}</span>
                           </div>
                           <p className="text-[var(--text-muted)] truncate mt-0.5">{e.reportName}</p>
                         </div>
