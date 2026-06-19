@@ -19,7 +19,7 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: npm ci && npx prisma generate
+        run: npm install && npx prisma generate
 
       - name: Process batch jobs
         run: npx tsx scripts/process-batch.ts
