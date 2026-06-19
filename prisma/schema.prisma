@@ -179,6 +179,8 @@ model BoardPost {
   targetCorp   String? // 제보 대상 회사명
   targetPerson String? // 제보 대상 인물명
   status      String   @default("PENDING") // PENDING | REVIEWED | RESOLVED
+  analysis    String?  // AI 분석 결과 (DeepSeek)
+  reportPath  String?  // Dart_Data/reports/{name}.json 경로
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -187,6 +189,21 @@ model BoardPost {
   @@index([status])
 }
 
+// ─── 배치 분석 작업 큐 ───
+model BatchJob {
+  id          String    @id @default(uuid())
+  targetName  String
+  targetType  String    @default("CORP") // CORP | PERSON
+  status      String    @default("QUEUED") // QUEUED | PROCESSING | DONE | FAILED
+  result      String?   // 분석 결과 텍스트
+  reportPath  String?   // Dart_Data/reports/{name}.json
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
 
 // ─── 감사법인 / 법무법인 / IR법인 ───
 model AuditorFirm {

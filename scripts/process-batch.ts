@@ -1,115 +1,167 @@
 /**
- * 배치 분석 처리 — GitHub Actions에서 실행
+ * 배치 분석 처리 — GitHub Actions (오전 6시/오후 3시/오후 9시 KST)
  * npx tsx scripts/process-batch.ts
  */
-async function main() {
-  console.log("📊 배치 분석 처리 시작...\n");
+import * as fs from "fs";
+import * as path from "path";
+import { PrismaClient } from "@prisma/client";
 
-  const { PrismaClient } = require("@prisma/client");
-  const prisma = new PrismaClient();
+const prisma = new PrismaClient();
+const DART_BASE = "https://opendart.fss.or.kr/api";
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-  // QUEUED 작업 가져오기
-  const jobs = await prisma.batchJob.findMany({
-    where: { status: "QUEUED" },
-    take: 10,
+function getDartKey() { return process.env.DART_API_KEY || (fs.existsSync(".env") ? (fs.readFileSync(".env","utf-8").match(/DART_API_KEY=(.+)/)?.[1]?.trim() || "") : ""); }
+function getDSKey() { return process.env.DEEPSEEK_API_KEY || (fs.existsSync(".env") ? (fs.readFileSync(".env","utf-8").match(/DEEPSEEK_API_KEY=(.+)/)?.[1]?.trim() || "") : ""); }
+
+async function callDeepSeek(prompt: string): Promise<string> {
+  const key = getDSKey();
+  if (!key) return "⚠️ DEEPSEEK_API_KEY 미설정";
+  try {
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model: "deepseek-chat", max_tokens: 1500, temperature: 0.3, messages: [
+        { role: "system", content: "한국 코스닥 작전세력 탐지 전문가. DART 공시·임원이력·법인관계를 분석해 주의 패턴을 명확히 설명." },
+        { role: "user", content: prompt },
+      ] }),
+    });
+    const d = await res.json();
+    return d.choices?.[0]?.message?.content || "분석 실패";
+  } catch (e: any) { return `DeepSeek 오류: ${e.message}`; }
+}
+
+async function fetchDartOfficers(corpCode: string, dk: string) {
+  if (!dk || !corpCode) return [];
+  try {
+    const y = new Date().getFullYear() - 1;
+    const r = await fetch(`${DART_BASE}/exctvSttus.json?crtfc_key=${dk}&corp_code=${corpCode}&bsns_year=${y}&reprt_code=11011`);
+    const d = await r.json();
+    return d.status === "000" ? (d.list || []) : [];
+  } catch { return []; }
+}
+
+async function fetchDartShareholders(corpCode: string, dk: string) {
+  if (!dk || !corpCode) return [];
+  try {
+    const y = new Date().getFullYear() - 1;
+    const r = await fetch(`${DART_BASE}/majorstock.json?crtfc_key=${dk}&corp_code=${corpCode}&bsns_year=${y}&reprt_code=11011`);
+    const d = await r.json();
+    return d.status === "000" ? (d.list || []) : [];
+  } catch { return []; }
+}
+
+async function processCorpJob(job: any, dartKey: string) {
+  const corp = await prisma.corp.findFirst({
+    where: { companyName: { contains: job.targetName, mode: "insensitive" } },
+    include: {
+      filings: { orderBy: { filedAt: "desc" }, take: 30 },
+      personRelations: { include: { person: true } },
+      fundRelations: { include: { fund: true } },
+      signals: { orderBy: { firedAt: "desc" }, take: 10 },
+    },
   });
+  if (!corp) return { result: `⏳ DB에 '${job.targetName}' 없음`, report: null };
 
-  if (jobs.length === 0) {
-    console.log("처리할 작업 없음");
-    await prisma.$disconnect();
-    return;
+  const cats: Record<string, { count: number; items: string[] }> = {};
+  for (const f of corp.filings) {
+    const t = f.title || "";
+    const cat = /전환사채|신주인수권|사채/.test(t) ? "CB/BW" : /소송|판결|가처분|회생/.test(t) ? "소송/분쟁" : /최대주주|대주주/.test(t) ? "대주주변경" : /유상증자|무상증자|감자|주식병합/.test(t) ? "증자/감자" : /상호변경|사명/.test(t) ? "사명변경" : /매매.*정지/.test(t) ? "매매정지" : /감사의견|감사인/.test(t) ? "감사리스크" : "기타";
+    if (!cats[cat]) cats[cat] = { count: 0, items: [] };
+    cats[cat].count++;
+    if (cats[cat].items.length < 3) cats[cat].items.push(f.title);
   }
 
-  console.log(`처리 대상: ${jobs.length}건\n`);
+  await sleep(400);
+  const dartOfficers = await fetchDartOfficers(corp.corpCode, dartKey);
+  await sleep(400);
+  const dartShareholders = await fetchDartShareholders(corp.corpCode, dartKey);
 
-  // DART API 키
-  const fs = require("fs");
-  const path = require("path");
-  const envPath = path.join(__dirname, "..", ".env");
-  let dartKey = "";
-  try {
-    dartKey = (fs.readFileSync(envPath, "utf-8").match(/DART_API_KEY=(.+)/) || [])[1]?.trim() || "";
-  } catch {}
+  const dbPersons = corp.personRelations.map((r) => ({ name: r.person.name, role: r.role, flags: r.person.flags }));
+  const seen = new Set(dbPersons.map((p) => p.name));
+  for (const o of dartOfficers) { if (o.nm && !seen.has(o.nm)) { dbPersons.push({ name: o.nm, role: o.ofcps || "임원", flags: [] }); seen.add(o.nm); } }
+
+  const personIds = corp.personRelations.map((r) => r.personId);
+  let relatedCorps: any[] = [];
+  if (personIds.length > 0) {
+    const otherRels = await prisma.corpPersonRelation.findMany({ where: { personId: { in: personIds }, corpId: { not: corp.id } }, include: { corp: true, person: true }, take: 30 });
+    relatedCorps = otherRels.map((r) => ({ personName: r.person.name, companyName: r.corp.companyName, role: r.role, since: r.since?.toISOString().slice(0,10), until: r.until?.toISOString().slice(0,10) }));
+  }
+
+  const prompt = `[분석대상] ${corp.companyName} (${corp.stockCode}, ${corp.market})\n\n[공시현황]\n${Object.entries(cats).map(([k,v])=>`- ${k}: ${v.count}건`).join("\n")}\n\n[경영진]\n${dbPersons.slice(0,10).map(p=>`- ${p.role}: ${p.name}`).join("\n") || "없음"}\n\n[주요주주]\n${dartShareholders.slice(0,5).map((s:any)=>`- ${s.nm} (${s.stkqy_irds}%)`).join("\n") || "없음"}\n\n[경영진 연관기업 이력]\n${relatedCorps.slice(0,10).map(r=>`- ${r.personName} → ${r.companyName}(${r.role})`).join("\n") || "없음"}\n\n[위험시그널]\n${corp.signals.slice(0,5).map(s=>`- ${s.ruleName}: ${s.score}점`).join("\n") || "없음"}\n\n5가지 분석: 1.관계망요약 2.위험시그널 3.작전패턴 4.핵심역할 5.투자주의`;
+
+  const aiAnalysis = await callDeepSeek(prompt);
+
+  const result = `📊 ${corp.companyName} 분석완료\n\n${Object.entries(cats).map(([k,v])=>`· ${k}: ${v.count}건`).join("\n")}\n\n경영진: ${dbPersons.slice(0,5).map(p=>p.name).join(", ")||"없음"}\n연관기업: ${relatedCorps.length}건\n\n${aiAnalysis}\n\n✅ ${new Date().toLocaleString("ko-KR")}`;
+
+  const report = {
+    targetName: corp.companyName, targetType: "CORP", stockCode: corp.stockCode, market: corp.market,
+    generatedAt: new Date().toISOString(),
+    keyInfo: { corpCode: corp.corpCode, stockCode: corp.stockCode, market: corp.market, filingCount: corp.filings.length, signalCount: corp.signals.length, riskScore: corp.signals.reduce((s,x)=>s+x.score,0) },
+    disclosureStats: Object.fromEntries(Object.entries(cats).map(([k,v])=>[k,v.count])),
+    officers: dbPersons,
+    shareholders: dartShareholders.slice(0,10).map((s:any)=>({ name: s.nm, pct: s.stkqy_irds })),
+    relatedCorps,
+    signals: corp.signals.slice(0,10).map(s=>({ rule: s.ruleName, score: s.score, date: s.firedAt.toISOString().slice(0,10) })),
+    aiAnalysis,
+  };
+
+  return { result, report };
+}
+
+async function processPersonJob(job: any) {
+  const person = await prisma.person.findFirst({
+    where: { name: { contains: job.targetName, mode: "insensitive" } },
+    include: { corpRelations: { include: { corp: { include: { signals: { take: 3 } } } } }, fundRelations: { include: { fund: true } } },
+  });
+  if (!person) return { result: `⏳ DB에 '${job.targetName}' 인물 없음`, report: null };
+
+  const corpList = person.corpRelations.map((r) => ({ name: r.corp.companyName, role: r.role, since: r.since?.toISOString().slice(0,10), until: r.until?.toISOString().slice(0,10), isCurrent: !r.until, riskScore: r.corp.signals.reduce((s,x)=>s+x.score,0) }));
+  const prompt = `[분석인물] ${person.name}(${person.birthDate||"생년불명"})\n\n[기업이력]\n${corpList.map(c=>`- ${c.name}: ${c.role} (${c.since||"?"}~${c.until||"현재"}) 위험${c.riskScore}`).join("\n")}\n\n[법인보유]\n${person.fundRelations.map(r=>`- ${r.fund.name}: ${r.role}`).join("\n")||"없음"}\n\n분석: 1.프로필 2.기업참여패턴 3.의심사항 4.투자주의`;
+  const aiAnalysis = await callDeepSeek(prompt);
+  const result = `👤 ${person.name} 분석완료\n\n연관기업: ${corpList.length}개\n고위험: ${corpList.filter(c=>c.riskScore>50).length}개\n\n${aiAnalysis}\n\n✅ ${new Date().toLocaleString("ko-KR")}`;
+  const report = { targetName: person.name, targetType: "PERSON", birthDate: person.birthDate, bio: person.bio, flags: person.flags, generatedAt: new Date().toISOString(), corpHistory: corpList, fundList: person.fundRelations.map(r=>({ name: r.fund.name, role: r.role })), aiAnalysis };
+  return { result, report };
+}
+
+async function main() {
+  console.log(`📊 배치 분석 [${new Date().toLocaleString("ko-KR")}]\n`);
+  const dartKey = getDartKey();
+
+  const jobs = await prisma.batchJob.findMany({ where: { status: "QUEUED" }, orderBy: { createdAt: "asc" }, take: 10 });
+  if (jobs.length === 0) { console.log("✅ 처리 대상 없음"); await prisma.$disconnect(); return; }
+  console.log(`처리: ${jobs.length}건\n`);
+
+  const reportsDir = path.join(process.cwd(), "Dart_Data", "reports");
+  if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true });
 
   for (const job of jobs) {
-    console.log(`  분석 중: ${job.targetName}...`);
+    console.log(`  → ${job.targetName} (${job.targetType})`);
     await prisma.batchJob.update({ where: { id: job.id }, data: { status: "PROCESSING" } });
-
-    let result = "";
     try {
-      // DB에서 회사/인물 검색
-      const corp = await prisma.corp.findFirst({
-        where: { companyName: { contains: job.targetName, mode: "insensitive" } },
-        include: { filings: { orderBy: { filedAt: "desc" }, take: 20 }, personRelations: { include: { person: true } } },
-      });
+      const { result, report } = job.targetType === "PERSON" ? await processPersonJob(job) : await processCorpJob(job, dartKey);
 
-      if (corp) {
-        const cats: Record<string, number> = {};
-        corp.filings.forEach((f: any) => {
-          const t = f.title || "";
-          if (/전환사채|신주인수권|사채/.test(t)) cats['CB/BW'] = (cats['CB/BW'] || 0) + 1;
-          else if (/소송|판결|가처분/.test(t)) cats['소송'] = (cats['소송'] || 0) + 1;
-          else if (/최대주주/.test(t)) cats['대주주'] = (cats['대주주'] || 0) + 1;
-          else if (/유상증자|무상증자|감자/.test(t)) cats['증자/감자'] = (cats['증자/감자'] || 0) + 1;
-          else cats['기타'] = (cats['기타'] || 0) + 1;
-        });
-
-        const persons = corp.personRelations.map(r => r.person.name).join(", ");
-        result = `📊 ${corp.companyName} 분석 (${corp.filings.length}건 공시)\n\n`;
-        result += `관계자: ${persons || "없음"}\n\n`;
-        result += Object.entries(cats).map(([k, v]) => `· ${k}: ${v}건`).join("\n");
-
-        if ((cats['증자/감자'] || 0) >= 3) result += `\n⚠️ 증자/감자 ${cats['증자/감자']}회 — 빈번한 자본 변동`;
-        if (cats['소송']) result += `\n⚠️ 소송 ${cats['소송']}건 — 법적 리스크`;
-        if (cats['대주주']) result += `\n⚠️ 대주주변경 ${cats['대주주']}회`;
-
-        result += `\n\n✅ 분석 완료: ${new Date().toLocaleString("ko-KR")}`;
-      } else {
-        // 인물 검색
-        const person = await prisma.person.findFirst({
-          where: { name: { contains: job.targetName, mode: "insensitive" } },
-          include: { corpRelations: { include: { corp: true } } },
-        });
-        if (person) {
-          const corps = person.corpRelations.map(r => r.corp.companyName).join(", ");
-          result = `👤 ${person.name} (${person.birthDate || "생년월일 미상"})\n\n`;
-          result += `연관 기업: ${corps}\n`;
-          result += `등록 이력: ${person.corpRelations.length}개 기업\n`;
-          if (person.bio) result += `\n약력: ${person.bio}`;
-          result += `\n\n✅ 분석 완료: ${new Date().toLocaleString("ko-KR")}`;
-        } else {
-          result = `⏳ '${job.targetName}'에 대한 데이터를 찾지 못했습니다. DART 웹사이트에서 직접 검색해보세요.\n✅ 검토 완료: ${new Date().toLocaleString("ko-KR")}`;
-        }
+      let reportPath: string | null = null;
+      if (report) {
+        const safe = job.targetName.replace(/[^가-힣a-zA-Z0-9]/g, "_");
+        reportPath = `Dart_Data/reports/${safe}.json`;
+        fs.writeFileSync(path.join(process.cwd(), reportPath), JSON.stringify(report, null, 2), "utf-8");
       }
 
-      await prisma.batchJob.update({
-        where: { id: job.id },
-        data: { status: "DONE", result, processedAt: new Date() },
-      });
+      await prisma.batchJob.update({ where: { id: job.id }, data: { status: "DONE", result, reportPath, processedAt: new Date() } });
 
-      // 게시판 글도 업데이트
-      const boardPost = await prisma.boardPost.findFirst({
-        where: { title: { contains: job.targetName }, category: "ANALYSIS_REQUEST" },
-        orderBy: { createdAt: "desc" },
-      });
-      if (boardPost) {
-        await prisma.boardPost.update({
-          where: { id: boardPost.id },
-          data: { analysis: result, status: "RESOLVED" },
-        });
-      }
+      const boardPost = await prisma.boardPost.findFirst({ where: { OR: [{ targetCorp: { contains: job.targetName, mode: "insensitive" } }, { targetPerson: { contains: job.targetName, mode: "insensitive" } }], category: "ANALYSIS_REQUEST" }, orderBy: { createdAt: "desc" } });
+      if (boardPost) await prisma.boardPost.update({ where: { id: boardPost.id }, data: { analysis: result, reportPath, status: "RESOLVED" } });
+
+      console.log(`  ✅ ${job.targetName}${reportPath ? " → " + reportPath : ""}`);
     } catch (e: any) {
-      await prisma.batchJob.update({
-        where: { id: job.id },
-        data: { status: "FAILED", result: `오류: ${e.message}`, processedAt: new Date() },
-      });
+      console.error(`  ❌ ${job.targetName}: ${e.message}`);
+      await prisma.batchJob.update({ where: { id: job.id }, data: { status: "FAILED", result: `오류: ${e.message}`, processedAt: new Date() } });
     }
-
-    console.log(`    완료: ${job.targetName}`);
+    await sleep(1000);
   }
 
   await prisma.$disconnect();
-  console.log("\n✅ 배치 처리 완료");
+  console.log("\n✅ 배치 완료");
 }
 
-main().catch(console.error);
+main().catch(async (e) => { console.error(e); await prisma.$disconnect(); process.exit(1); });

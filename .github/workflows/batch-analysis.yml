@@ -2,28 +2,36 @@ name: Batch Analysis
 
 on:
   schedule:
-    - cron: "0 * * * *"     # 매시간 정각
-    - cron: "0 12 * * *"    # 오후 9시 KST (UTC 12:00)
+    - cron: "0 21 * * *"   # KST 06:00 (UTC 21:00 전날)
+    - cron: "0 6 * * *"    # KST 15:00 (UTC 06:00)
+    - cron: "0 12 * * *"   # KST 21:00 (UTC 12:00)
   workflow_dispatch:
 
 jobs:
   process:
     runs-on: ubuntu-latest
-    permissions: { contents: write }
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm install && npx prisma generate
-      - name: Process batch
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci && npx prisma generate
+
+      - name: Process batch jobs
         run: npx tsx scripts/process-batch.ts
         env:
-          DATABASE_URL: ${{ vars.DATABASE_URL }}
-          DART_API_KEY: ${{ vars.DART_API_KEY }}
-      - name: Commit results
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+
+      - name: Commit report files
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/ Dart_Data/
-          git diff --staged --quiet || git commit -m "chore: batch analysis results"
+          git config user.name "cassandra-bot"
+          git config user.email "cassandra-bot@users.noreply.github.com"
+          git add Dart_Data/reports/
+          git diff --staged --quiet || git commit -m "chore: batch report $(date -u '+%Y-%m-%d %H:%M') UTC"
           git push
