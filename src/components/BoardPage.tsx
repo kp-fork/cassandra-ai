@@ -405,7 +405,7 @@ export default function BoardPage() {
 
             {(detailPost.targetCorp || detailPost.targetPerson) && (
               <div className="flex gap-2">
-                {detailPost.targetCorp && <a href={`/corp/${detailPost.targetCorp.replace(/\s*(분석해줘|분석해|분석요청|알려줘|조사해줘|이사진|주주|관계자|정보)\s*/g, "").replace(/\s*(을|를|의|에|과|와|이|가|은|는)\s*/g, "").trim().split(/\s+/)[0]}`} className="px-2 py-1 rounded text-xs bg-[var(--accent)]/10 text-[var(--accent-glow)] hover:underline">🏢 {detailPost.targetCorp}</a>}
+                {detailPost.targetCorp && <a href={`/corp/${encodeURIComponent(detailPost.targetCorp.replace(/\s*(분석해줘|분석해|분석요청|알려줘|조사해줘|이사진|주주|관계자|정보)\s*/g, "").replace(/\s*(을|를|의|에|과|와|이|가|은|는)\s*/g, "").trim().split(/\s+/)[0])}`} className="px-2 py-1 rounded text-xs bg-[var(--accent)]/10 text-[var(--accent-glow)] hover:underline">🏢 {detailPost.targetCorp}</a>}
                 {detailPost.targetPerson && <span className="px-2 py-1 rounded text-xs bg-[var(--person-color)]/10 text-[var(--person-color)]">👤 {detailPost.targetPerson}</span>}
               </div>
             )}
