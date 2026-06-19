@@ -2,8 +2,8 @@ name: Daily Person History
 
 on:
   schedule:
-    - cron: "21 0 * * *"   # 09:21 KST
-    - cron: "21 9 * * *"   # 18:21 KST
+    - cron: "21 0 * * *"   # KST 09:21
+    - cron: "21 9 * * *"   # KST 18:21
   workflow_dispatch:
 
 jobs:
@@ -14,17 +14,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm install && npx prisma generate
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install && npx prisma generate
+
       - name: Sync person history
         run: npx tsx scripts/sync-person-history.ts
         env:
           DATABASE_URL: ${{ vars.DATABASE_URL }}
           DART_API_KEY: ${{ vars.DART_API_KEY }}
+
       - name: Commit
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add Dart_Data/
-          git diff --staged --quiet || git commit -m "chore: person history sync"
-          git push
+          if git diff --staged --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "chore: person history sync"
+            git pull --rebase origin main || true
+            git push origin main
+          fi

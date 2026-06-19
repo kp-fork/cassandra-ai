@@ -9,23 +9,34 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
-      DART_API_KEY: ${{ vars.DART_API_KEY }}
-    permissions: { contents: write }
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 22 }
+        with:
+          node-version: 20
+
       - run: npm install
+
       - name: Install Chromium
         run: npx puppeteer browsers install chrome
+
       - name: Scrape DART
         run: node scripts/scrape-person.js "${{ inputs.name }}" "${{ inputs.period }}"
+        env:
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
+          DART_API_KEY: ${{ vars.DART_API_KEY }}
+
       - name: Commit results
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add Dart_Data/person-results/
-          git diff --staged --quiet || git commit -m "chore: person scrape ${{ inputs.name }}"
-          git push
+          if git diff --staged --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "chore: person scrape ${{ inputs.name }}"
+            git pull --rebase origin main || true
+            git push origin main
+          fi
