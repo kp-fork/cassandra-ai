@@ -326,6 +326,147 @@ function ReportListPanel() {
   );
 }
 
+function CorpPopup({ name, onClose }: { name: string; onClose: () => void }) {
+  const [report, setReport] = useState<ReportData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const safe = name.replace(/[^가-힣a-zA-Z0-9]/g, "_");
+    fetch(`https://raw.githubusercontent.com/gameworkerkim/cassandra-ai/main/Dart_Data/reports/${safe}.json`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { setReport(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [name]);
+
+  const copyText = () => {
+    if (!report) return;
+    const text = [
+      `[${report.targetName}] 분석 보고서`,
+      `생성: ${report.generatedAt ? new Date(report.generatedAt).toLocaleString("ko-KR") : ""}`,
+      ``,
+      `[주요정보]`,
+      `공시건수: ${report.keyInfo?.filingCount ?? "-"} / 위험신호: ${report.keyInfo?.signalCount ?? "-"} / 위험점수: ${report.keyInfo?.riskScore ?? "-"}`,
+      ``,
+      `[경영진]`,
+      ...(report.officers?.slice(0, 8).map(o => `${o.role}: ${o.name}`) ?? []),
+      ``,
+      `[주요주주]`,
+      ...(report.shareholders?.slice(0, 5).map(s => `${s.name} (${s.pct}%)`) ?? []),
+      ``,
+      `[AI 분석]`,
+      report.aiAnalysis ?? "",
+    ].join("\n");
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      <div className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl bg-[var(--bg)] border border-[var(--border)] shadow-2xl" onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 bg-[var(--bg)] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between z-10">
+          <span className="font-bold text-sm">🏢 {name}</span>
+          <div className="flex items-center gap-2">
+            <button onClick={copyText} disabled={!report} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs bg-[var(--surface)] hover:bg-[var(--border)] disabled:opacity-40 transition-colors">
+              {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Eye className="w-3.5 h-3.5" />}
+              {copied ? "복사됨" : "텍스트 복사"}
+            </button>
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--surface)]"><X className="w-4 h-4" /></button>
+          </div>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {loading && <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-[var(--accent-glow)]" /></div>}
+
+          {!loading && !report && (
+            <div className="text-center py-8 space-y-2">
+              <p className="text-sm text-[var(--text-muted)]">아직 분석 보고서가 없습니다.</p>
+              <p className="text-[11px] text-[var(--text-muted)]">게시판에서 분석 요청 시 오전 6시/오후 3시/오후 9시 배치 분석됩니다.</p>
+            </div>
+          )}
+
+          {report && (
+            <>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "공시건수", value: report.keyInfo?.filingCount ?? "-" },
+                  { label: "위험신호", value: report.keyInfo?.signalCount ?? "-" },
+                  { label: "위험점수", value: report.keyInfo?.riskScore ?? "-" },
+                ].map(({ label, value }) => (
+                  <div key={label} className="text-center p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)]">
+                    <div className="text-lg font-bold text-[var(--accent-glow)]">{value}</div>
+                    <div className="text-[9px] text-[var(--text-muted)]">{label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {report.disclosureStats && Object.keys(report.disclosureStats).length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {Object.entries(report.disclosureStats).map(([k, v]) => (
+                    <span key={k} className="px-2 py-0.5 rounded text-[10px] bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)]">{k}: {v}건</span>
+                  ))}
+                </div>
+              )}
+
+              {(report.officers?.length ?? 0) > 0 && (
+                <div>
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase mb-2 flex items-center gap-1"><User className="w-3 h-3" /> 경영진</p>
+                  <div className="grid grid-cols-2 gap-1">
+                    {report.officers!.slice(0, 8).map((o, i) => (
+                      <div key={i} className="flex items-center gap-1.5 p-1.5 rounded bg-[var(--surface)] text-xs">
+                        <span className="px-1.5 py-0.5 rounded text-[9px] bg-[var(--person-color)]/10 text-[var(--person-color)] shrink-0">{o.role}</span>
+                        <span className="font-medium truncate">{o.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(report.shareholders?.length ?? 0) > 0 && (
+                <div>
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase mb-2">주요주주</p>
+                  <div className="space-y-1">
+                    {report.shareholders!.slice(0, 5).map((s, i) => (
+                      <div key={i} className="flex items-center justify-between text-xs p-1.5 rounded bg-[var(--surface)]">
+                        <span>{s.name}</span>
+                        <span className="text-[var(--accent-glow)] font-mono">{s.pct}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(report.relatedCorps?.length ?? 0) > 0 && (
+                <div>
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase mb-2 flex items-center gap-1"><Building2 className="w-3 h-3" /> 경영진 연관기업</p>
+                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                    {report.relatedCorps!.slice(0, 10).map((r, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs p-1.5 rounded bg-[var(--surface)]">
+                        <span className="text-[var(--person-color)] font-medium shrink-0">{r.personName}</span>
+                        <span className="text-[var(--text-muted)]">→</span>
+                        <span className="truncate">{r.companyName}</span>
+                        <span className="text-[9px] text-[var(--text-muted)] shrink-0">{r.role}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {report.aiAnalysis && (
+                <div>
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase mb-2">🤖 AI 분석</p>
+                  <pre className="text-[11px] whitespace-pre-wrap font-sans leading-relaxed text-[var(--text)] max-h-64 overflow-y-auto p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)]">{report.aiAnalysis}</pre>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function BoardPage() {
   const [tab, setTab] = useState<"board" | "reports">("board");
   const [posts, setPosts] = useState<BoardPost[]>([]);
@@ -335,6 +476,7 @@ export default function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [detailPost, setDetailPost] = useState<BoardPost | null>(null);
+  const [corpPopup, setCorpPopup] = useState<string | null>(null);
   const [deletePw, setDeletePw] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [form, setForm] = useState({ authorName: "", password: "", title: "", content: "", category: "REPORT", targetCorp: "", targetPerson: "" });
@@ -456,15 +598,19 @@ export default function BoardPage() {
             const cat = CATEGORY_LABELS[post.category] || CATEGORY_LABELS.DISCUSSION;
             const sb = STATUS_BADGE[post.status] || STATUS_BADGE.PENDING;
             return (
-              <div key={post.id} className="p-3 rounded-lg bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)]/50 transition-colors cursor-pointer" onClick={() => fetchDetail(post.id)}>
-                <div className="flex items-center gap-2">
+              <div key={post.id} className={`p-3 rounded-lg bg-[var(--surface)] border transition-colors cursor-pointer ${post.status === "RESOLVED" ? "border-emerald-500/30 hover:border-emerald-500/60" : "border-[var(--border)] hover:border-[var(--accent)]/50"}`} onClick={() => fetchDetail(post.id)}>
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className={`flex items-center gap-0.5 text-[10px] font-medium ${cat.color}`}>{cat.icon} {cat.label}</span>
                   {(post.targetCorp || post.targetPerson) && (
                     <span className="text-[10px] text-[var(--text-muted)] px-1.5 py-0.5 rounded bg-[var(--border)]">{[post.targetCorp, post.targetPerson].filter(Boolean).join(" · ")}</span>
                   )}
-                  <span className={`ml-auto text-[9px] px-1.5 py-0.5 rounded font-medium ${sb.color}`}>
-                    {post.status === "RESOLVED" ? <><CheckCircle2 className="w-2.5 h-2.5 inline mr-0.5" />{sb.label}</> : sb.label}
-                  </span>
+                  {post.status === "RESOLVED" ? (
+                    <span className="ml-auto flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      <CheckCircle2 className="w-3 h-3" /> 분석완료
+                    </span>
+                  ) : (
+                    <span className={`ml-auto text-[9px] px-1.5 py-0.5 rounded font-medium ${sb.color}`}>{sb.label}</span>
+                  )}
                 </div>
                 <p className="text-sm font-medium mt-1.5">{post.title}</p>
                 <p className="text-[10px] text-[var(--text-muted)] mt-0.5">{post.authorName} · {format(new Date(post.createdAt), "MM/dd HH:mm", { locale: ko })}</p>
@@ -504,7 +650,12 @@ export default function BoardPage() {
 
             {(detailPost.targetCorp || detailPost.targetPerson) && (
               <div className="flex gap-2">
-                {detailPost.targetCorp && <a href={`/corp/${encodeURIComponent(detailPost.targetCorp.replace(/\s*(분석해줘|분석해|분석요청|알려줘|조사해줘|이사진|주주|관계자|정보)\s*/g, "").replace(/\s*(을|를|의|에|과|와|이|가|은|는)\s*/g, "").trim().split(/\s+/)[0])}`} className="px-2 py-1 rounded text-xs bg-[var(--accent)]/10 text-[var(--accent-glow)] hover:underline">🏢 {detailPost.targetCorp}</a>}
+                {detailPost.targetCorp && (
+                  <button
+                    onClick={() => setCorpPopup(detailPost.targetCorp!.replace(/\s*(분석해줘|분석해|분석요청|알려줘|조사해줘|이사진|주주|관계자|정보)\s*/g, "").replace(/\s*(을|를|의|에|과|와|이|가|은|는)\s*/g, "").trim().split(/\s+/)[0])}
+                    className="px-2 py-1 rounded text-xs bg-[var(--accent)]/10 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors"
+                  >🏢 {detailPost.targetCorp} →</button>
+                )}
                 {detailPost.targetPerson && <span className="px-2 py-1 rounded text-xs bg-[var(--person-color)]/10 text-[var(--person-color)]">👤 {detailPost.targetPerson}</span>}
               </div>
             )}
@@ -532,6 +683,8 @@ export default function BoardPage() {
         </div>
       )}
       </>)}
+
+      {corpPopup && <CorpPopup name={corpPopup} onClose={() => setCorpPopup(null)} />}
     </div>
   );
 }
