@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-18T10:36:26.869Z",
+  "generatedAt": "2026-06-19T01:25:05.173Z",
   "period": {
-    "from": "20260611",
-    "to": "20260618"
+    "from": "20260612",
+    "to": "20260619"
   },
-  "totalCompanies": 46,
-  "totalDisclosures": 86,
+  "totalCompanies": 39,
+  "totalDisclosures": 68,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -49,124 +49,6 @@
     }
   ],
   "highRisk": [
-    {
-      "stockCode": "297570",
-      "corpCode": "01309795",
-      "name": "알로이스",
-      "totalDisclosures": 3,
-      "signals": [
-        {
-          "rule": "사명변경",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260612"
-        },
-        {
-          "rule": "소송/분쟁",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260611"
-        }
-      ],
-      "riskScore": 50,
-      "recentDisclosures": [
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900563",
-          "title": "상호변경안내              ",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900547",
-          "title": "임시주주총회결과              ",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900600",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "123010",
-      "corpCode": "00615723",
-      "name": "알엔티엑스",
-      "totalDisclosures": 9,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 3,
-          "latestDate": "20260611"
-        },
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 2,
-          "latestDate": "20260611"
-        }
-      ],
-      "riskScore": 50,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000653",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000645",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000638",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000465",
-          "title": "[기재정정]주요사항보고서(유상증자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000433",
-          "title": "[기재정정]주요사항보고서(유상증자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260616",
-          "rceptNo": "20260616900003",
-          "title": "[기재정정]주주명부폐쇄기간또는기준일설정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260615",
-          "rceptNo": "20260615900739",
-          "title": "본점소재지변경              ",
-          "type": "I"
-        },
-        {
-          "date": "20260615",
-          "rceptNo": "20260615900627",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900846",
-          "title": "증권발행결과(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
     {
       "stockCode": "011300",
       "corpCode": "00132868",
@@ -228,124 +110,6 @@
     }
   ],
   "companies": [
-    {
-      "stockCode": "297570",
-      "corpCode": "01309795",
-      "name": "알로이스",
-      "totalDisclosures": 3,
-      "signals": [
-        {
-          "rule": "사명변경",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260612"
-        },
-        {
-          "rule": "소송/분쟁",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260611"
-        }
-      ],
-      "riskScore": 50,
-      "recentDisclosures": [
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900563",
-          "title": "상호변경안내              ",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900547",
-          "title": "임시주주총회결과              ",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900600",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "123010",
-      "corpCode": "00615723",
-      "name": "알엔티엑스",
-      "totalDisclosures": 9,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 3,
-          "latestDate": "20260611"
-        },
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 2,
-          "latestDate": "20260611"
-        }
-      ],
-      "riskScore": 50,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000653",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000645",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000638",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000465",
-          "title": "[기재정정]주요사항보고서(유상증자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000433",
-          "title": "[기재정정]주요사항보고서(유상증자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260616",
-          "rceptNo": "20260616900003",
-          "title": "[기재정정]주주명부폐쇄기간또는기준일설정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260615",
-          "rceptNo": "20260615900739",
-          "title": "본점소재지변경              ",
-          "type": "I"
-        },
-        {
-          "date": "20260615",
-          "rceptNo": "20260615900627",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900846",
-          "title": "증권발행결과(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
     {
       "stockCode": "011300",
       "corpCode": "00132868",
@@ -409,7 +173,7 @@
       "stockCode": "015590",
       "corpCode": "00108746",
       "name": "DKME",
-      "totalDisclosures": 3,
+      "totalDisclosures": 2,
       "signals": [
         {
           "rule": "소송/분쟁",
@@ -431,12 +195,6 @@
           "rceptNo": "20260612800292",
           "title": "소송등의판결ㆍ결정              ",
           "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611800236",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
         }
       ]
     },
@@ -444,7 +202,7 @@
       "stockCode": "258830",
       "corpCode": "00959229",
       "name": "세종메디칼",
-      "totalDisclosures": 7,
+      "totalDisclosures": 5,
       "signals": [
         {
           "rule": "소송/분쟁",
@@ -484,18 +242,6 @@
           "rceptNo": "20260612900656",
           "title": "기타경영사항(자율공시)              (상장폐지결정 효력정지 가처분 신청)",
           "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900905",
-          "title": "주권매매거래정지해제              (상장폐지에 따른 정리매매 개시)",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900896",
-          "title": "기타시장안내              (코스닥시장위원회 개최 결과 및 상장폐지 결정 안내)",
-          "type": "I"
         }
       ]
     },
@@ -530,6 +276,70 @@
           "date": "20260616",
           "rceptNo": "20260616900612",
           "title": "타인에대한담보제공결정              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "297570",
+      "corpCode": "01309795",
+      "name": "알로이스",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "사명변경",
+          "weight": 25,
+          "count": 1,
+          "latestDate": "20260612"
+        }
+      ],
+      "riskScore": 25,
+      "recentDisclosures": [
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900563",
+          "title": "상호변경안내              ",
+          "type": "I"
+        },
+        {
+          "date": "20260612",
+          "rceptNo": "20260612900547",
+          "title": "임시주주총회결과              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "900100",
+      "corpCode": "00781202",
+      "name": "파이온엑스",
+      "totalDisclosures": 3,
+      "signals": [
+        {
+          "rule": "CB발행",
+          "weight": 10,
+          "count": 2,
+          "latestDate": "20260616"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260619",
+          "rceptNo": "20260618000413",
+          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260616",
+          "rceptNo": "20260616000046",
+          "title": "[첨부정정]주요사항보고서(전환사채권발행결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260615",
+          "rceptNo": "20260615900360",
+          "title": "[기재정정]주주총회소집결의              ",
           "type": "I"
         }
       ]
@@ -613,7 +423,7 @@
       "stockCode": "127120",
       "corpCode": "00642541",
       "name": "제이에스링크",
-      "totalDisclosures": 3,
+      "totalDisclosures": 2,
       "signals": [
         {
           "rule": "CB발행",
@@ -635,12 +445,6 @@
           "rceptNo": "20260617000402",
           "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
           "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900299",
-          "title": "기업설명회(IR)개최              ",
-          "type": "I"
         }
       ]
     },
@@ -703,39 +507,10 @@
       ]
     },
     {
-      "stockCode": "900100",
-      "corpCode": "00781202",
-      "name": "파이온엑스",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "20260616"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260616",
-          "rceptNo": "20260616000046",
-          "title": "[첨부정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260615",
-          "rceptNo": "20260615900360",
-          "title": "[기재정정]주주총회소집결의              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "026910",
       "corpCode": "00104120",
       "name": "광진실업",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [
         {
           "rule": "증자/감자",
@@ -751,12 +526,6 @@
           "rceptNo": "20260617000241",
           "title": "[기재정정]주요사항보고서(유상증자결정)",
           "type": "B"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900752",
-          "title": "[기재정정]주주총회소집결의              ",
-          "type": "I"
         }
       ]
     },
@@ -784,33 +553,10 @@
       ]
     },
     {
-      "stockCode": "009190",
-      "corpCode": "00111111",
-      "name": "대양금속",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "20260611"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000489",
-          "title": "[기재정정]주요사항보고서(유상증자결정)",
-          "type": "B"
-        }
-      ]
-    },
-    {
       "stockCode": "084440",
       "corpCode": "00531078",
       "name": "유비온",
-      "totalDisclosures": 4,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "증자/감자",
@@ -837,12 +583,6 @@
           "date": "20260615",
           "rceptNo": "20260615900872",
           "title": "주식병합결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900800",
-          "title": "단일판매ㆍ공급계약체결(자율공시)              ",
           "type": "I"
         }
       ]
@@ -997,22 +737,6 @@
       ]
     },
     {
-      "stockCode": "101930",
-      "corpCode": "00482426",
-      "name": "인화정공",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900213",
-          "title": "수시공시의무관련사항(공정공시)              (주주가치 제고를 위한 중장기 주주환원 정책 안내)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "001080",
       "corpCode": "00120872",
       "name": "만호제강",
@@ -1137,22 +861,6 @@
       ]
     },
     {
-      "stockCode": "224110",
-      "corpCode": "01099861",
-      "name": "에이텍모빌리티",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611000338",
-          "title": "주요사항보고서(자기주식취득신탁계약체결결정)",
-          "type": "B"
-        }
-      ]
-    },
-    {
       "stockCode": "086890",
       "corpCode": "00526872",
       "name": "이수앱지스",
@@ -1223,49 +931,29 @@
       ]
     },
     {
-      "stockCode": "017000",
-      "corpCode": "00136925",
-      "name": "신원종합개발",
-      "totalDisclosures": 1,
+      "stockCode": "123010",
+      "corpCode": "00615723",
+      "name": "알엔티엑스",
+      "totalDisclosures": 3,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
         {
-          "date": "20260611",
-          "rceptNo": "20260611900224",
-          "title": "[기재정정]단일판매ㆍ공급계약체결(자율공시)              ",
+          "date": "20260616",
+          "rceptNo": "20260616900003",
+          "title": "[기재정정]주주명부폐쇄기간또는기준일설정              ",
           "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "006380",
-      "corpCode": "00159810",
-      "name": "카프로",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
+        },
         {
-          "date": "20260611",
-          "rceptNo": "20260611800393",
-          "title": "단기차입금증가결정              ",
+          "date": "20260615",
+          "rceptNo": "20260615900739",
+          "title": "본점소재지변경              ",
           "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "332290",
-      "corpCode": "01394669",
-      "name": "누보",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
+        },
         {
-          "date": "20260611",
-          "rceptNo": "20260611900493",
-          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
+          "date": "20260615",
+          "rceptNo": "20260615900627",
+          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
           "type": "I"
         }
       ]
@@ -1290,10 +978,16 @@
       "stockCode": "388210",
       "corpCode": "01529982",
       "name": "씨엠티엑스",
-      "totalDisclosures": 2,
+      "totalDisclosures": 3,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
+        {
+          "date": "20260619",
+          "rceptNo": "20260619900166",
+          "title": "기업설명회(IR)개최              ",
+          "type": "I"
+        },
         {
           "date": "20260616",
           "rceptNo": "20260616900438",
@@ -1336,22 +1030,6 @@
           "date": "20260615",
           "rceptNo": "20260615800149",
           "title": "주주명부폐쇄기간또는기준일설정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "290690",
-      "corpCode": "00605522",
-      "name": "소룩스",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260611",
-          "rceptNo": "20260611900662",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
           "type": "I"
         }
       ]

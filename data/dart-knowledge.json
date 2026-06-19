@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T10:36:26.870Z",
+  "generatedAt": "2026-06-19T01:25:05.174Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,25 +11,9 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 3,
-    "totalSignals": 22,
+    "highRiskCount": 1,
+    "totalSignals": 18,
     "topRisks": [
-      {
-        "name": "알로이스",
-        "score": 50,
-        "signals": [
-          "사명변경",
-          "소송/분쟁"
-        ]
-      },
-      {
-        "name": "알엔티엑스",
-        "score": 50,
-        "signals": [
-          "CB발행",
-          "증자/감자"
-        ]
-      },
       {
         "name": "우성머티리얼스",
         "score": 30,
