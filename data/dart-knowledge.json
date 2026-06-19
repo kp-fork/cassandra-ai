@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19T01:25:05.174Z",
+  "generatedAt": "2026-06-19T10:36:56.865Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,9 +11,16 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 1,
-    "totalSignals": 18,
+    "highRiskCount": 2,
+    "totalSignals": 22,
     "topRisks": [
+      {
+        "name": "일정실업",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
       {
         "name": "우성머티리얼스",
         "score": 30,
