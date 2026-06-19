@@ -136,9 +136,25 @@ async function processPersonJob(job: any) {
   return { result, report };
 }
 
+async function connectWithRetry(retries = 5, delayMs = 5000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await prisma.$connect();
+      console.log("✅ DB 연결 성공");
+      return;
+    } catch (e: any) {
+      console.log(`⏳ DB 연결 시도 ${i + 1}/${retries} 실패: ${e.message}`);
+      if (i < retries - 1) await sleep(delayMs);
+    }
+  }
+  throw new Error("DB 연결 실패 (5회 재시도 초과)");
+}
+
 async function main() {
   console.log(`📊 배치 분석 [${new Date().toLocaleString("ko-KR")}]\n`);
   const dartKey = getDartKey();
+
+  await connectWithRetry();
 
   const jobs = await prisma.batchJob.findMany({ where: { status: "QUEUED" }, orderBy: { createdAt: "asc" }, take: 10 });
   if (jobs.length === 0) { console.log("✅ 처리 대상 없음"); await prisma.$disconnect(); return; }

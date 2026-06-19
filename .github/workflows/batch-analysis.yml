@@ -35,11 +35,15 @@ jobs:
           echo "DEEPSEEK_API_KEY set: ${{ vars.DEEPSEEK_API_KEY != '' }}"
 
       - name: Process batch jobs
-        run: npx tsx scripts/process-batch.ts
-        env:
-          DATABASE_URL: ${{ vars.DATABASE_URL }}
-          DART_API_KEY: ${{ vars.DART_API_KEY }}
-          DEEPSEEK_API_KEY: ${{ vars.DEEPSEEK_API_KEY }}
+        run: |
+          # Neon DB sleep 상태 대응: connect_timeout 파라미터 추가
+          DB="${{ vars.DATABASE_URL }}"
+          if [[ "$DB" == *"?"* ]]; then
+            DB="${DB}&connect_timeout=30&pool_timeout=30"
+          else
+            DB="${DB}?connect_timeout=30&pool_timeout=30"
+          fi
+          DATABASE_URL="$DB" DART_API_KEY="${{ vars.DART_API_KEY }}" DEEPSEEK_API_KEY="${{ vars.DEEPSEEK_API_KEY }}" npx tsx scripts/process-batch.ts
 
       - name: Commit report files
         run: |
