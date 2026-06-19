@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, ReactNode } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import dynamic from "next/dynamic";
@@ -33,7 +33,7 @@ interface ReportData {
   aiAnalysis?: string;
 }
 
-const CATEGORY_LABELS: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+const CATEGORY_LABELS: Record<string, { label: string; icon: ReactNode; color: string }> = {
   REPORT: { label: "제보", icon: <AlertTriangle className="w-3.5 h-3.5" />, color: "text-[var(--danger-glow)]" },
   ANALYSIS_REQUEST: { label: "분석 요청", icon: <FileSearch className="w-3.5 h-3.5" />, color: "text-[var(--accent-glow)]" },
   DISCUSSION: { label: "토론", icon: <MessageSquare className="w-3.5 h-3.5" />, color: "text-[var(--text-muted)]" },
@@ -278,7 +278,7 @@ function ReportDetail({ report, onClose }: { report: ReportData; onClose: () => 
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const Section = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
+  const Section = ({ id, title, children }: { id: string; title: string; children: ReactNode }) => (
     <div className="rounded-lg border border-[var(--border)] overflow-hidden">
       <button onClick={() => toggle(id)} className="w-full flex items-center justify-between px-3 py-2.5 bg-[var(--surface)] hover:bg-[var(--border)]/30 transition-colors">
         <span className="text-xs font-semibold text-[var(--text)]">{title}</span>
