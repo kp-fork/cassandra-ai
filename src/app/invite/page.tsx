@@ -19,12 +19,18 @@ function InviteForm() {
     const [checking, setChecking] = useState(true);
     const [alreadyExists, setAlreadyExists] = useState(false);
 
-    // 중복 가입 체크
+    const [notApproved, setNotApproved] = useState(false);
+
+    // 사전 승인 + 중복 가입 체크
     useEffect(() => {
-        if (!email) return;
-        const supabase = createSupabaseBrowser();
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session?.user?.email === email) {
+        if (!email) { setChecking(false); return; }
+        Promise.all([
+            fetch(`/api/admin/invite?email=${encodeURIComponent(email)}`).then(r => r.json()),
+            createSupabaseBrowser().auth.getSession(),
+        ]).then(([approvalData, { data: { session } }]) => {
+            if (!approvalData.approved) {
+                setNotApproved(true);
+            } else if (session?.user?.email === email) {
                 setAlreadyExists(true);
             }
             setChecking(false);
@@ -75,6 +81,18 @@ function InviteForm() {
         } catch { setError("가입 중 오류가 발생했습니다."); }
         setLoading(false);
     };
+
+    if (notApproved) {
+        return (
+            <div className="min-h-screen flex items-center justify-center px-4">
+                <div className="w-full max-w-sm text-center space-y-4">
+                    <Shield className="w-12 h-12 mx-auto text-[#ef4444]" />
+                    <h1 className="text-lg font-bold">초대되지 않은 이메일입니다</h1>
+                    <p className="text-xs text-[var(--text-muted)]">{email || "이 링크"}는 유효한 초대 링크가 아닙니다.<br />관리자에게 문의하세요.</p>
+                </div>
+            </div>
+        );
+    }
 
     if (alreadyExists) {
         return (

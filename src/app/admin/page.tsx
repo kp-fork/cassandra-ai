@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Users, Eye, TrendingUp, Clock } from "lucide-react";
+import { Shield, Users, Eye, TrendingUp, Clock, Link, Copy, CheckCircle2, UserPlus } from "lucide-react";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 const ADMIN_EMAILS = ["gameworker@gmail.com"];
@@ -10,6 +10,7 @@ export default function AdminPage() {
     const [authorized, setAuthorized] = useState(false);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [adminEmail, setAdminEmail] = useState("");
 
     useEffect(() => {
         const supabase = createSupabaseBrowser();
@@ -17,6 +18,7 @@ export default function AdminPage() {
             const email = session?.user?.email;
             if (email && ADMIN_EMAILS.includes(email)) {
                 setAuthorized(true);
+                setAdminEmail(email);
                 fetchStats();
             } else {
                 setAuthorized(false);
@@ -110,6 +112,12 @@ export default function AdminPage() {
                 </div>
             </div>
 
+            {/* Expert 초대 링크 생성 */}
+            <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+                <h2 className="text-sm font-bold mb-3 flex items-center gap-2"><UserPlus className="w-4 h-4 text-[#22c55e]" /> Expert 초대</h2>
+                <InviteSection adminEmail={adminEmail} />
+            </div>
+
             {/* Expert 승인 관리 */}
             <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
                 <h2 className="text-sm font-bold mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-[#f59e0b]" /> Expert 승인 대기</h2>
@@ -167,6 +175,90 @@ function AdminExpertList() {
                     </span>
                 </div>
             ))}
+        </div>
+    );
+}
+
+function InviteSection({ adminEmail }: { adminEmail: string }) {
+    const [email, setEmail] = useState("");
+    const [link, setLink] = useState("");
+    const [copied, setCopied] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [invited, setInvited] = useState<{ email: string; link: string }[]>([]);
+
+    const handleCreate = async () => {
+        if (!email.trim() || !email.includes("@")) { setError("유효한 이메일을 입력하세요"); return; }
+        setLoading(true); setError(""); setLink("");
+        try {
+            const res = await fetch("/api/admin/invite", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: email.trim(), adminEmail }),
+            });
+            const data = await res.json();
+            if (!res.ok) { setError(data.error || "오류 발생"); setLoading(false); return; }
+            setLink(data.link);
+            setInvited(prev => [{ email: email.trim(), link: data.link }, ...prev.filter(i => i.email !== email.trim())]);
+            setEmail("");
+        } catch { setError("네트워크 오류"); }
+        setLoading(false);
+    };
+
+    const handleCopy = (text: string) => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <div className="space-y-3">
+            <div className="flex gap-2">
+                <input
+                    type="email"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); setError(""); }}
+                    onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleCreate(); } }}
+                    placeholder="초대할 이메일 입력 (예: user@naver.com)"
+                    className="flex-1 px-3 py-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent)]"
+                />
+                <button
+                    onClick={handleCreate}
+                    disabled={loading || !email.trim()}
+                    className="px-4 py-2 rounded-lg bg-[#22c55e] text-white text-xs font-medium disabled:opacity-40 flex items-center gap-1.5"
+                >
+                    <Link className="w-3.5 h-3.5" />
+                    {loading ? "생성 중..." : "링크 생성"}
+                </button>
+            </div>
+            {error && <p className="text-[11px] text-[#ef4444]">{error}</p>}
+
+            {link && (
+                <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#22c55e]/5 border border-[#22c55e]/20">
+                    <span className="flex-1 text-[10px] font-mono text-[var(--text-muted)] truncate">{link}</span>
+                    <button
+                        onClick={() => handleCopy(link)}
+                        className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded bg-[#22c55e] text-white text-[10px]"
+                    >
+                        {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                        {copied ? "복사됨" : "복사"}
+                    </button>
+                </div>
+            )}
+
+            {invited.length > 0 && (
+                <div className="space-y-1 pt-1 border-t border-[var(--border)]">
+                    <p className="text-[10px] text-[var(--text-muted)] mb-1">이번 세션 초대 목록</p>
+                    {invited.map(i => (
+                        <div key={i.email} className="flex items-center justify-between text-[10px] py-1">
+                            <span className="text-[var(--text)]">{i.email}</span>
+                            <button onClick={() => handleCopy(i.link)} className="text-[var(--accent-glow)] hover:underline flex items-center gap-0.5">
+                                <Copy className="w-2.5 h-2.5" /> 링크 복사
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
