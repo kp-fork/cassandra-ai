@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Users, Eye, TrendingUp, Clock, Link, Copy, CheckCircle2, UserPlus } from "lucide-react";
+import { Shield, Users, Eye, TrendingUp, Clock, Link, Copy, CheckCircle2, UserPlus, RefreshCw } from "lucide-react";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 const ADMIN_EMAILS = ["gameworker@gmail.com"];
@@ -40,7 +40,7 @@ export default function AdminPage() {
     if (!authorized) return <div className="min-h-screen flex items-center justify-center text-[#ef4444]">관리자 권한이 없습니다.</div>;
 
     return (
-        <div className="max-w-4xl mx-auto py-6 px-4 space-y-6">
+        <div className="max-w-5xl mx-auto py-6 px-4 space-y-6">
             <div className="flex items-center gap-3">
                 <Shield className="w-6 h-6 text-[#f59e0b]" />
                 <h1 className="text-xl font-bold">관리자 대시보드</h1>
@@ -52,6 +52,9 @@ export default function AdminPage() {
                 <StatCard icon={<TrendingUp />} label="구글 로그인(오늘/누적)" value={`${stats?.todayLogins ?? 0} / ${stats?.totalLogins ?? 0}`} color="#f59e0b" />
                 <StatCard icon={<Clock />} label="초대 유입(오늘/누적)" value={`${stats?.todayRef ?? 0} / ${stats?.totalRef ?? 0}`} color="#a855f7" />
             </div>
+
+            {/* Supabase 전체 유저 목록 */}
+            <UserListSection />
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
@@ -71,44 +74,6 @@ export default function AdminPage() {
                             <span className="text-[10px]">{new Date(u.time).toLocaleTimeString("ko-KR", {hour:"2-digit",minute:"2-digit"})}</span>
                         </div>
                     )) : <p className="text-[10px] text-[var(--text-muted)]">오늘 로그인 없음</p>}
-                    <div className="text-right text-[10px] text-[var(--text-muted)] mt-1">{stats?.todayLoginUsers?.length || 0}명</div>
-                </div>
-                <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-                    <h2 className="text-sm font-bold mb-3">🔐 Google 로그인 유저</h2>
-                    {stats?.googleUsers?.length > 0 ? stats.googleUsers.map((u: any, i: number) => (
-                        <div key={i} className="flex justify-between text-xs py-1 border-b border-[var(--border)] last:border-0">
-                            <span className="text-[var(--text-muted)] truncate max-w-[180px]">{u.email}</span>
-                            <span className="text-[10px]">{u.last_sign_in ? new Date(u.last_sign_in).toLocaleString("ko-KR", {month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}) : "-"}</span>
-                        </div>
-                    )) : <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
-                    <div className="text-right text-[10px] text-[var(--text-muted)] mt-1">{stats?.googleUsers?.length || 0}명</div>
-                </div>
-                <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-                    <h2 className="text-sm font-bold mb-3">Supabase 전체 유저</h2>
-                    {stats?.supabaseUsers?.map((u: any, i: number) => (
-                        <div key={i} className="flex justify-between text-xs py-1 border-b border-[var(--border)] last:border-0">
-                            <span className="text-[var(--text-muted)]">{u.email}</span>
-                            <span className="text-[10px]">{new Date(u.created_at).toLocaleDateString("ko-KR")}</span>
-                        </div>
-                    )) || <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
-                </div>
-                <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-                    <h2 className="text-sm font-bold mb-3">🔗 추천인 TOP 10</h2>
-                    {stats?.topRefs?.length > 0 ? stats.topRefs.map((r: any, i: number) => (
-                        <div key={i} className="flex justify-between text-xs py-1 border-b border-[var(--border)] last:border-0">
-                            <span className="text-[var(--text-muted)]">{i+1}. {r.code}</span>
-                            <span className="font-semibold">{r.count}명</span>
-                        </div>
-                    )) : <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
-                </div>
-                <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-                    <h2 className="text-sm font-bold mb-3">💬 사주 질문 종목 TOP 10</h2>
-                    {stats?.topStocks?.length > 0 ? stats.topStocks.map((s: any, i: number) => (
-                        <div key={i} className="flex justify-between text-xs py-1 border-b border-[var(--border)] last:border-0">
-                            <span className="text-[var(--text-muted)]">{i+1}. {s.stock}</span>
-                            <span className="font-semibold">{s.count}회</span>
-                        </div>
-                    )) : <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>}
                 </div>
             </div>
 
@@ -123,6 +88,103 @@ export default function AdminPage() {
                 <h2 className="text-sm font-bold mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-[#f59e0b]" /> Expert 승인 대기</h2>
                 <AdminExpertList />
             </div>
+        </div>
+    );
+}
+
+function UserListSection() {
+    const [users, setUsers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [search, setSearch] = useState("");
+
+    const load = async () => {
+        setLoading(true); setError("");
+        try {
+            const res = await fetch("/api/admin/users");
+            const data = await res.json();
+            if (!res.ok) { setError(data.error || "오류"); } else { setUsers(data.users || []); }
+        } catch { setError("네트워크 오류"); }
+        setLoading(false);
+    };
+
+    useEffect(() => { load(); }, []);
+
+    const filtered = users.filter(u =>
+        !search || u.email?.toLowerCase().includes(search.toLowerCase()) || u.name?.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const fmt = (d: string | null) => {
+        if (!d) return "-";
+        return new Date(d).toLocaleString("ko-KR", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+    };
+
+    return (
+        <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
+            <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-bold flex items-center gap-2">
+                    <Users className="w-4 h-4 text-[#3b82f6]" />
+                    전체 유저
+                    <span className="text-[10px] text-[var(--text-muted)] font-normal">({users.length}명)</span>
+                </h2>
+                <div className="flex items-center gap-2">
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder="이메일 / 이름 검색"
+                        className="px-2 py-1 rounded bg-[var(--bg)] border border-[var(--border)] text-[10px] w-40 focus:outline-none focus:border-[var(--accent)]"
+                    />
+                    <button onClick={load} className="p-1 rounded hover:bg-[var(--border)]" title="새로고침">
+                        <RefreshCw className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                    </button>
+                </div>
+            </div>
+
+            {loading ? (
+                <p className="text-[10px] text-[var(--text-muted)] py-4 text-center">로딩 중...</p>
+            ) : error ? (
+                <p className="text-[10px] text-[#ef4444] py-2">{error}</p>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="w-full text-[10px]">
+                        <thead>
+                            <tr className="text-[var(--text-muted)] border-b border-[var(--border)]">
+                                <th className="text-left py-1.5 pr-3 font-medium">이메일</th>
+                                <th className="text-left py-1.5 pr-3 font-medium">이름</th>
+                                <th className="text-left py-1.5 pr-3 font-medium">가입일</th>
+                                <th className="text-left py-1.5 pr-3 font-medium">마지막 로그인</th>
+                                <th className="text-center py-1.5 pr-3 font-medium">로그인수</th>
+                                <th className="text-center py-1.5 font-medium">가입경로</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered.map((u) => (
+                                <tr key={u.id} className="border-b border-[var(--border)]/40 hover:bg-[var(--border)]/20">
+                                    <td className="py-1.5 pr-3">{u.email}</td>
+                                    <td className="py-1.5 pr-3 text-[var(--text-muted)]">{u.name}</td>
+                                    <td className="py-1.5 pr-3 text-[var(--text-muted)]">{fmt(u.createdAt)}</td>
+                                    <td className="py-1.5 pr-3 text-[var(--text-muted)]">{fmt(u.lastSignInAt)}</td>
+                                    <td className="py-1.5 pr-3 text-center font-semibold">{u.loginCount}</td>
+                                    <td className="py-1.5 text-center">
+                                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium ${
+                                            u.provider === "google" ? "bg-[#3b82f6]/10 text-[#3b82f6]" : "bg-[#22c55e]/10 text-[#22c55e]"
+                                        }`}>
+                                            {u.provider === "google" ? "Google" : "초대"}
+                                        </span>
+                                        {!u.emailConfirmed && u.provider !== "google" && (
+                                            <span className="ml-1 text-[9px] text-[#f59e0b]">미인증</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {filtered.length === 0 && (
+                        <p className="text-center text-[10px] text-[var(--text-muted)] py-4">검색 결과 없음</p>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
@@ -254,7 +316,6 @@ function InviteSection({ adminEmail }: { adminEmail: string }) {
                 </div>
             )}
 
-            {/* 초대 이력 */}
             {history.length > 0 && (
                 <div className="border-t border-[var(--border)] pt-3">
                     <p className="text-[10px] font-semibold text-[var(--text-muted)] mb-2">초대 이력 ({history.length}건)</p>
