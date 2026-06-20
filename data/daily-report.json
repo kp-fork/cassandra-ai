@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-19T15:12:43.066Z",
+  "generatedAt": "2026-06-20T01:13:49.380Z",
   "period": {
-    "from": "20260612",
-    "to": "20260619"
+    "from": "20260613",
+    "to": "20260620"
   },
-  "totalCompanies": 47,
-  "totalDisclosures": 84,
+  "totalCompanies": 43,
+  "totalDisclosures": 72,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -228,82 +228,6 @@
       ]
     },
     {
-      "stockCode": "015590",
-      "corpCode": "00108746",
-      "name": "DKME",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "소송/분쟁",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260612"
-        }
-      ],
-      "riskScore": 25,
-      "recentDisclosures": [
-        {
-          "date": "20260616",
-          "rceptNo": "20260616800380",
-          "title": "단일판매ㆍ공급계약체결(자율공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612800292",
-          "title": "소송등의판결ㆍ결정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "258830",
-      "corpCode": "00959229",
-      "name": "세종메디칼",
-      "totalDisclosures": 5,
-      "signals": [
-        {
-          "rule": "소송/분쟁",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260612"
-        }
-      ],
-      "riskScore": 25,
-      "recentDisclosures": [
-        {
-          "date": "20260615",
-          "rceptNo": "20260615900601",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612901024",
-          "title": "[기재정정]불성실공시법인지정예고              (공시번복)",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900673",
-          "title": "주권매매거래정지              (투자자 보호)",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900665",
-          "title": "기타시장안내              (정리매매 보류 관련)",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900656",
-          "title": "기타경영사항(자율공시)              (상장폐지결정 효력정지 가처분 신청)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "288620",
       "corpCode": "01257872",
       "name": "에스프리즘",
@@ -334,35 +258,6 @@
           "date": "20260616",
           "rceptNo": "20260616900612",
           "title": "타인에대한담보제공결정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "297570",
-      "corpCode": "01309795",
-      "name": "알로이스",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "사명변경",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "20260612"
-        }
-      ],
-      "riskScore": 25,
-      "recentDisclosures": [
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900563",
-          "title": "상호변경안내              ",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900547",
-          "title": "임시주주총회결과              ",
           "type": "I"
         }
       ]
@@ -428,29 +323,6 @@
           "rceptNo": "20260619000412",
           "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
           "type": "B"
-        }
-      ]
-    },
-    {
-      "stockCode": "000430",
-      "corpCode": "00111847",
-      "name": "대원강업",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "20260612"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260612",
-          "rceptNo": "20260612800850",
-          "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
         }
       ]
     },
@@ -630,29 +502,6 @@
           "date": "20260619",
           "rceptNo": "20260619900871",
           "title": "신규시설투자등              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "000880",
-      "corpCode": "00160588",
-      "name": "한화",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "20260612"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260612",
-          "rceptNo": "20260612800541",
-          "title": "[기재정정]유상증자결정(종속회사의주요경영사항)              ",
           "type": "I"
         }
       ]
@@ -846,6 +695,22 @@
       ]
     },
     {
+      "stockCode": "015590",
+      "corpCode": "00108746",
+      "name": "DKME",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260616",
+          "rceptNo": "20260616800380",
+          "title": "단일판매ㆍ공급계약체결(자율공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "217590",
       "corpCode": "00949161",
       "name": "티엠씨",
@@ -857,6 +722,22 @@
           "date": "20260619",
           "rceptNo": "20260619800690",
           "title": "기업설명회(IR)개최(안내공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "258830",
+      "corpCode": "00959229",
+      "name": "세종메디칼",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260615",
+          "rceptNo": "20260615900601",
+          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
           "type": "I"
         }
       ]
@@ -881,19 +762,13 @@
       "stockCode": "086790",
       "corpCode": "00547583",
       "name": "하나금융지주",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
         {
           "date": "20260619",
           "rceptNo": "20260619800652",
-          "title": "기업설명회(IR)개최(안내공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612800535",
           "title": "기업설명회(IR)개최(안내공시)              ",
           "type": "I"
         }
@@ -1024,22 +899,6 @@
       ]
     },
     {
-      "stockCode": "380540",
-      "corpCode": "01506990",
-      "name": "옵티코어",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900554",
-          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "179530",
       "corpCode": "01022902",
       "name": "애드바이오텍",
@@ -1145,7 +1004,7 @@
       "stockCode": "205100",
       "corpCode": "01042085",
       "name": "엑셈",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -1154,12 +1013,6 @@
           "rceptNo": "20260617000328",
           "title": "주요사항보고서(자기주식취득결정)",
           "type": "B"
-        },
-        {
-          "date": "20260612",
-          "rceptNo": "20260612900238",
-          "title": "주주명부폐쇄기간또는기준일설정              ",
-          "type": "I"
         }
       ]
     },
