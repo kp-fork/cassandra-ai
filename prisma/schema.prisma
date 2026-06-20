@@ -351,3 +351,51 @@ model SearchCache {
   @@index([type, query])
   @@index([lastSearched])
 }
+
+// ─── 초대/레퍼럴 ───
+model Referral {
+  id        String   @id @default(uuid())
+  refCode   String
+  visitorIp String?
+  createdAt DateTime @default(now())
+
+  @@index([refCode])
+  @@index([createdAt])
+}
+
+// ─── 사주 질문 로그 ───
+model SajuLog {
+  id        String   @id @default(uuid())
+  action    String
+  stock     String?
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([action, createdAt])
+}
+
+// ─── 인물 이력 ───
+model PersonHistory {
+  id          String   @id @default(uuid())
+  personName  String
+  corpName    String?
+  role        String?
+  startDate   String?
+  endDate     String?
+  source      String?
+  createdAt   DateTime @default(now())
+
+  @@index([personName])
+}
+
+// ─── HBM 예측 ───
+model MuHynixPrediction {
+  id          String   @id @default(uuid())
+  date        String
+  price       Float?
+  prediction  Float?
+  signal      String?
+  createdAt   DateTime @default(now())
+
+  @@unique([date])
+}
