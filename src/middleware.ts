@@ -45,10 +45,13 @@ export async function middleware(request: NextRequest) {
 
   if (session) {
     if (path === "/login") return NextResponse.redirect(new URL("/dashboard", request.url));
-    // Expert 권한 체크
+    // Expert 권한 체크: 관리자 이메일 OR Supabase user_metadata.role === "expert" 허용
     if (EXPERT_PATHS.some(p => path === p || path.startsWith(p + "/"))) {
       const email = session.user?.email;
-      if (email && !EXPERT_EMAILS.includes(email)) {
+      const metaRole = session.user?.user_metadata?.role;
+      const isAdmin = email && EXPERT_EMAILS.includes(email);
+      const isExpert = metaRole === "expert";
+      if (!isAdmin && !isExpert) {
         return NextResponse.redirect(new URL("/access-denied?page=" + encodeURIComponent(path), request.url));
       }
     }

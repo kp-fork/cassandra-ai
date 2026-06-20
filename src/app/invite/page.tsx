@@ -51,7 +51,7 @@ function InviteForm() {
 
             const { error: signUpError } = await supabase.auth.signUp({
                 email, password,
-                options: { data: { name: name.trim(), organization: org.trim() } },
+                options: { data: { name: name.trim(), organization: org.trim(), role: "expert" } },
             });
 
             if (signUpError) {
