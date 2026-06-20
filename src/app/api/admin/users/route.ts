@@ -1,40 +1,36 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+
+const SUPA_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPA_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 export async function GET() {
   try {
-    // auth.users 직접 조회 (Supabase가 관리하는 스키마)
-    const users = await prisma.$queryRaw<any[]>`
-      SELECT
-        u.id,
-        u.email,
-        u.created_at,
-        u.last_sign_in_at,
-        u.email_confirmed_at,
-        u.raw_user_meta_data,
-        u.raw_app_meta_data,
-        COUNT(a.id)::int AS login_count
-      FROM auth.users u
-      LEFT JOIN auth.audit_log_entries a
-        ON a.payload->>'actor_id' = u.id::text
-        AND a.payload->>'action' = 'login'
-      GROUP BY u.id
-      ORDER BY u.created_at DESC
-      LIMIT 200
-    `;
-
-    return NextResponse.json({
-      users: users.map(u => ({
-        id: u.id,
-        email: u.email,
-        name: u.raw_user_meta_data?.name || u.raw_user_meta_data?.full_name || "-",
-        provider: u.raw_app_meta_data?.provider || "email",
-        createdAt: u.created_at,
-        lastSignInAt: u.last_sign_in_at,
-        emailConfirmed: !!u.email_confirmed_at,
-        loginCount: u.login_count ?? 0,
-      })),
+    // Supabase Admin REST API로 전체 유저 목록 조회
+    const res = await fetch(`${SUPA_URL}/auth/v1/admin/users?page=1&per_page=200`, {
+      headers: {
+        "apikey": SUPA_KEY,
+        "Authorization": `Bearer ${SUPA_KEY}`,
+      },
     });
+
+    if (!res.ok) {
+      const err = await res.json();
+      return NextResponse.json({ error: err.msg || err.message || "Supabase 오류" }, { status: res.status });
+    }
+
+    const data = await res.json();
+    const users = (data.users || []).map((u: any) => ({
+      id: u.id,
+      email: u.email,
+      name: u.user_metadata?.name || u.user_metadata?.full_name || "-",
+      provider: u.app_metadata?.provider || "email",
+      createdAt: u.created_at,
+      lastSignInAt: u.last_sign_in_at,
+      emailConfirmed: !!u.email_confirmed_at,
+      loginCount: 0, // audit_log는 별도 API 필요, 일단 0
+    }));
+
+    return NextResponse.json({ users });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
