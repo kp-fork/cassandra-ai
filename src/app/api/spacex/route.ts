@@ -150,7 +150,15 @@ function scoreToSignal(score: number): string {
   return "HOLD";
 }
 
+async function pruneStaleSymbols() {
+  const valid = STOCKS.map(s => s.symbol);
+  await prisma.spaceXQuant.deleteMany({
+    where: { symbol: { notIn: valid } },
+  });
+}
+
 async function refreshAll() {
+  await pruneStaleSymbols();
   const results = await Promise.allSettled(
     STOCKS.map(async (s) => {
       const bars = await fetchOHLCV(s.symbol);
