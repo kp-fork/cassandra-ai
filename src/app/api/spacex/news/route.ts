@@ -7,38 +7,99 @@ const SPACE_KEYWORDS = [
   "ipo","stock","share","invest","billion","funding",
 ];
 
+// nitter 인스턴스 목록 (최대한 많이)
 const NITTER_INSTANCES = [
   "https://nitter.poast.org",
-  "https://nitter.net",
   "https://nitter.privacydev.net",
+  "https://nitter.1d4.us",
+  "https://nitter.kavin.rocks",
+  "https://nitter.unixfox.eu",
+  "https://n.sneed.network",
+  "https://nitter.moomoo.me",
+  "https://nitter.net",
 ];
 
-// 여러 nitter 인스턴스 중 살아있는 걸로 RSS fetch
-async function fetchElonRSS(): Promise<string> {
-  for (const base of NITTER_INSTANCES) {
-    try {
-      const res = await fetch(`${base}/elonmusk/rss`, {
-        headers: { "User-Agent": "Mozilla/5.0" },
-        signal: AbortSignal.timeout(5000),
-      });
-      if (res.ok) return await res.text();
-    } catch {}
+// RSSHub 인스턴스 (nitter 전체 실패 시 폴백)
+const RSSHUB_INSTANCES = [
+  "https://rsshub.app",
+  "https://rsshub.rssforever.com",
+  "https://hub.slarker.me",
+];
+
+async function tryFetch(url: string, timeout = 6000): Promise<string | null> {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+      },
+      signal: AbortSignal.timeout(timeout),
+    });
+    if (res.ok) {
+      const text = await res.text();
+      // RSS 형식 최소 확인
+      if (text.includes("<item>") || text.includes("<entry>")) return text;
+    }
+    return null;
+  } catch {
+    return null;
   }
-  throw new Error("All nitter instances failed");
+}
+
+async function fetchElonRSS(): Promise<{ xml: string; source: string }> {
+  // 1단계: nitter 인스턴스 병렬 시도 (첫 번째 성공한 것 사용)
+  const nitterResults = await Promise.allSettled(
+    NITTER_INSTANCES.map(base => tryFetch(`${base}/elonmusk/rss`))
+  );
+  for (let i = 0; i < nitterResults.length; i++) {
+    const r = nitterResults[i];
+    if (r.status === "fulfilled" && r.value) {
+      return { xml: r.value, source: NITTER_INSTANCES[i] };
+    }
+  }
+
+  // 2단계: RSSHub 폴백
+  for (const base of RSSHUB_INSTANCES) {
+    const xml = await tryFetch(`${base}/twitter/user/elonmusk`, 8000);
+    if (xml) return { xml, source: base };
+  }
+
+  throw new Error("All RSS sources failed (nitter + rsshub)");
 }
 
 function parseRSSItems(xml: string) {
   const items: { title: string; link: string; pubDate: string; text: string }[] = [];
+
+  // RSS 2.0 <item> 파싱
   const blocks = xml.split("<item>").slice(1);
   for (const block of blocks) {
-    const title   = block.match(/<title><!\[CDATA\[(.*?)\]\]>/s)?.[1]?.trim() || "";
-    const link    = block.match(/<link>(.*?)<\/link>/)?.[1]?.trim() || "";
-    const pubDate = block.match(/<pubDate>(.*?)<\/pubDate>/)?.[1]?.trim() || "";
-    const desc    = block.match(/<description><!\[CDATA\[(.*?)\]\]>/s)?.[1] || "";
-    // HTML 태그 제거
+    const title   = block.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]>/s)?.[1]?.trim()
+                 || block.match(/<title[^>]*>(.*?)<\/title>/s)?.[1]?.trim() || "";
+    const link    = block.match(/<link>(.*?)<\/link>/)?.[1]?.trim()
+                 || block.match(/<link[^>]+href="([^"]+)"/)?.[1]?.trim() || "";
+    const pubDate = block.match(/<pubDate>(.*?)<\/pubDate>/)?.[1]?.trim()
+                 || block.match(/<published>(.*?)<\/published>/)?.[1]?.trim() || "";
+    const desc    = block.match(/<description><!\[CDATA\[(.*?)\]\]>/s)?.[1]
+                 || block.match(/<description>(.*?)<\/description>/s)?.[1] || "";
     const text = (title + " " + desc).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-    items.push({ title, link, pubDate, text });
+    if (text.length > 10) items.push({ title, link, pubDate, text });
   }
+
+  // Atom <entry> 파싱 (RSSHub 일부 포맷)
+  if (items.length === 0) {
+    const entries = xml.split("<entry>").slice(1);
+    for (const block of entries) {
+      const title   = block.match(/<title[^>]*>(.*?)<\/title>/s)?.[1]?.replace(/<[^>]+>/g,"").trim() || "";
+      const link    = block.match(/<link[^>]+href="([^"]+)"/)?.[1]?.trim() || "";
+      const pubDate = block.match(/<published>(.*?)<\/published>/)?.[1]?.trim()
+                   || block.match(/<updated>(.*?)<\/updated>/)?.[1]?.trim() || "";
+      const content = block.match(/<content[^>]*>(.*?)<\/content>/s)?.[1]
+                   || block.match(/<summary[^>]*>(.*?)<\/summary>/s)?.[1] || "";
+      const text = (title + " " + content).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      if (text.length > 10) items.push({ title, link, pubDate, text });
+    }
+  }
+
   return items;
 }
 
@@ -105,8 +166,8 @@ export async function GET() {
       return NextResponse.json({ ...cache.data, cached: true });
     }
 
-    const xml = await fetchElonRSS();
-    const all  = parseRSSItems(xml);
+    const { xml, source } = await fetchElonRSS();
+    const all = parseRSSItems(xml);
     const spaceItems = all.filter(t => isSpaceRelated(t.text)).slice(0, 8);
 
     const withAnalysis = await analyzeTweets(spaceItems);
@@ -114,12 +175,17 @@ export async function GET() {
     const result = {
       tweets: withAnalysis,
       fetchedAt: new Date().toISOString(),
+      source,
       cached: false,
     };
 
     cache = { data: result, at: Date.now() };
     return NextResponse.json(result);
   } catch (e: any) {
-    return NextResponse.json({ error: e.message, tweets: [], fetchedAt: new Date().toISOString() }, { status: 200 });
+    return NextResponse.json({
+      error: e.message,
+      tweets: [],
+      fetchedAt: new Date().toISOString(),
+    }, { status: 200 });
   }
 }
