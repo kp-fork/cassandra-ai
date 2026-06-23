@@ -8,7 +8,7 @@ const STOCKS = [
   { symbol: "SPCE",  name: "Virgin Galactic",       group: "pure_space" },
   { symbol: "RDW",   name: "Redwire",               group: "pure_space" },
   { symbol: "ASTR",  name: "Astra Space",           group: "pure_space" },
-  { symbol: "UFO",   name: "Procure Space ETF",     group: "etf"        },
+  { symbol: "SPCX",  name: "SpaceX",                group: "pure_space" },
   { symbol: "ARKX",  name: "ARK Space ETF",         group: "etf"        },
   { symbol: "LMT",   name: "Lockheed Martin",       group: "defense"    },
   { symbol: "NOC",   name: "Northrop Grumman",      group: "defense"    },
