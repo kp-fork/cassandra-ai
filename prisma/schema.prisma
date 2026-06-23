@@ -416,3 +416,30 @@ model MuHynixPrediction {
 
   @@unique([date])
 }
+
+// ─── 우주항공 퀀트 스냅샷 ───
+model SpaceXQuant {
+  id         String   @id @default(uuid())
+  symbol     String   @unique
+  name       String
+  group      String   // "pure_space" | "etf" | "defense"
+  price      Float?
+  change1d   Float?
+  change5d   Float?
+  volume     BigInt?
+  avgVolume  BigInt?
+  high52w    Float?
+  low52w     Float?
+  williamsR  Float?   // Williams %R 14-period
+  rsi14      Float?
+  sma20      Float?
+  sma50      Float?
+  momentum20 Float?   // 20-day price momentum %
+  score      Float?   // -3 to +3 quant score
+  signal     String?  // BUY | HOLD | SELL | AVOID
+  ohlcv      Json?    // last 60 days OHLCV
+  updatedAt  DateTime @default(now())
+
+  @@index([group])
+  @@index([updatedAt])
+}

@@ -1,0 +1,21 @@
+name: SpaceX Quant Refresh
+
+on:
+  schedule:
+    # 미국 동부시간 기준 (EST = UTC-5, EDT = UTC-4)
+    # 장 마감 후: 16:05 EDT = 20:05 UTC
+    - cron: "5 20 * * 1-5"
+    # 장 개장 30분 후: 10:00 EDT = 14:00 UTC
+    - cron: "0 14 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh SpaceX Quant Data
+        run: |
+          curl -s -X POST \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            https://dart-monitor-pi.vercel.app/api/spacex \
+            | jq .

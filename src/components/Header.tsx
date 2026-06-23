@@ -55,6 +55,9 @@ export default function Header() {
         </a>
         <nav className="flex items-center gap-2 text-xs">
           {btn("/dashboard", "코스닥 시그널")}
+          <a href="/spacex" className={`px-3 py-1.5 rounded-lg border transition-colors text-xs ${
+            pathname === "/spacex" ? "bg-[#3b82f6]/10 border-[#3b82f6]/30 text-[#3b82f6]" : "bg-[var(--bg)] border-[var(--border)] hover:border-[#3b82f6] hover:text-[#3b82f6]"
+          }`}>🚀 SpaceX</a>
           <a href="/quant" className="px-3 py-1.5 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--accent-glow)] hover:bg-[var(--accent)]/20 transition-colors text-xs">
             퀀트 대시보드
           </a>
