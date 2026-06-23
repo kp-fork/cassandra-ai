@@ -18,6 +18,34 @@ const STOCKS = [
 
 const CACHE_TTL_MS = 4 * 60 * 60 * 1000; // 4시간
 
+// 테이블 없으면 자동 생성
+async function ensureTable() {
+  await prisma.$executeRawUnsafe(`
+    CREATE TABLE IF NOT EXISTS "SpaceXQuant" (
+      "id"         TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+      "symbol"     TEXT UNIQUE NOT NULL,
+      "name"       TEXT NOT NULL,
+      "group"      TEXT NOT NULL,
+      "price"      DOUBLE PRECISION,
+      "change1d"   DOUBLE PRECISION,
+      "change5d"   DOUBLE PRECISION,
+      "volume"     BIGINT,
+      "avgVolume"  BIGINT,
+      "high52w"    DOUBLE PRECISION,
+      "low52w"     DOUBLE PRECISION,
+      "williamsR"  DOUBLE PRECISION,
+      "rsi14"      DOUBLE PRECISION,
+      "sma20"      DOUBLE PRECISION,
+      "sma50"      DOUBLE PRECISION,
+      "momentum20" DOUBLE PRECISION,
+      "score"      DOUBLE PRECISION,
+      "signal"     TEXT,
+      "ohlcv"      JSONB,
+      "updatedAt"  TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+}
+
 // Yahoo Finance에서 OHLCV 가져오기
 async function fetchOHLCV(symbol: string) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=3mo&interval=1d`;
@@ -189,6 +217,7 @@ function serializeStocks(rows: any[]) {
 // GET: 캐시된 데이터 반환 (4시간 이내면 바로, 아니면 갱신)
 export async function GET(req: NextRequest) {
   try {
+    await ensureTable();
     const force = req.nextUrl.searchParams.get("refresh") === "1";
 
     const cached = await prisma.spaceXQuant.findMany({ orderBy: { group: "asc" } });
