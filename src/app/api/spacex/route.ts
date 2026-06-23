@@ -177,21 +177,34 @@ async function refreshAll() {
   return results;
 }
 
+// BigInt → Number 변환 (JSON 직렬화 오류 방지)
+function serializeStocks(rows: any[]) {
+  return rows.map(r => ({
+    ...r,
+    volume:    r.volume    != null ? Number(r.volume)    : null,
+    avgVolume: r.avgVolume != null ? Number(r.avgVolume) : null,
+  }));
+}
+
 // GET: 캐시된 데이터 반환 (4시간 이내면 바로, 아니면 갱신)
 export async function GET(req: NextRequest) {
-  const force = req.nextUrl.searchParams.get("refresh") === "1";
+  try {
+    const force = req.nextUrl.searchParams.get("refresh") === "1";
 
-  const cached = await prisma.spaceXQuant.findMany({ orderBy: { group: "asc" } });
-  const stale  = cached.length < STOCKS.length ||
-    cached.some(r => Date.now() - new Date(r.updatedAt).getTime() > CACHE_TTL_MS);
+    const cached = await prisma.spaceXQuant.findMany({ orderBy: { group: "asc" } });
+    const stale  = cached.length < STOCKS.length ||
+      cached.some(r => Date.now() - new Date(r.updatedAt).getTime() > CACHE_TTL_MS);
 
-  if (force || stale) {
-    await refreshAll();
-    const fresh = await prisma.spaceXQuant.findMany({ orderBy: { group: "asc" } });
-    return NextResponse.json({ stocks: fresh, refreshed: true });
+    if (force || stale) {
+      await refreshAll();
+      const fresh = await prisma.spaceXQuant.findMany({ orderBy: { group: "asc" } });
+      return NextResponse.json({ stocks: serializeStocks(fresh), refreshed: true });
+    }
+
+    return NextResponse.json({ stocks: serializeStocks(cached), refreshed: false });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
-
-  return NextResponse.json({ stocks: cached, refreshed: false });
 }
 
 // POST: GitHub Actions 크론에서 호출 (강제 갱신)
