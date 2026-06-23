@@ -24,17 +24,18 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 /* ── DCA 백테스트 계산 ── */
 function calcDCA(monthlyKrw: number, years: number, cagr: number): number {
-  // 월복리 DCA: FV = PMT * [((1+r)^n - 1) / r]
   const r = cagr / 100 / 12;
   const n = years * 12;
   if (r === 0) return monthlyKrw * n;
   return monthlyKrw * ((Math.pow(1 + r, n) - 1) / r);
 }
 
+// 레버리지별 시나리오 — 역사적 CAGR 기반 (2010-2026)
 const DCA_SCENARIOS = [
-  { label: "보수적", cagr: 8,  color: "#64748b", desc: "QQQ 위주 장기 보유" },
-  { label: "기본",   cagr: 15, color: "#3b82f6", desc: "QQQ+TQQQ 혼합 DCA" },
-  { label: "공격적", cagr: 22, color: "#22c55e", desc: "TQQQ 딥바잉 집중" },
+  { label: "QQQ (1x)",   cagr: 13, color: "#64748b", instrument: "QQQ",  desc: "나스닥100 직접 투자 · 변동성 감쇄 없음", leverage: 1 },
+  { label: "QLD (2x)",   cagr: 19, color: "#3b82f6", instrument: "QLD",  desc: "2배 레버리지 · 중간 리스크", leverage: 2 },
+  { label: "TQQQ (3x)",  cagr: 24, color: "#22c55e", instrument: "TQQQ", desc: "3배 레버리지 · 딥바잉 집중 · 고위험", leverage: 3 },
+  { label: "혼합 DCA",   cagr: 17, color: "#a78bfa", instrument: "MIX",  desc: "QQQ 40%+QLD 30%+TQQQ 30%", leverage: 2 },
 ];
 const DCA_AMOUNTS  = [100, 200, 300, 500]; // 만원
 const DCA_YEARS    = [5, 10, 15, 20];
@@ -289,7 +290,7 @@ function LogForm({ onAdd }: { onAdd: () => void }) {
           <label className="text-[9px] text-[var(--text-muted)]">종목</label>
           <select value={form.symbol} onChange={e => set("symbol", e.target.value)}
             className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-[11px] focus:outline-none focus:border-[var(--accent)]">
-            {["TQQQ","QQQ","TLT","IEF"].map(s => <option key={s}>{s}</option>)}
+            {["TQQQ","QLD","QQQ","TLT","IEF"].map(s => <option key={s}>{s}</option>)}
           </select>
         </div>
         <div className="space-y-1">
@@ -328,7 +329,7 @@ function LogForm({ onAdd }: { onAdd: () => void }) {
 
 /* ── 평단 요약 ── */
 function HoldingsSummary({ logs, quotes }: { logs: any[]; quotes: any }) {
-  const symbols = ["TQQQ", "QQQ", "TLT", "IEF"];
+  const symbols = ["TQQQ", "QLD", "QQQ", "TLT", "IEF"];
   const holdings = symbols.map(sym => {
     const rows = logs.filter(l => l.symbol === sym);
     if (!rows.length) return null;
@@ -441,45 +442,69 @@ function LogTable({ logs, onDelete }: { logs: any[]; onDelete: (id: string) => v
 
 /* ── DCA 백테스트 테이블 ── */
 function BacktestTable() {
-  const [scenario, setScenario] = useState(1); // 기본
+  const [scenario, setScenario] = useState(1); // QLD 기본
   const sc = DCA_SCENARIOS[scenario];
+
+  // 변동성 감쇄 경고 문구
+  const decayWarn: Record<number, string> = {
+    1: "1x — 변동성 감쇄 없음. 장기 보유에 가장 안정적.",
+    2: "2x — 장기 횡보 시 연 2~4%p 내외 감쇄 발생. 상승장에서 효과적.",
+    3: "3x — 장기 횡보·하락 시 감쇄 심각. 딥바잉+익절 조합 필수.",
+  };
+
   return (
-    <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4 space-y-3">
+    <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="text-xs font-bold flex items-center gap-1.5"><BarChart2 className="w-3.5 h-3.5" /> DCA 장기 시뮬레이션 (월 정기 투자)</h3>
-        <div className="flex gap-1">
+        <h3 className="text-xs font-bold flex items-center gap-1.5"><BarChart2 className="w-3.5 h-3.5" /> 레버리지 시나리오 비교 — DCA 장기 시뮬레이션</h3>
+        <div className="flex gap-1 flex-wrap">
           {DCA_SCENARIOS.map((s, i) => (
             <button key={i} onClick={() => setScenario(i)}
               className={`px-2 py-1 rounded text-[10px] border transition-colors ${i === scenario ? "font-bold" : "text-[var(--text-muted)]"}`}
               style={{ borderColor: i === scenario ? s.color : "var(--border)", color: i === scenario ? s.color : undefined, background: i === scenario ? `${s.color}15` : undefined }}>
-              {s.label} ({s.cagr}%)
+              {s.label}
             </button>
           ))}
         </div>
       </div>
-      <p className="text-[10px] text-[var(--text-muted)]">{sc.desc} · 연 {sc.cagr}% CAGR 가정 · 세금/수수료 미반영</p>
+
+      {/* 선택 시나리오 설명 */}
+      <div className="rounded-lg border p-3 space-y-1" style={{ borderColor: `${sc.color}40`, background: `${sc.color}08` }}>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-bold" style={{ color: sc.color }}>{sc.label}</span>
+          <span className="text-[10px] border rounded-full px-2 py-0.5" style={{ color: sc.color, borderColor: `${sc.color}50` }}>연 {sc.cagr}% CAGR 가정</span>
+          {sc.leverage > 1 && <span className="text-[10px] text-[#f59e0b] border border-[#f59e0b]/40 rounded-full px-2 py-0.5">{sc.leverage}x 레버리지</span>}
+        </div>
+        <p className="text-[11px] text-[var(--text-muted)]">{sc.desc}</p>
+        <p className="text-[10px] text-[#f59e0b]/80">{decayWarn[sc.leverage]}</p>
+      </div>
+
+      {/* 월 투자금별 결과 테이블 */}
       <div className="overflow-x-auto">
         <table className="w-full text-[11px]">
           <thead className="border-b border-[var(--border)]">
             <tr className="text-[var(--text-muted)]">
               <th className="text-left pb-2 pr-4">월 투자금</th>
+              <th className="text-left pb-2 pr-4 text-[9px]">총 납입</th>
               {DCA_YEARS.map(y => <th key={y} className="text-right pb-2 px-2">{y}년</th>)}
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)]">
             {DCA_AMOUNTS.map(amt => {
-              const total = amt * 10_000; // 만원 → 원
+              const monthly = amt * 10_000;
               return (
                 <tr key={amt}>
-                  <td className="py-2 pr-4 font-bold">{amt}만원/월</td>
+                  <td className="py-2 pr-4 font-bold">{amt}만원</td>
+                  <td className="py-2 pr-4 text-[var(--text-muted)] text-[10px]">
+                    {DCA_YEARS.map(y => `${y}년:${KRW(monthly*y*12)}`).join(" · ")}
+                  </td>
                   {DCA_YEARS.map(y => {
-                    const fv = calcDCA(total, y, sc.cagr);
-                    const invested = total * y * 12;
-                    const gain = fv - invested;
+                    const fv = calcDCA(monthly, y, sc.cagr);
+                    const invested = monthly * y * 12;
+                    const multiple = fv / invested;
                     return (
                       <td key={y} className="py-2 px-2 text-right">
                         <div className="font-mono font-bold" style={{ color: sc.color }}>{KRW(fv)}</div>
-                        <div className="text-[9px] text-[var(--text-muted)]">+{KRW(gain)}</div>
+                        <div className="text-[9px] text-[var(--text-muted)]">{multiple.toFixed(1)}배</div>
                       </td>
                     );
                   })}
@@ -489,18 +514,66 @@ function BacktestTable() {
           </tbody>
         </table>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[var(--border)]">
-        {DCA_SCENARIOS.map((s, i) => (
-          <div key={i} className="text-[10px] space-y-0.5">
-            <div className="font-bold" style={{ color: s.color }}>{s.label} ({s.cagr}%)</div>
-            <div className="text-[var(--text-muted)]">{s.desc}</div>
-            <div className="text-[var(--text-muted)]">200만/월 × 10년 → <span className="text-white font-bold">{KRW(calcDCA(2_000_000, 10, s.cagr))}</span></div>
-          </div>
-        ))}
+
+      {/* 전략별 한눈 비교 (200만원/월 × 10년) */}
+      <div className="pt-3 border-t border-[var(--border)] space-y-2">
+        <p className="text-[10px] text-[var(--text-muted)] font-bold">월 200만원 × 10년 기준 전략 비교</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+          {DCA_SCENARIOS.map((s, i) => {
+            const fv = calcDCA(2_000_000, 10, s.cagr);
+            const inv = 2_000_000 * 120;
+            const mult = fv / inv;
+            return (
+              <div key={i} onClick={() => setScenario(i)} className="cursor-pointer rounded-lg border p-3 space-y-1 transition-colors hover:opacity-90"
+                style={{ borderColor: i === scenario ? s.color : "var(--border)", background: i === scenario ? `${s.color}10` : "var(--bg)" }}>
+                <div className="text-[10px] font-bold" style={{ color: s.color }}>{s.label}</div>
+                <div className="text-base font-bold font-mono">{KRW(fv)}</div>
+                <div className="text-[9px] text-[var(--text-muted)]">납입 {KRW(inv)} → {mult.toFixed(1)}배</div>
+                <div className="text-[9px] text-[var(--text-muted)]">{s.instrument} · CAGR {s.cagr}%</div>
+              </div>
+            );
+          })}
+        </div>
       </div>
+
+      {/* QLD vs TQQQ 특징 비교 */}
+      <div className="pt-3 border-t border-[var(--border)] space-y-2">
+        <p className="text-[10px] font-bold text-[var(--text-muted)]">QLD vs TQQQ 핵심 비교</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[10px]">
+            <thead className="border-b border-[var(--border)]">
+              <tr className="text-[var(--text-muted)]">
+                <th className="text-left pb-1.5 pr-3">항목</th>
+                <th className="text-center pb-1.5 px-3" style={{ color: "#64748b" }}>QQQ (1x)</th>
+                <th className="text-center pb-1.5 px-3" style={{ color: "#3b82f6" }}>QLD (2x)</th>
+                <th className="text-center pb-1.5 px-3" style={{ color: "#22c55e" }}>TQQQ (3x)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[var(--border)]">
+              {[
+                ["레버리지 배수", "1배", "2배", "3배"],
+                ["나스닥 -10% 시", "-10%", "-20%", "-30%"],
+                ["나스닥 +10% 시", "+10%", "+20%", "+30%"],
+                ["변동성 감쇄", "없음", "중간 (~3%/년)", "심함 (~7%/년)"],
+                ["장기 보유 적합성", "최적 ✅", "보통 ⚠️", "단기·딥바잉 ⚠️"],
+                ["DCA 추천 비중", "40%", "30%", "30% (딥바잉 시↑)"],
+                ["하락 시 전략", "유지", "소폭 확대", "트랜치 적극 매수"],
+              ].map(([label, ...vals], ri) => (
+                <tr key={ri}>
+                  <td className="py-1.5 pr-3 text-[var(--text-muted)]">{label}</td>
+                  {vals.map((v, vi) => (
+                    <td key={vi} className="py-1.5 px-3 text-center font-medium">{v}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <p className="text-[9px] text-[var(--text-muted)]">
-        ※ QQQ 역사적 CAGR: ~18% (2010-2026) · TQQQ 딥바잉 시 CAGR 20-25% 추정 · 채권 혼합 시 8-12%
-        · 레버리지 변동성 감쇄(volatility decay) 미반영 — 실제 수익은 낮을 수 있음. 투자 권유 아님.
+        ※ CAGR 추정: QQQ ~13%, QLD ~19%, TQQQ ~24% (2010-2026 강세장 기준) · 변동성 감쇄 반영 시 실제 수익은 낮을 수 있음
+        · 세금(해외주식 22%) 미반영 · 투자 권유 아님.
       </p>
     </div>
   );
@@ -561,7 +634,7 @@ export default function TQQQPage() {
 
   const quotes: Record<string, any> = {
     qqq: mktData?.quotes?.qqq, tqqq: mktData?.quotes?.tqqq,
-    tlt: mktData?.quotes?.tlt, ief: mktData?.quotes?.ief,
+    qld: mktData?.quotes?.qld, tlt: mktData?.quotes?.tlt, ief: mktData?.quotes?.ief,
   };
 
   return (
@@ -590,11 +663,12 @@ export default function TQQQPage() {
         <DailyAction data={mktData} logs={logs} />
 
         {/* 시세 카드 */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <QuoteCard q={quotes.qqq}  label="QQQ" />
-          <QuoteCard q={quotes.tqqq} label="TQQQ" />
-          <QuoteCard q={quotes.tlt}  label="TLT" />
-          <QuoteCard q={quotes.ief}  label="IEF" />
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+          <QuoteCard q={quotes.qqq}  label="QQQ (1x)" />
+          <QuoteCard q={quotes.qld}  label="QLD (2x)" />
+          <QuoteCard q={quotes.tqqq} label="TQQQ (3x)" />
+          <QuoteCard q={quotes.tlt}  label="TLT 장기국채" />
+          <QuoteCard q={quotes.ief}  label="IEF 중기국채" />
         </div>
 
         {/* QQQ 하락 미터 + 트랜치 */}

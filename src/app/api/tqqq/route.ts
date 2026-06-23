@@ -15,7 +15,7 @@ export const TRANCHES = [
   { label: "5차", minDrop: 20, maxDrop: 99, alloc: 0.06, note: "극단 하락 — 최후 예비탄" },
 ];
 
-const SYMBOLS = ["QQQ", "TQQQ", "TLT", "IEF", "^NDX"];
+const SYMBOLS = ["QQQ", "TQQQ", "QLD", "TLT", "IEF", "^NDX"];
 
 async function fetchOHLCV(symbol: string) {
   const encoded = encodeURIComponent(symbol);
@@ -151,6 +151,7 @@ export async function GET(req: Request) {
 
     const qqq   = makeQuote("QQQ");
     const tqqq  = makeQuote("TQQQ");
+    const qld   = makeQuote("QLD");
     const tlt   = makeQuote("TLT");
     const ief   = makeQuote("IEF");
     const ndx   = makeQuote("^NDX");
@@ -167,7 +168,7 @@ export async function GET(req: Request) {
 
     const data = {
       fetchedAt: new Date().toISOString(),
-      quotes: { qqq, tqqq, tlt, ief, ndx },
+      quotes: { qqq, tqqq, qld, tlt, ief, ndx },
       signal,
       reason,
       dropFrom20dHigh: drop,
