@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-24T01:06:21.582Z",
+  "generatedAt": "2026-06-24T10:10:13.991Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,7 +12,7 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 2,
-    "totalSignals": 21,
+    "totalSignals": 22,
     "topRisks": [
       {
         "name": "제이에스링크",

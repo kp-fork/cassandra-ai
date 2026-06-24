@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-24T01:06:21.580Z",
+  "generatedAt": "2026-06-24T10:10:13.991Z",
   "period": {
     "from": "20260617",
     "to": "20260624"
   },
-  "totalCompanies": 39,
-  "totalDisclosures": 67,
+  "totalCompanies": 43,
+  "totalDisclosures": 74,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -345,6 +345,29 @@
       ]
     },
     {
+      "stockCode": "000430",
+      "corpCode": "00111847",
+      "name": "대원강업",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 20,
+          "count": 1,
+          "latestDate": "20260624"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260624",
+          "rceptNo": "20260624800749",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "033310",
       "corpCode": "00143226",
       "name": "엠투엔",
@@ -521,7 +544,7 @@
       "stockCode": "376270",
       "corpCode": "01480708",
       "name": "HEM파마",
-      "totalDisclosures": 3,
+      "totalDisclosures": 4,
       "signals": [
         {
           "rule": "CB발행",
@@ -537,6 +560,12 @@
           "rceptNo": "20260619000658",
           "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
           "type": "B"
+        },
+        {
+          "date": "20260624",
+          "rceptNo": "20260624900759",
+          "title": "단일판매ㆍ공급계약체결              ",
+          "type": "I"
         },
         {
           "date": "20260619",
@@ -804,6 +833,28 @@
       ]
     },
     {
+      "stockCode": "020120",
+      "corpCode": "00140131",
+      "name": "키다리스튜디오",
+      "totalDisclosures": 2,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260624",
+          "rceptNo": "20260624000152",
+          "title": "주요사항보고서(자기주식취득신탁계약체결결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260624",
+          "rceptNo": "20260624000047",
+          "title": "주요사항보고서(자기주식취득신탁계약해지결정)",
+          "type": "B"
+        }
+      ]
+    },
+    {
       "stockCode": "086790",
       "corpCode": "00547583",
       "name": "하나금융지주",
@@ -832,6 +883,22 @@
           "rceptNo": "20260619900494",
           "title": "단일판매ㆍ공급계약체결              ",
           "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "458350",
+      "corpCode": "01379563",
+      "name": "에스팀",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260624",
+          "rceptNo": "20260624000198",
+          "title": "주요사항보고서(자기주식취득신탁계약체결결정)",
+          "type": "B"
         }
       ]
     },
@@ -931,10 +998,16 @@
       "stockCode": "375500",
       "corpCode": "01524093",
       "name": "DL이앤씨",
-      "totalDisclosures": 2,
+      "totalDisclosures": 3,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
+        {
+          "date": "20260624",
+          "rceptNo": "20260624800895",
+          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        },
         {
           "date": "20260622",
           "rceptNo": "20260622800877",
@@ -1069,6 +1142,22 @@
           "date": "20260623",
           "rceptNo": "20260623800205",
           "title": "횡령ㆍ배임혐의발생              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "145170",
+      "corpCode": "00305941",
+      "name": "노브랜드",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260624",
+          "rceptNo": "20260624900453",
+          "title": "자기주식처분결정              ",
           "type": "I"
         }
       ]
