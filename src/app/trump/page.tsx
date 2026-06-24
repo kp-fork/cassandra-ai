@@ -368,10 +368,10 @@ export default function TrumpPage() {
                   {truthPosts.length === 0 ? (
                     <div className="text-center py-8 space-y-2">
                       <div className="text-2xl">🦅</div>
-                      <p className="text-sm text-[var(--text-muted)]">트루스소셜 RSS 직접 접근 불가</p>
+                      <p className="text-sm text-[var(--text-muted)]">트루스소셜 포스트 수집 실패</p>
                       <p className="text-[10px] text-[var(--text-muted)]">
-                        출처: {data?.truthSource ?? "Google News 인용 뉴스"}<br/>
-                        Vercel 서버에서 truthsocial.com 차단 중 — 뉴스 탭에서 인용 내용 확인 가능
+                        Mastodon API · RSS 애그리게이터 모두 응답 없음<br/>
+                        뉴스 탭에서 트럼프 SNS 인용 내용 확인 가능
                       </p>
                     </div>
                   ) : (

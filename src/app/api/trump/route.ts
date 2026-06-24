@@ -47,9 +47,26 @@ const NEWS_QUERIES = [
   "Trump posted Truth Social statement",
 ];
 
-const TRUTH_SOCIAL_RSS = [
+// Truth Social 접근 순서 (빠른 것부터)
+// 1) Mastodon JSON API — 인증 불필요 공개 엔드포인트
+// 2) RSS 애그리게이터 — Vercel 비차단
+// 3) 직접 RSS — 보통 차단됨, 마지막 시도
+const TRUTH_SOCIAL_JSON_API = "https://truthsocial.com/api/v1/accounts/107780257626128497/statuses?limit=10&exclude_replies=true";
+
+const TRUTH_SOCIAL_RSS_SOURCES = [
+  "https://www.trumpstruth.org/feed",           // Trump's Truth 아카이브 RSS
   "https://truthsocial.com/@realDonaldTrump.rss",
   "https://rss.truthsocial.com/@realDonaldTrump",
+];
+
+// Yahoo News RSS (Trump Truth Social 인용)
+const YAHOO_NEWS_QUERIES = [
+  "https://news.yahoo.com/rss/",  // 정치 섹션 기본
+];
+
+const YAHOO_NEWS_SEARCH = [
+  "Trump Truth Social",
+  "Trump announcement today",
 ];
 
 // ─── 유틸 ───
@@ -71,16 +88,19 @@ function hashTitle(title: string) {
   return Math.abs(h).toString(36);
 }
 
-async function tryFetch(url: string, timeout = 6000): Promise<string | null> {
+async function tryFetchText(url: string, timeout = 6000, ua?: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1)", "Accept": "application/rss+xml, */*" },
+      headers: {
+        "User-Agent": ua ?? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+        "Accept": "application/rss+xml, application/json, application/xml, text/xml, */*",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
       signal: AbortSignal.timeout(timeout),
       next: { revalidate: 0 },
     });
     if (!res.ok) return null;
-    const text = await res.text();
-    return (text.includes("<item>") || text.includes("<entry>")) ? text : null;
+    return await res.text();
   } catch { return null; }
 }
 
@@ -99,27 +119,83 @@ function parseRssItems(xml: string, limit = 8) {
   return items;
 }
 
-// ─── 수집 ───
-async function fetchTruthSocial() {
-  for (const url of TRUTH_SOCIAL_RSS) {
-    const xml = await tryFetch(url, 4000);
-    if (xml) {
-      const items = parseRssItems(xml, 8);
-      if (items.length) return { items, source: "Truth Social" };
+// Mastodon JSON API → RSS 형식 변환
+function mastodonToItems(posts: any[]): { title: string; text: string; date: string; link: string }[] {
+  return posts
+    .filter(p => p.content || p.reblog?.content)
+    .map(p => {
+      const content = stripHtml(decodeHtml(p.content ?? p.reblog?.content ?? ""));
+      return {
+        title: content.slice(0, 100) + (content.length > 100 ? "…" : ""),
+        text:  content.slice(0, 350),
+        date:  p.created_at ?? "",
+        link:  p.url ?? `https://truthsocial.com/@realDonaldTrump/${p.id}`,
+      };
+    })
+    .filter(i => i.title);
+}
+
+// ─── Truth Social 수집 (3단계 폴백) ───
+async function fetchTruthSocial(): Promise<{ items: any[]; source: string } | null> {
+  // 1단계: Mastodon JSON API (인증 없이 공개 계정 접근)
+  try {
+    const text = await tryFetchText(TRUTH_SOCIAL_JSON_API, 5000);
+    if (text) {
+      const posts = JSON.parse(text);
+      if (Array.isArray(posts) && posts.length > 0) {
+        const items = mastodonToItems(posts);
+        if (items.length > 0) return { items, source: "Truth Social (Mastodon API)" };
+      }
+    }
+  } catch {}
+
+  // 2단계: RSS 애그리게이터 + 직접 RSS 순차 시도
+  for (const url of TRUTH_SOCIAL_RSS_SOURCES) {
+    const text = await tryFetchText(url, 5000);
+    if (text && (text.includes("<item>") || text.includes("<entry>"))) {
+      const items = parseRssItems(text, 10);
+      if (items.length > 0) {
+        const sourceName = url.includes("trumpstruth") ? "Trump's Truth 아카이브" : "Truth Social RSS";
+        return { items, source: sourceName };
+      }
     }
   }
+
   return null;
+}
+
+// ─── Yahoo News RSS 수집 ───
+async function fetchYahooNews(): Promise<{ title: string; text: string; date: string; link: string; source: string }[]> {
+  const all: { title: string; text: string; date: string; link: string; source: string }[] = [];
+  await Promise.allSettled(
+    YAHOO_NEWS_SEARCH.map(async (q) => {
+      // Yahoo News는 검색 RSS를 직접 지원하지 않으므로 Google News Yahoo 관련 쿼리 활용
+      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q + " site:yahoo.com OR site:finance.yahoo.com")}&hl=en-US&gl=US&ceid=US:en`;
+      const text = await tryFetchText(url, 6000);
+      if (text && text.includes("<item>")) {
+        parseRssItems(text, 4).forEach(i => all.push({ ...i, source: `Yahoo News: ${q}` }));
+      }
+    })
+  );
+  return all;
 }
 
 async function fetchAllNews() {
   const all: { title: string; text: string; date: string; link: string; source: string }[] = [];
-  await Promise.allSettled(
-    NEWS_QUERIES.map(async (q) => {
+
+  // Google News + Yahoo News 병렬
+  await Promise.allSettled([
+    // Google News
+    ...NEWS_QUERIES.map(async (q) => {
       const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`;
-      const xml = await tryFetch(url, 6000);
-      if (xml) parseRssItems(xml, 5).forEach(i => all.push({ ...i, source: q }));
-    })
-  );
+      const text = await tryFetchText(url, 6000);
+      if (text && text.includes("<item>")) {
+        parseRssItems(text, 5).forEach(i => all.push({ ...i, source: `Google: ${q}` }));
+      }
+    }),
+    // Yahoo News (Trump Truth Social 인용)
+    fetchYahooNews().then(items => all.push(...items)),
+  ]);
   const seen = new Set<string>();
   return all
     .filter(i => { const k = i.title.slice(0, 60); if (seen.has(k)) return false; seen.add(k); return true; })
