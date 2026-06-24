@@ -24,15 +24,28 @@ interface Analysis {
   nextCatalyst: string;
 }
 
+interface Item {
+  title: string;
+  titleKo: string;
+  text: string;
+  summaryKo: string;
+  date: string;
+  link: string;
+  source: string;
+  type: "news" | "truth";
+  hash: string;
+}
+
 interface TrumpData {
   generatedAt: string;
-  truthPosts: { title: string; text: string; date: string; link: string }[];
   truthSource: string | null;
-  newsItems: { title: string; text: string; date: string; source: string; link: string }[];
+  items: Item[];
   analysis: Analysis;
   analysisError?: string | null;
   fromCache?: boolean;
   cachedSecondsAgo?: number;
+  newItemsFound?: number;
+  noNewContent?: boolean;
   stale?: boolean;
   error?: string;
 }
@@ -101,6 +114,8 @@ export default function TrumpPage() {
 
   const picks = data?.analysis?.picks ?? [];
   const analysis = data?.analysis;
+  const newsItems  = data?.items?.filter(i => i.type === "news")  ?? [];
+  const truthPosts = data?.items?.filter(i => i.type === "truth") ?? [];
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
@@ -119,9 +134,13 @@ export default function TrumpPage() {
           <div className="flex items-center gap-2">
             {data && (
               <span className="text-[10px] text-[var(--text-muted)]">
-                {data.fromCache ? `캐시 ${data.cachedSecondsAgo ? Math.floor(data.cachedSecondsAgo / 60) + "분 전" : ""}` : "실시간"}
+                {data.noNewContent
+                  ? "변동 없음 · 캐시 유지"
+                  : data.fromCache
+                    ? `캐시 ${data.cachedSecondsAgo ? Math.floor(data.cachedSecondsAgo / 60) + "분 전" : ""}`
+                    : `신규 ${data.newItemsFound ?? 0}건 분석`}
                 {data.stale && " ⚠️ 오래된 캐시"}
-                {" · 갱신: "}{timeAgo(data.generatedAt)}
+                {" · "}{timeAgo(data.generatedAt)}
               </span>
             )}
             <button
@@ -234,9 +253,9 @@ export default function TrumpPage() {
               {/* 탭 헤더 */}
               <div className="flex border-b border-[var(--border)]">
                 {[
-                  { key: "picks", label: `📊 종목 픽 (${picks.length})`, },
-                  { key: "news",  label: `📰 뉴스 (${data?.newsItems?.length ?? 0})` },
-                  { key: "truth", label: `🦅 트루스소셜 (${data?.truthPosts?.length ?? 0})` },
+                  { key: "picks", label: `📊 종목 픽 (${picks.length})` },
+                  { key: "news",  label: `📰 뉴스 (${newsItems.length})` },
+                  { key: "truth", label: `🦅 트루스소셜 (${truthPosts.length})` },
                 ].map(({ key, label }) => (
                   <button
                     key={key}
@@ -306,26 +325,34 @@ export default function TrumpPage() {
               {/* ─── 뉴스 탭 ─── */}
               {tab === "news" && (
                 <div className="divide-y divide-[var(--border)]">
-                  {(data?.newsItems ?? []).length === 0 ? (
+                  {newsItems.length === 0 ? (
                     <p className="text-sm text-[var(--text-muted)] text-center py-8">뉴스 없음</p>
                   ) : (
-                    (data?.newsItems ?? []).map((n, i) => (
+                    newsItems.map((n, i) => (
                       <div key={i} className="px-4 py-3 hover:bg-[var(--bg)] transition-colors">
                         <div className="flex items-start gap-2">
                           <Globe className="w-3.5 h-3.5 text-[var(--text-muted)] mt-0.5 shrink-0" />
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
+                            {/* 한국어 제목 (있으면 우선) */}
                             {n.link ? (
                               <a href={n.link} target="_blank" rel="noopener noreferrer"
-                                className="text-xs font-semibold hover:text-[#f87171] transition-colors line-clamp-2">
-                                {n.title}
+                                className="text-xs font-semibold hover:text-[#f87171] transition-colors block">
+                                {n.titleKo || n.title}
                               </a>
                             ) : (
-                              <p className="text-xs font-semibold">{n.title}</p>
+                              <p className="text-xs font-semibold">{n.titleKo || n.title}</p>
                             )}
-                            {n.text && <p className="text-[10px] text-[var(--text-muted)] mt-0.5 line-clamp-2">{n.text}</p>}
+                            {/* 원문 제목 (한국어가 있을 때만 원문 표시) */}
+                            {n.titleKo && (
+                              <p className="text-[9px] text-[var(--text-muted)] mt-0.5 italic">{n.title}</p>
+                            )}
+                            {/* 한국어 요약 */}
+                            {n.summaryKo && (
+                              <p className="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">{n.summaryKo}</p>
+                            )}
                             <div className="flex items-center gap-2 mt-1">
                               <span className="text-[9px] text-[var(--text-muted)]">{timeAgo(n.date)}</span>
-                              <span className="text-[9px] text-[#6c5ce7]">{n.source}</span>
+                              <span className="text-[9px] text-[#6c5ce7] truncate">{n.source}</span>
                             </div>
                           </div>
                         </div>
@@ -338,12 +365,13 @@ export default function TrumpPage() {
               {/* ─── 트루스소셜 탭 ─── */}
               {tab === "truth" && (
                 <div className="p-4">
-                  {(data?.truthPosts ?? []).length === 0 ? (
-                    <div className="text-center py-8">
-                      <div className="text-2xl mb-2">🦅</div>
-                      <p className="text-sm text-[var(--text-muted)]">트루스소셜 RSS 접근 불가</p>
-                      <p className="text-[10px] text-[var(--text-muted)] mt-1">
-                        서버 환경에서 truthsocial.com RSS 차단 중 — 뉴스 탭에서 트럼프 SNS 관련 내용 확인 가능
+                  {truthPosts.length === 0 ? (
+                    <div className="text-center py-8 space-y-2">
+                      <div className="text-2xl">🦅</div>
+                      <p className="text-sm text-[var(--text-muted)]">트루스소셜 RSS 직접 접근 불가</p>
+                      <p className="text-[10px] text-[var(--text-muted)]">
+                        출처: {data?.truthSource ?? "Google News 인용 뉴스"}<br/>
+                        Vercel 서버에서 truthsocial.com 차단 중 — 뉴스 탭에서 인용 내용 확인 가능
                       </p>
                     </div>
                   ) : (
@@ -352,18 +380,26 @@ export default function TrumpPage() {
                         <MessageSquare className="w-3 h-3" />
                         출처: {data?.truthSource}
                       </div>
-                      {data?.truthPosts.map((p, i) => (
+                      {truthPosts.map((p, i) => (
                         <div key={i} className="rounded-lg bg-[var(--bg)] border border-[var(--border)] p-3">
                           <div className="flex items-start gap-2">
                             <div className="w-7 h-7 rounded-full bg-[#dc2626]/20 flex items-center justify-center text-sm shrink-0">🇺🇸</div>
-                            <div>
-                              <div className="flex items-center gap-2">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <span className="text-xs font-bold text-[#f87171]">Donald J. Trump</span>
                                 <span className="text-[9px] text-[var(--text-muted)]">@realDonaldTrump</span>
                                 <span className="text-[9px] text-[var(--text-muted)]">{timeAgo(p.date)}</span>
                               </div>
-                              {p.title && <p className="text-xs font-semibold mt-1">{p.title}</p>}
-                              {p.text && <p className="text-[11px] text-[var(--text-muted)] mt-0.5 leading-relaxed">{p.text}</p>}
+                              {/* 한국어 요약 */}
+                              {p.titleKo && <p className="text-xs font-semibold mt-1.5">{p.titleKo}</p>}
+                              {p.summaryKo && <p className="text-[11px] text-[var(--text-muted)] mt-0.5 leading-relaxed">{p.summaryKo}</p>}
+                              {/* 원문 */}
+                              {(p.title || p.text) && (
+                                <details className="mt-1.5">
+                                  <summary className="text-[9px] text-[var(--text-muted)] cursor-pointer hover:text-[var(--text)]">원문 보기</summary>
+                                  <p className="text-[10px] text-[var(--text-muted)] mt-1 italic leading-relaxed">{p.title} {p.text}</p>
+                                </details>
+                              )}
                             </div>
                           </div>
                         </div>
