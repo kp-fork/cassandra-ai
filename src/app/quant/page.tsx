@@ -6,34 +6,15 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, 
 
 const TOOLTIP_STYLE = { backgroundColor: "#1a1a2e", border: "1px solid #333", borderRadius: 6, color: "#fff", fontSize: 12 };
 
-// ─── 더미 데이터 (fallback) ───
-const regimeData = [
-  { date: "06/01", regime: 2 }, { date: "06/03", regime: 2 }, { date: "06/05", regime: 1 },
-  { date: "06/07", regime: 2 }, { date: "06/09", regime: 2 }, { date: "06/11", regime: 3 },
-];
-
-const momentumData = [
-  { date: "06/01", amqs: 100, m7: 102 }, { date: "06/03", amqs: 103, m7: 105 },
-  { date: "06/05", amqs: 107, m7: 110 }, { date: "06/07", amqs: 112, m7: 118 },
-  { date: "06/09", amqs: 108, m7: 114 }, { date: "06/11", amqs: 115, m7: 122 },
-];
-
-// AMQS-M7 개별 종목 (하드코딩 — 추후 API 연동)
-const amqsStocks = [
-  { name: "엔비디아", score: 92, weight: "25%", signal: "매수" },
-  { name: "TSMC", score: 88, weight: "20%", signal: "매수" },
-  { name: "SK하이닉스", score: 82, weight: "18%", signal: "매수" },
-  { name: "삼성전자", score: 75, weight: "15%", signal: "매수" },
-  { name: "ASML", score: 70, weight: "12%", signal: "관망" },
-  { name: "AMD", score: 62, weight: "10%", signal: "관망" },
-];
-
-const ardsStocks = [
-  { name: "AMQS-M7 Long", score: 65, signal: "매수", desc: "AI 반도체 모멘텀" },
-  { name: "KOSDAQ150 인버스", score: 35, signal: "헤지", desc: "하락장 방어" },
-  { name: "국고채 10년", score: 15, signal: "안전", desc: "무위험 자산" },
-  { name: "금 현물", score: 10, signal: "안전", desc: "인플레이션 헤지" },
-];
+// 레짐 색상
+const REGIME_COLOR: Record<number, string> = { 0:"#ef4444", 1:"#f59e0b", 2:"#6c5ce7", 3:"#22c55e" };
+const REGIME_LABEL: Record<number, string> = { 0:"하락", 1:"횡보", 2:"상승", 3:"급등" };
+const SIG_STYLE: Record<string, string> = {
+  BUY:  "bg-[#22c55e]/10 text-[#22c55e]",
+  SELL: "bg-[#ef4444]/10 text-[#ef4444]",
+  HOLD: "bg-[#f59e0b]/10 text-[#f59e0b]",
+  "—":  "bg-[var(--border)] text-[var(--text-muted)]",
+};
 
 interface StockData {
   name: string; code: string; price: string; change: string; changePercent: number;
@@ -71,6 +52,7 @@ export default function QuantDashboard() {
   // 실시간 데이터
   const [regimeStocks, setRegimeStocks] = useState<{ name: string; score: number; signal: string; color: string }[]>([]);
   const [cacheInfo, setCacheInfo] = useState("");
+  const [quantRT, setQuantRT] = useState<any>(null); // ARDS-X + AMQS + ARDS 실시간
   const [sectorData, setSectorData] = useState<{ marketAvg: number; marketStatus: string; sectors: any[] } | null>(null);
   const [muHynixData, setMuHynixData] = useState<{ prediction: any; backtest: any } | null>(null);
   const [marketOverview, setMarketOverview] = useState<any>(null);
@@ -128,6 +110,10 @@ export default function QuantDashboard() {
     const shuffled = [...hookMessages].sort(() => Math.random() - 0.5);
     setHookMsg(shuffled.slice(0, count).join("\n"));
     fetchQuantData(false);
+    // ARDS-X + AMQS + ARDS 실시간
+    fetch("/api/quant").then(r => r.json()).then(d => {
+      if (d.ardsX || d.amqs) setQuantRT(d);
+    }).catch(() => {});
     // 섹터 공포·탐욕 지수
     fetch("/api/sector-fear-greed").then(r => r.json()).then(d => {
       if (d.sectors?.length) setSectorData(d);
@@ -381,126 +367,193 @@ export default function QuantDashboard() {
 
         {/* 3. ARDS-X Regime Classifier */}
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-          <h2 className="text-sm font-bold flex items-center gap-2 mb-3"><BarChart3 className="w-4 h-4 text-[var(--accent-glow)]" /> 시장 국면 판단 (ARDS-X)</h2>
-          <ResponsiveContainer width="100%" height={100}>
-            <LineChart data={regimeData}>
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#888" }} />
-              <YAxis domain={[0, 4]} tick={{ fontSize: 10, fill: "#888" }} />
-              <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={{ color: "#fff", fontWeight: 600 }} />
-              <Line type="monotone" dataKey="regime" stroke="#6c5ce7" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-          <div className="flex justify-between text-[10px] mt-1">
-            <span className="text-[#ef4444]">0:하락</span><span className="text-[var(--text-muted)]">1:횡보</span><span className="text-[var(--accent-glow)]">2:상승</span><span className="text-[#22c55e]">3:급등</span>
-          </div>
-
-          {/* 개별 종목 평가 (실시간) */}
-          <div className="mt-3">
-            <h4 className="text-[10px] font-semibold text-[var(--text-muted)] mb-1">📊 개별 종목 시그널</h4>
-            {loading && !regimeStocks.length ? (
-              <p className="text-[10px] text-[var(--text-muted)]">로딩 중...</p>
-            ) : regimeStocks.length > 0 ? (
-              <ResponsiveContainer width="100%" height={100}>
-                <BarChart data={regimeStocks} layout="vertical" margin={{ left: 90 }}>
-                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "#888" }} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "#e4e4f0" }} width={85} />
-                  <Tooltip
-                    contentStyle={TOOLTIP_STYLE}
-                    formatter={(value: any) => [`${value}점`, "스코어"]}
-                    labelStyle={{ color: "#fff", fontWeight: 600 }}
-                  />
-                  <Bar dataKey="score" radius={[0, 4, 4, 0]}>
-                    {regimeStocks.map((s, i) => <Cell key={i} fill={s.color} />)}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-[10px] text-[var(--text-muted)]">데이터 없음</p>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold flex items-center gap-2"><BarChart3 className="w-4 h-4 text-[var(--accent-glow)]" /> 시장 국면 판단 (ARDS-X)</h2>
+            {quantRT?.ardsX && (
+              <span className="text-[10px] text-[var(--text-muted)]">
+                갱신: {new Date(quantRT.generatedAt).toLocaleString("ko-KR")} · Yahoo Finance
+              </span>
             )}
           </div>
 
-          <p className="text-[10px] text-[var(--text-muted)] mt-2 leading-relaxed">
-            <strong>ARDS-X</strong>는 NASDAQ Top 100의 변동성·거래량·모멘텀을 결합하여 시장 국면을 4단계로 분류합니다.
-            상승 국면에서는 공격적 비중, 하락 국면에서는 현금 비중을 늘리는 전략을 제안합니다.
+          {/* 현재 레짐 요약 */}
+          {quantRT?.ardsX ? (() => {
+            const ax = quantRT.ardsX;
+            const rc = REGIME_COLOR[ax.regime] ?? "#6c5ce7";
+            return (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="rounded-lg p-2 text-center border" style={{ borderColor: `${rc}60`, background: `${rc}10` }}>
+                    <div className="text-[9px] text-[var(--text-muted)]">현재 국면</div>
+                    <div className="text-base font-bold mt-0.5" style={{ color: rc }}>{REGIME_LABEL[ax.regime]}</div>
+                    <div className="text-[9px]" style={{ color: rc }}>{ax.signal}</div>
+                  </div>
+                  <div className="rounded-lg p-2 text-center bg-[var(--bg)] border border-[var(--border)]">
+                    <div className="text-[9px] text-[var(--text-muted)]">VIX</div>
+                    <div className={`text-base font-bold mt-0.5 ${ax.vix > 25 ? "text-[#ef4444]" : ax.vix < 15 ? "text-[#22c55e]" : "text-[#f59e0b]"}`}>{ax.vix}</div>
+                    <div className="text-[9px] text-[var(--text-muted)]">{ax.vix > 25 ? "공포" : ax.vix < 15 ? "안정" : "중립"}</div>
+                  </div>
+                  <div className="rounded-lg p-2 text-center bg-[var(--bg)] border border-[var(--border)]">
+                    <div className="text-[9px] text-[var(--text-muted)]">RSI(14)</div>
+                    <div className={`text-base font-bold mt-0.5 ${ax.rsi < 30 ? "text-[#22c55e]" : ax.rsi > 70 ? "text-[#ef4444]" : "text-white"}`}>{ax.rsi?.toFixed(0)}</div>
+                    <div className="text-[9px] text-[var(--text-muted)]">{ax.rsi < 30 ? "과매도" : ax.rsi > 70 ? "과매수" : "중립"}</div>
+                  </div>
+                  <div className="rounded-lg p-2 text-center bg-[var(--bg)] border border-[var(--border)]">
+                    <div className="text-[9px] text-[var(--text-muted)]">20일 고점↓</div>
+                    <div className={`text-base font-bold mt-0.5 ${Math.abs(ax.drawdown20) > 5 ? "text-[#ef4444]" : "text-white"}`}>{ax.drawdown20?.toFixed(1)}%</div>
+                    <div className="text-[9px] text-[var(--text-muted)]">QQQ 기준</div>
+                  </div>
+                </div>
+
+                {/* 레짐 히스토리 차트 */}
+                {ax.history?.length > 0 && (
+                  <ResponsiveContainer width="100%" height={80}>
+                    <LineChart data={ax.history}>
+                      <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#888" }} tickFormatter={s => s.slice(5)} interval={3} />
+                      <YAxis domain={[0, 3]} ticks={[0,1,2,3]} tick={{ fontSize: 9, fill: "#888" }} width={20} />
+                      <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: any) => [REGIME_LABEL[v] ?? v, "국면"]} />
+                      <Line type="stepAfter" dataKey="regime" stroke="#6c5ce7" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
+                <div className="flex gap-3 text-[9px]">
+                  {[0,1,2,3].map(r => <span key={r} style={{ color: REGIME_COLOR[r] }}>{r}:{REGIME_LABEL[r]}</span>)}
+                </div>
+              </div>
+            );
+          })() : (
+            <p className="text-[10px] text-[var(--text-muted)] animate-pulse">QQQ 데이터 로딩 중…</p>
+          )}
+
+          <p className="text-[10px] text-[var(--text-muted)] mt-3 leading-relaxed">
+            <strong>ARDS-X</strong>: QQQ 실데이터(MA20/MA60/RSI/VIX)로 시장 국면을 4단계 분류.
+            상승 국면 → 공격적 비중 / 하락 국면 → 현금 비중 확대.
           </p>
-          <button onClick={() => setQuantPopup("ardsx")} className="mt-2 text-[10px] text-[var(--accent-glow)] hover:underline">
+          <button onClick={() => setQuantPopup("ardsx")} className="mt-1 text-[10px] text-[var(--accent-glow)] hover:underline">
             📂 퀀트 원본 보기 (GitHub)
           </button>
         </div>
 
-        {/* 3. AMQS / AMQS-M7 */}
+        {/* 4. AMQS / AMQS-M7 */}
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
-          <h2 className="text-sm font-bold flex items-center gap-2 mb-3"><TrendingUp className="w-4 h-4 text-[#22c55e]" /> AI 반도체 모멘텀 (AMQS / AMQS-M7)</h2>
-          <ResponsiveContainer width="100%" height={100}>
-            <LineChart data={momentumData}>
-              <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#888" }} />
-              <YAxis domain={[95, 130]} tick={{ fontSize: 9, fill: "#888" }} />
-              <Tooltip contentStyle={{ ...TOOLTIP_STYLE, fontSize: 11 }} labelStyle={{ color: "#fff", fontWeight: 600 }} />
-              <Line type="monotone" dataKey="amqs" stroke="#6c5ce7" strokeWidth={2} dot={false} name="AMQS" />
-              <Line type="monotone" dataKey="m7" stroke="#22c55e" strokeWidth={2} dot={false} name="M7" />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#22c55e]" /> AI 반도체 모멘텀 (AMQS / AMQS-M7)</h2>
+            {quantRT?.amqs && (
+              <span className="text-[10px] text-[var(--text-muted)]">
+                전략 모멘텀 <span className={`font-bold ${(quantRT.amqs.avgMom ?? 0) >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                  {(quantRT.amqs.avgMom ?? 0) >= 0 ? "+" : ""}{quantRT.amqs.avgMom?.toFixed(1)}%
+                </span>
+              </span>
+            )}
+          </div>
 
-          <div className="mt-3 text-[10px]">
-            <h4 className="font-semibold text-[var(--text-muted)] mb-1">📊 AMQS-M7 구성 종목</h4>
-            <div className="space-y-1">
-              {amqsStocks.map((s, i) => (
+          {/* AMQS 모멘텀 히스토리 */}
+          {quantRT?.amqs?.history?.length > 0 && (
+            <ResponsiveContainer width="100%" height={80}>
+              <LineChart data={quantRT.amqs.history}>
+                <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#888" }} tickFormatter={s => s.slice(5)} interval={3} />
+                <YAxis tick={{ fontSize: 9, fill: "#888" }} width={28} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: any) => [`${v}%`, "20일 모멘텀"]} />
+                <Line type="monotone" dataKey="amqs" stroke="#22c55e" strokeWidth={2} dot={false} name="NVDA 모멘텀" />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+
+          {/* AMQS-M7 종목별 실시간 */}
+          {quantRT?.amqs?.stocks?.length > 0 ? (
+            <div className="mt-3 space-y-1 text-[10px]">
+              <h4 className="font-semibold text-[var(--text-muted)] mb-1">📊 AMQS-M7 실시간 시그널</h4>
+              {quantRT.amqs.stocks.map((s: any, i: number) => (
                 <div key={i} className="flex items-center justify-between p-1.5 rounded bg-[var(--bg)]">
-                  <span>{s.name}</span>
+                  <span className="flex items-center gap-1">{s.emoji} <span className="font-bold">{s.ticker}</span> <span className="text-[var(--text-muted)]">{s.name}</span></span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[var(--text-muted)]">{s.weight}</span>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] ${s.signal === "매수" ? "bg-[#22c55e]/10 text-[#22c55e]" : "bg-[var(--warning)]/10 text-[var(--warning)]"}`}>{s.signal}</span>
+                    {s.price && <span className="font-mono">${s.price}</span>}
+                    {s.change1d != null && (
+                      <span className={s.change1d >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}>
+                        {s.change1d >= 0 ? "+" : ""}{s.change1d}%
+                      </span>
+                    )}
+                    {s.momentum20 != null && (
+                      <span className="text-[var(--text-muted)]">20d:{s.momentum20 >= 0 ? "+" : ""}{s.momentum20}%</span>
+                    )}
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] ${SIG_STYLE[s.signal] ?? SIG_STYLE["—"]}`}>{s.signal}</span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          ) : (
+            <p className="text-[10px] text-[var(--text-muted)] mt-2 animate-pulse">종목 데이터 로딩 중…</p>
+          )}
 
           <p className="text-[10px] text-[var(--text-muted)] mt-2 leading-relaxed">
-            <strong>AMQS (AI Momentum Quant Strategy)</strong>는 AI·반도체 섹터의 모멘텀을 추종하는 전략입니다.
-            AMQS-M7은 상위 7개 종목(엔비디아·TSMC·SK하이닉스·삼성전자·ASML·AMD·퀄컴)에 집중 투자합니다.
+            <strong>AMQS</strong>: NVDA·AVGO·AMD·QCOM·ASML·MU·TSM 실데이터 기반 20일 모멘텀.
+            Yahoo Finance 실시간 · 캐시 30분(장중) / 2시간(마감후).
           </p>
-          <button onClick={() => setQuantPopup("amqs")} className="mt-2 text-[10px] text-[var(--accent-glow)] hover:underline">
+          <button onClick={() => setQuantPopup("amqs")} className="mt-1 text-[10px] text-[var(--accent-glow)] hover:underline">
             📂 퀀트 원본 보기 (GitHub)
           </button>
         </div>
 
-        {/* 4. ARDS 헤지 */}
+        {/* 5. ARDS 헤지 */}
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4">
           <h2 className="text-sm font-bold flex items-center gap-2 mb-3"><TrendingDown className="w-4 h-4 text-[#ef4444]" /> 방어·헤지 (ARDS)</h2>
 
-          <div className="text-[10px] space-y-1 mb-3">
-            {ardsStocks.map((s, i) => (
-              <div key={i} className="flex items-center justify-between p-1.5 rounded bg-[var(--bg)]">
-                <div>
-                  <span>{s.name}</span>
-                  <span className="text-[var(--text-muted)] ml-1">({s.desc})</span>
+          {(() => {
+            const hedge = quantRT?.hedge ?? { long: 65, hedge: 25, safe: 10 };
+            const regime = quantRT?.ardsX?.regime ?? 2;
+            const rc = REGIME_COLOR[regime];
+            const items = [
+              { label: "AMQS-M7 Long", pct: hedge.long, color: "#22c55e", signal: "매수", desc: "AI 반도체 모멘텀" },
+              { label: "헤지 (인버스/풋)", pct: hedge.hedge, color: "#ef4444", signal: "헤지", desc: "하락장 방어" },
+              { label: "안전자산 (국채/금)", pct: hedge.safe, color: "#f59e0b", signal: "안전", desc: "무위험 수익" },
+            ];
+            return (
+              <div className="space-y-3">
+                {/* 현재 레짐 기반 메시지 */}
+                <div className="rounded-lg p-2.5 text-[10px] border" style={{ borderColor: `${rc}50`, background: `${rc}08` }}>
+                  <span style={{ color: rc }}>■ {REGIME_LABEL[regime]} 국면</span>
+                  <span className="text-[var(--text-muted)] ml-2">
+                    {regime === 0 && "현금 비중 최대화 — 헤지 강화"}
+                    {regime === 1 && "균형 유지 — 중립 헤지"}
+                    {regime === 2 && "롱 비중 우선 — 소폭 헤지"}
+                    {regime === 3 && "풀 롱 — 헤지 최소화"}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold">{s.score}%</span>
-                  <span className={`px-1.5 py-0.5 rounded text-[9px] ${s.signal==="매수"?"bg-[#22c55e]/10 text-[#22c55e]":s.signal==="헤지"?"bg-[var(--warning)]/10 text-[var(--warning)]":"bg-[var(--accent)]/10 text-[var(--accent-glow)]"}`}>{s.signal}</span>
+
+                {items.map((s, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-24 text-[10px] text-[var(--text-muted)] shrink-0">{s.label}</div>
+                    <div className="flex-1 h-4 bg-[var(--bg)] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-700" style={{ width: `${s.pct}%`, background: s.color, opacity: 0.8 }} />
+                    </div>
+                    <div className="text-[11px] font-bold w-8 text-right" style={{ color: s.color }}>{s.pct}%</div>
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] w-8 text-center ${SIG_STYLE[s.signal] ?? ""}`}>{s.signal}</span>
+                  </div>
+                ))}
+
+                <div className="grid grid-cols-3 gap-2 text-xs pt-1">
+                  <div className="p-2 rounded bg-[var(--bg)] text-center border border-[var(--border)]">
+                    <div className="text-[var(--text-muted)] text-[9px]">AMQS-M7</div>
+                    <div className="font-bold" style={{ color:"#22c55e" }}>{hedge.long}%</div>
+                  </div>
+                  <div className="p-2 rounded bg-[var(--bg)] text-center border border-[var(--border)]">
+                    <div className="text-[var(--text-muted)] text-[9px]">헤지</div>
+                    <div className="font-bold" style={{ color:"#ef4444" }}>{hedge.hedge}%</div>
+                  </div>
+                  <div className="p-2 rounded bg-[var(--bg)] text-center border border-[var(--border)]">
+                    <div className="text-[var(--text-muted)] text-[9px]">안전</div>
+                    <div className="font-bold" style={{ color:"#f59e0b" }}>{hedge.safe}%</div>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })()}
 
-          <div className="grid grid-cols-3 gap-2 text-xs mb-2">
-            <div className="p-2 rounded bg-[var(--bg)] text-center">
-              <div className="text-[var(--text-muted)]">AMQS-M7</div><div className="font-bold">65%</div>
-            </div>
-            <div className="p-2 rounded bg-[var(--bg)] text-center">
-              <div className="text-[var(--text-muted)]">헤지</div><div className="font-bold">25%</div>
-            </div>
-            <div className="p-2 rounded bg-[var(--bg)] text-center">
-              <div className="text-[var(--text-muted)]">안전</div><div className="font-bold">10%</div>
-            </div>
-          </div>
-
-          <p className="text-[10px] text-[var(--text-muted)] mt-2 leading-relaxed">
-            <strong>ARDS (AI Risk Diversification Strategy)</strong>는 AMQS-M7에 대한 대칭 헤지 전략입니다.
-            비중은 Median + 15% Cap으로 관리되어 과도한 레버리지를 방지합니다.
+          <p className="text-[10px] text-[var(--text-muted)] mt-3 leading-relaxed">
+            <strong>ARDS</strong>: ARDS-X 레짐에 따라 헤지 비중 자동 조정.
+            레짐 0(하락) → 헤지 35% / 레짐 3(급등) → 헤지 0%.
           </p>
-          <button onClick={() => setQuantPopup("ards")} className="mt-2 text-[10px] text-[var(--accent-glow)] hover:underline">
+          <button onClick={() => setQuantPopup("ards")} className="mt-1 text-[10px] text-[var(--accent-glow)] hover:underline">
             📂 퀀트 원본 보기 (GitHub)
           </button>
         </div>
