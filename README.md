@@ -128,9 +128,11 @@ npm run setup        # DART API 키 입력
 ## 문서
 
 - [ROADMAP.md](docs/ROADMAP.md) — 작업 로드맵
+- [REFACTORING_PLAN.md](docs/REFACTORING_PLAN.md) — 관계망 분석 리팩토링 계획 (3단계: 정합성 복원 → 본문 파싱 → 리스크 태깅)
 - [SERVICE_FLOW.md](docs/SERVICE_FLOW.md) — 서비스 흐름도
 - [DEPLOYMENT.md](docs/DEPLOYMENT.md) — 배포 전략
 - [TECH_STACK.md](docs/TECH_STACK.md) — 기술 스택
+- [NETWORK_ANALYSIS.md](docs/NETWORK_ANALYSIS.md) — 관계망 분석 기능 명세 (v1.5.0)
 
 ---
 
