@@ -20,11 +20,20 @@ jobs:
       - name: Install dependencies
         run: npm install && npx prisma generate
 
-      - name: Run daily sync
+      - name: Run daily sync (DART 공시)
         run: npx tsx scripts/daily-sync.ts
         env:
           DATABASE_URL: ${{ vars.DATABASE_URL }}
           DART_API_KEY: ${{ vars.DART_API_KEY }}
+
+      - name: Run KOSDAQ extract (Toss API → 이상징후 리포트)
+        run: npx tsx scripts/extract-kosdaq.ts
+        env:
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
+          DART_API_KEY: ${{ vars.DART_API_KEY }}
+          TOSS_CLIENT_ID: ${{ vars.TOSS_CLIENT_ID }}
+          TOSS_CLIENT_SECRET: ${{ vars.TOSS_CLIENT_SECRET }}
+        continue-on-error: true   # Toss 실패해도 DART sync는 유지
 
       - name: Commit updated data
         run: |
