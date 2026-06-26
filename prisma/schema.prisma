@@ -86,10 +86,12 @@ model CorpPersonRelation {
   description   String?  // 부연 설명
   since         DateTime?
   until         DateTime?
+  isCurrent     Boolean  @default(false)  // until=null 인 현직 여부 플래그
   source        String?  // 출처 (뉴스 URL, DART rcept_no 등)
   person        Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
   corp          Corp     @relation(fields: [corpId], references: [id], onDelete: Cascade)
 
+  @@unique([corpId, personId, role])        // 중복 관계 방지
   @@index([personId])
   @@index([corpId])
 }
@@ -393,16 +395,25 @@ model SajuLog {
 
 // ─── 인물 이력 ───
 model PersonHistory {
-  id          String   @id @default(uuid())
-  personName  String
-  corpName    String?
-  role        String?
-  startDate   String?
-  endDate     String?
-  source      String?
-  createdAt   DateTime @default(now())
+  id            String    @id
+  personUid     String?                   // "이름_생년월일" 형식 통합 UID
+  personName    String                    // alias: name (스크립트 호환)
+  birthDate     String?
+  corpName      String?                   // alias: companyName (스크립트 호환)
+  stockCode     String?
+  role          String?
+  eventType     String?                   // "DIRECTOR_CHANGE" | "LARGEST_HOLDER" | etc.
+  eventDate     DateTime?                 // 공시 접수일 기준
+  startDate     String?
+  endDate       String?
+  source        String?
+  sourceRceptNo String?                   // DART 접수번호
+  sourceTitle   String?                   // 공시 제목
+  createdAt     DateTime  @default(now())
 
   @@index([personName])
+  @@index([personUid])
+  @@index([eventDate])
 }
 
 // ─── HBM 예측 ───
