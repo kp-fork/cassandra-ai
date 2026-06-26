@@ -10,10 +10,11 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import { evaluateFilings, upsertSignals, RULES } from "../src/lib/risk-flags";
 
 function getDartKey(): string {
   try {
-    return process.env.DART_API_KEY || 
+    return process.env.DART_API_KEY ||
       ((fs.readFileSync(path.join(__dirname, "..", ".env"), "utf-8").match(/DART_API_KEY=(.+)/) || [])[1]?.trim() || "");
   } catch { return ""; }
 }
@@ -21,18 +22,6 @@ function getDartKey(): string {
 const DART_KEY = getDartKey();
 const DART_BASE = "https://opendart.fss.or.kr/api";
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-// 룰셋 정의
-const RULES = {
-  NAME_CHANGE: { pattern: /상호변경|사명변경|명칭변경/, weight: 25, label: "사명변경" },
-  MAJOR_HOLDER: { pattern: /최대주주\s*변경|대주주/, weight: 20, label: "대주주변경" },
-  LAWSUIT: { pattern: /소송|분쟁|경영권|가처분|회생|주주제안/, weight: 25, label: "소송/분쟁" },
-  CB_ISSUANCE: { pattern: /전환사채|신주인수권|사채/, weight: 10, label: "CB발행" },
-  CB_REFIX: { pattern: /전환가액.*조정|리픽싱/, weight: 15, label: "CB리픽싱" },
-  CAPITAL: { pattern: /유상증자|무상증자|감자|주식병합/, weight: 10, label: "증자/감자" },
-  PAYMENT_DELAY: { pattern: /납입.*지연|잔금.*지연|납입기한.*변경/, weight: 20, label: "대금지연" },
-  AUDIT: { pattern: /감사의견.*거절|감사의견.*한정|감사인.*변경/, weight: 30, label: "감사위험" },
-};
 
 interface FilingItem {
   date: string; rceptNo: string; title: string; type: string;
@@ -105,22 +94,15 @@ async function main() {
         await sleep(80);
       }
 
-      // 룰셋 적용
-      const signals: CompanyReport["signals"] = [];
-      let riskScore = 0;
-
-      for (const [key, rule] of Object.entries(RULES)) {
-        const matches = filings.filter((f) => rule.pattern.test(f.title));
-        if (matches.length > 0) {
-          signals.push({
-            rule: rule.label,
-            weight: rule.weight,
-            count: matches.length,
-            latestDate: matches[matches.length - 1].date,
-          });
-          riskScore += rule.weight * Math.min(matches.length, 3);
-        }
-      }
+      // 룰셋 적용 (risk-flags 엔진 사용)
+      const firingResults = evaluateFilings(filings.map(f => ({
+        title: f.title,
+        filedAt: `${f.date.slice(0,4)}-${f.date.slice(4,6)}-${f.date.slice(6,8)}`,
+      })));
+      const signals: CompanyReport["signals"] = firingResults.map(r => ({
+        rule: r.label, weight: Math.round(r.score * 100), count: r.matchCount, latestDate: r.latestDate,
+      }));
+      const riskScore = Math.min(firingResults.reduce((s, r) => s + r.score * 100, 0), 100);
 
       if (filings.length > 0 || signals.length > 0) {
         reports.push({
@@ -157,7 +139,7 @@ async function main() {
     period: { from: bgnDe, to: endDe },
     totalCompanies: reports.length,
     totalDisclosures,
-    rules: Object.entries(RULES).map(([k, v]) => ({ key: k, label: v.label, weight: v.weight })),
+    rules: RULES.filter(r => r.layer === "filing").map(r => ({ key: r.name, label: r.label, weight: r.weight })),
     highRisk: reports.filter((r) => r.riskScore >= 30),
     companies: reports,
   };
@@ -224,17 +206,13 @@ async function main() {
           dbSaved++;
         } catch {}
       }
-      // 신호 저장
-      for (const s of r.signals) {
-        await prisma.signal.create({
-          data: {
-            corpId: dbCorp.id,
-            ruleName: s.rule,
-            score: riskScore,
-            detail: `${s.rule} ${s.count}건 (최근: ${s.latestDate})`,
-            firedAt: new Date(),
-          },
-        }).catch(() => {});
+      // 신호 저장 (risk-flags upsertSignals 사용)
+      if (r.signals.length > 0) {
+        await upsertSignals(dbCorp.id, r.signals.map(s => ({
+          ruleName: s.rule, label: s.rule, score: s.weight / 100,
+          matchCount: s.count, detail: `${s.rule} ${s.count}건 (최근: ${s.latestDate})`,
+          latestDate: s.latestDate,
+        }))).catch(() => {});
       }
     }
     console.log(`   DB 저장: ${dbSaved}건 공시`);
