@@ -55,6 +55,8 @@ export default function QuantDashboard() {
   const [quantRT, setQuantRT] = useState<any>(null); // ARDS-X + AMQS + ARDS 실시간
   const [sectorData, setSectorData] = useState<{ marketAvg: number; marketStatus: string; sectors: any[] } | null>(null);
   const [muHynixData, setMuHynixData] = useState<{ prediction: any; backtest: any } | null>(null);
+  const [seohakData, setSeohakData] = useState<any>(null);
+  const [seohakLoading, setSeohakLoading] = useState(false);
   const [marketOverview, setMarketOverview] = useState<any>(null);
   const [nasdaqMovers, setNasdaqMovers] = useState<any>(null);
   const [moversTab, setMoversTab] = useState<"daily" | "weekly">("daily");
@@ -122,6 +124,11 @@ export default function QuantDashboard() {
     fetch("/api/mu-hynix").then(r => r.json()).then(d => {
       if (d.prediction || d.backtest) setMuHynixData(d);
     }).catch(() => {});
+    // 서학개미 퀀트
+    setSeohakLoading(true);
+    fetch("/api/seohak").then(r => r.json()).then(d => {
+      if (d.stocks?.length) setSeohakData(d);
+    }).catch(() => {}).finally(() => setSeohakLoading(false));
     // 시장 오버뷰
     fetch("/api/market-overview").then(r => r.json()).then(d => {
       if (d.etfs || d.sectors) setMarketOverview(d);
@@ -664,6 +671,143 @@ export default function QuantDashboard() {
           </div>
         </div>
       )}
+
+      {/* ─── 서학개미 퀀트 ─── */}
+      <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
+          <h2 className="text-base font-bold flex items-center gap-2">
+            <span>🐜</span> 서학개미 퀀트 — AI 종목 분석
+          </h2>
+          <button
+            onClick={() => {
+              setSeohakLoading(true);
+              fetch("/api/seohak?force=1").then(r => r.json()).then(d => {
+                if (d.stocks?.length) setSeohakData(d);
+              }).catch(() => {}).finally(() => setSeohakLoading(false));
+            }}
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded border border-[var(--border)] hover:bg-[var(--border)]"
+          >
+            <RefreshCw className={`w-3 h-3 ${seohakLoading ? "animate-spin" : ""}`} /> 갱신
+          </button>
+        </div>
+        <div className="p-4 space-y-4">
+          {seohakLoading && !seohakData && (
+            <div className="text-center text-sm text-[var(--text-muted)] py-4">AI가 분석 중입니다…</div>
+          )}
+          {seohakData && (
+            <>
+              {/* 분화 지도 */}
+              {seohakData.analysis?.divisionMap && (
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="bg-[#22c55e]/10 border border-[#22c55e]/20 rounded-lg p-3">
+                    <div className="font-semibold text-[#22c55e] mb-1">📈 수혜</div>
+                    {(seohakData.analysis.divisionMap.beneficiaries ?? []).map((t: string) => (
+                      <span key={t} className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-[#22c55e]/20 text-[#22c55e]">{t}</span>
+                    ))}
+                  </div>
+                  <div className="bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-lg p-3">
+                    <div className="font-semibold text-[#f59e0b] mb-1">⚖️ 중립</div>
+                    {(seohakData.analysis.divisionMap.neutral ?? []).map((t: string) => (
+                      <span key={t} className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-[#f59e0b]/20 text-[#f59e0b]">{t}</span>
+                    ))}
+                  </div>
+                  <div className="bg-[#ef4444]/10 border border-[#ef4444]/20 rounded-lg p-3">
+                    <div className="font-semibold text-[#ef4444] mb-1">📉 피해</div>
+                    {(seohakData.analysis.divisionMap.victims ?? []).map((t: string) => (
+                      <span key={t} className="inline-block mr-1 mb-1 px-1.5 py-0.5 rounded bg-[#ef4444]/20 text-[#ef4444]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 종목 테이블 */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-[var(--border)] text-[var(--text-muted)]">
+                      <th className="text-left py-2 pr-3">티커</th>
+                      <th className="text-right pr-3">종가</th>
+                      <th className="text-right pr-3">등락</th>
+                      <th className="text-center pr-3">군집도</th>
+                      <th className="text-left pr-3">거시포지션</th>
+                      <th className="text-center pr-3">신호</th>
+                      <th className="text-left pr-3">핵심 근거</th>
+                      <th className="text-left">리스크 플래그</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {seohakData.stocks.map((stock: any) => {
+                      const ai = (seohakData.analysis?.stocks ?? []).find((s: any) => s.ticker === stock.ticker);
+                      const signalColor: Record<string, string> = {
+                        "매수": "#22c55e", "관망": "#f59e0b", "매도": "#ef4444",
+                        "BUY": "#22c55e", "WATCH": "#f59e0b", "SELL": "#ef4444",
+                      };
+                      const sig = ai?.signal ?? "—";
+                      const sigColor = signalColor[sig] ?? "#888";
+                      return (
+                        <tr key={stock.ticker} className="border-b border-[var(--border)]/50">
+                          <td className="py-2 pr-3 font-mono font-bold">{stock.ticker}</td>
+                          <td className="text-right pr-3 font-mono">${stock.close.toFixed(2)}</td>
+                          <td className={`text-right pr-3 font-mono ${stock.changePct >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                            {stock.changePct >= 0 ? "▲" : "▼"}{Math.abs(stock.changePct).toFixed(1)}%
+                          </td>
+                          <td className="text-center pr-3">
+                            {"●".repeat(ai?.crowding ?? stock.crowdingLabels?.length ?? 0)}{"○".repeat(Math.max(0, 3 - (ai?.crowding ?? stock.crowdingLabels?.length ?? 0)))}
+                          </td>
+                          <td className="pr-3 text-[var(--text-muted)]">{ai?.macroPosKr ?? stock.macro}</td>
+                          <td className="text-center pr-3">
+                            <span className="px-2 py-0.5 rounded text-xs font-semibold" style={{ color: sigColor, background: `${sigColor}22` }}>
+                              {sig}
+                            </span>
+                          </td>
+                          <td className="pr-3 text-[var(--text-muted)] max-w-[180px]">{ai?.keyReason ?? "—"}</td>
+                          <td className="text-[var(--text-muted)] max-w-[140px]">{ai?.riskFlag ?? "—"}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* ETF 매핑 */}
+              <div>
+                <h3 className="text-xs font-semibold text-[var(--text-muted)] mb-2">📦 ETF 분산 대안</h3>
+                <div className="grid gap-2">
+                  {(seohakData.etfMap ?? []).map((e: any) => (
+                    <div key={e.group} className="flex items-start gap-2 text-xs bg-[var(--bg)] rounded-lg p-2">
+                      <div className="shrink-0 font-mono font-bold text-[var(--accent-glow)]">{e.etf}</div>
+                      <div>
+                        <span className="text-[var(--text-muted)]">{e.group}</span>
+                        {e.alt && <span className="ml-1 text-[var(--text-muted)]/60">/ 대체 {e.alt}</span>}
+                        <p className="text-[var(--text-muted)]/70 mt-0.5">{e.reason}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* FX 메모 + disclaimer */}
+              {seohakData.analysis?.fxMemo && (
+                <div className="text-xs text-[var(--text-muted)] bg-[var(--bg)] rounded-lg p-2 flex items-start gap-1">
+                  <span>💱</span> {seohakData.analysis.fxMemo}
+                </div>
+              )}
+              <div className="text-[10px] text-[var(--text-muted)] border-t border-[var(--border)] pt-2">
+                {seohakData.analysis?.disclaimer ?? "본 출력은 투자 자문이 아니며, 구조화된 참고 자료다. 최종 판단과 책임은 사용자에게 있다."}
+              </div>
+              <div className="text-[10px] text-[var(--text-muted)]">
+                갱신: {seohakData.updatedAt ? new Date(seohakData.updatedAt).toLocaleString("ko-KR") : "—"}
+                {seohakData.cached && " (캐시)"}
+              </div>
+            </>
+          )}
+          {seohakData?.analysisError && (
+            <div className="text-xs text-[var(--warning)] bg-[var(--warning)]/10 rounded p-2">
+              AI 분석 오류: {seohakData.analysisError}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* 친구 추천 */}
       <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-4 text-center">
