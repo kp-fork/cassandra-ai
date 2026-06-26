@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T10:08:49.562Z",
+  "generatedAt": "2026-06-26T01:13:33.736Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,16 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 1,
-    "totalSignals": 22,
-    "topRisks": [
-      {
-        "name": "우성머티리얼스",
-        "score": 30,
-        "signals": [
-          "증자/감자"
-        ]
-      }
-    ]
+    "highRiskCount": 0,
+    "totalSignals": 19,
+    "topRisks": []
   }
 }
