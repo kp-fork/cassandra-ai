@@ -8,11 +8,12 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(params.get("email") || "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(params.get("error") || "");
   const [mode, setMode] = useState<"login" | "signup">("login");
+  const isInviteHint = params.get("hint") === "invite";
 
   const supabase = createSupabaseBrowser();
 
@@ -54,6 +55,12 @@ function LoginForm() {
             DART 공시 × 퀀트 × AI 분석
           </p>
         </div>
+
+        {isInviteHint && (
+          <div className="rounded-lg bg-[#22c55e]/10 border border-[#22c55e]/30 p-3 text-xs text-[#22c55e]">
+            ✅ 가입이 완료됐습니다. 이메일과 비밀번호로 로그인하세요.
+          </div>
+        )}
 
         <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4">
           {/* OAuth 버튼 */}

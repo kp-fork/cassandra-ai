@@ -48,7 +48,9 @@ export async function middleware(request: NextRequest) {
     // Expert 권한 체크: 관리자 이메일 OR Supabase user_metadata.role === "expert" 허용
     if (EXPERT_PATHS.some(p => path === p || path.startsWith(p + "/"))) {
       const email = session.user?.email;
-      const metaRole = session.user?.user_metadata?.role;
+      // user_metadata(유저 수정 가능) + app_metadata(서버만 수정 가능) 둘 다 체크
+      const metaRole = session.user?.user_metadata?.role
+                    || session.user?.app_metadata?.role;
       const isAdmin = email && EXPERT_EMAILS.includes(email);
       const isExpert = metaRole === "expert";
       if (!isAdmin && !isExpert) {

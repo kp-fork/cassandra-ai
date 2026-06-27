@@ -54,8 +54,8 @@ function InviteForm() {
             const supabase = createSupabaseBrowser();
             const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
             if (signInError) {
-                setError("가입은 완료됐으나 로그인 실패: " + signInError.message);
-                setLoading(false);
+                // 자동 로그인 실패해도 계정은 생성됐으므로 로그인 페이지로 안내
+                router.push(`/login?email=${encodeURIComponent(email)}&hint=invite`);
                 return;
             }
 

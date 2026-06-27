@@ -8,16 +8,25 @@ const SUPA_URL = () => process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPA_KEY = () => process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 async function supabaseAdminFetch(path: string, method: string, body?: object) {
+  const key = SUPA_KEY();
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY 환경변수 없음");
+
   const res = await fetch(`${SUPA_URL()}/auth/v1/admin/${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
-      "apikey": SUPA_KEY(),
-      "Authorization": `Bearer ${SUPA_KEY()}`,
+      "apikey": key,
+      "Authorization": `Bearer ${key}`,
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  return res.json();
+
+  const json = await res.json();
+  if (!res.ok) {
+    // Supabase Admin API 에러를 명시적으로 throw
+    throw new Error(json?.message || json?.msg || json?.error_description || `HTTP ${res.status}`);
+  }
+  return json;
 }
 
 // POST: 초대 이메일 등록 (7일 만료)
@@ -70,32 +79,50 @@ export async function PATCH(req: NextRequest) {
   const { email, password, name } = await req.json();
   if (!email || !password) return NextResponse.json({ error: "이메일/비밀번호 필요" }, { status: 400 });
 
+  // SUPABASE_SERVICE_ROLE_KEY 사전 체크
+  if (!SUPA_KEY()) {
+    return NextResponse.json(
+      { error: "서버 설정 오류: SUPABASE_SERVICE_ROLE_KEY 없음. 관리자에게 문의하세요." },
+      { status: 500 }
+    );
+  }
+
   // 초대 재검증
   const invite = await prisma.expertInvite.findUnique({ where: { email } });
   if (!invite) return NextResponse.json({ error: "초대 없음" }, { status: 403 });
   if (invite.expiresAt < new Date()) return NextResponse.json({ error: "초대 만료" }, { status: 403 });
 
-  // Admin REST API로 유저 생성 (email_confirm: true → 이메일 인증 불필요)
-  const created = await supabaseAdminFetch("users", "POST", {
-    email,
-    password,
-    email_confirm: true,
-    user_metadata: { name: name || email.split("@")[0], role: "expert" },
-  });
+  try {
+    // Admin REST API로 유저 생성 (email_confirm: true → 이메일 인증 불필요)
+    await supabaseAdminFetch("users", "POST", {
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { name: name || email.split("@")[0], role: "expert" },
+      app_metadata: { role: "expert" },
+    });
+  } catch (err: any) {
+    const msg = err.message ?? "";
 
-  // 이미 존재하는 유저면 이메일로 조회 후 업데이트
-  if (created?.msg?.toLowerCase().includes("already") || created?.code === "email_exists") {
-    const list = await supabaseAdminFetch(`users?email=${encodeURIComponent(email)}`, "GET");
-    const existing = list?.users?.[0];
-    if (existing?.id) {
-      await supabaseAdminFetch(`users/${existing.id}`, "PUT", {
-        password,
-        email_confirm: true,
-        user_metadata: { name: name || existing.user_metadata?.name || email.split("@")[0], role: "expert" },
-      });
+    // 이미 존재하는 유저면 비밀번호 + role 업데이트
+    if (msg.toLowerCase().includes("already") || msg.toLowerCase().includes("email address")) {
+      try {
+        const list = await supabaseAdminFetch(`users?email=${encodeURIComponent(email)}`, "GET");
+        const existing = list?.users?.[0];
+        if (existing?.id) {
+          await supabaseAdminFetch(`users/${existing.id}`, "PUT", {
+            password,
+            email_confirm: true,
+            user_metadata: { name: name || existing.user_metadata?.name || email.split("@")[0], role: "expert" },
+            app_metadata: { role: "expert" },
+          });
+        }
+      } catch (updateErr: any) {
+        return NextResponse.json({ error: `기존 유저 업데이트 실패: ${updateErr.message}` }, { status: 500 });
+      }
+    } else {
+      return NextResponse.json({ error: `유저 생성 실패: ${msg}` }, { status: 500 });
     }
-  } else if (created?.error || created?.msg) {
-    return NextResponse.json({ error: created.msg || created.error }, { status: 500 });
   }
 
   // 초대 완료 처리
