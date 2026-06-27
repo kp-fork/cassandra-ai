@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-26T16:32:46.289Z",
+  "generatedAt": "2026-06-27T01:09:21.073Z",
   "period": {
-    "from": "20260619",
-    "to": "20260626"
+    "from": "20260620",
+    "to": "20260627"
   },
-  "totalCompanies": 55,
-  "totalDisclosures": 91,
+  "totalCompanies": 45,
+  "totalDisclosures": 73,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -59,47 +59,6 @@
     }
   ],
   "highRisk": [
-    {
-      "stockCode": "900100",
-      "corpCode": "00781202",
-      "name": "파이온엑스",
-      "totalDisclosures": 3,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-19"
-        },
-        {
-          "rule": "상장폐지위험",
-          "weight": 35,
-          "count": 1,
-          "latestDate": "2026-06-22"
-        }
-      ],
-      "riskScore": 45,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260618000413",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626901379",
-          "title": "기타경영사항(자율공시)              (조회공시 요구(현저한 시황변동)에 대한 답변(확정))",
-          "type": "I"
-        },
-        {
-          "date": "20260622",
-          "rceptNo": "20260622900833",
-          "title": "주권매매거래정지해제              (액면병합 주권 변경상장)",
-          "type": "I"
-        }
-      ]
-    },
     {
       "stockCode": "033310",
       "corpCode": "00143226",
@@ -160,6 +119,35 @@
           "date": "20260623",
           "rceptNo": "20260623800205",
           "title": "횡령ㆍ배임혐의발생              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "900100",
+      "corpCode": "00781202",
+      "name": "파이온엑스",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "상장폐지위험",
+          "weight": 35,
+          "count": 1,
+          "latestDate": "2026-06-22"
+        }
+      ],
+      "riskScore": 35,
+      "recentDisclosures": [
+        {
+          "date": "20260626",
+          "rceptNo": "20260626901379",
+          "title": "기타경영사항(자율공시)              (조회공시 요구(현저한 시황변동)에 대한 답변(확정))",
+          "type": "I"
+        },
+        {
+          "date": "20260622",
+          "rceptNo": "20260622900833",
+          "title": "주권매매거래정지해제              (액면병합 주권 변경상장)",
           "type": "I"
         }
       ]
@@ -278,47 +266,6 @@
   ],
   "companies": [
     {
-      "stockCode": "900100",
-      "corpCode": "00781202",
-      "name": "파이온엑스",
-      "totalDisclosures": 3,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-19"
-        },
-        {
-          "rule": "상장폐지위험",
-          "weight": 35,
-          "count": 1,
-          "latestDate": "2026-06-22"
-        }
-      ],
-      "riskScore": 45,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260618000413",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626901379",
-          "title": "기타경영사항(자율공시)              (조회공시 요구(현저한 시황변동)에 대한 답변(확정))",
-          "type": "I"
-        },
-        {
-          "date": "20260622",
-          "rceptNo": "20260622900833",
-          "title": "주권매매거래정지해제              (액면병합 주권 변경상장)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "033310",
       "corpCode": "00143226",
       "name": "엠투엔",
@@ -378,6 +325,35 @@
           "date": "20260623",
           "rceptNo": "20260623800205",
           "title": "횡령ㆍ배임혐의발생              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "900100",
+      "corpCode": "00781202",
+      "name": "파이온엑스",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "상장폐지위험",
+          "weight": 35,
+          "count": 1,
+          "latestDate": "2026-06-22"
+        }
+      ],
+      "riskScore": 35,
+      "recentDisclosures": [
+        {
+          "date": "20260626",
+          "rceptNo": "20260626901379",
+          "title": "기타경영사항(자율공시)              (조회공시 요구(현저한 시황변동)에 대한 답변(확정))",
+          "type": "I"
+        },
+        {
+          "date": "20260622",
+          "rceptNo": "20260622900833",
+          "title": "주권매매거래정지해제              (액면병합 주권 변경상장)",
           "type": "I"
         }
       ]
@@ -552,35 +528,6 @@
       ]
     },
     {
-      "stockCode": "210120",
-      "corpCode": "00550082",
-      "name": "캔버스엔",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 20,
-          "count": 2,
-          "latestDate": "2026-06-19"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619000451",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260619",
-          "rceptNo": "20260619000412",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        }
-      ]
-    },
-    {
       "stockCode": "000430",
       "corpCode": "00111847",
       "name": "대원강업",
@@ -630,7 +577,7 @@
       "stockCode": "179530",
       "corpCode": "01022902",
       "name": "애드바이오텍",
-      "totalDisclosures": 6,
+      "totalDisclosures": 4,
       "signals": [
         {
           "rule": "CB발행",
@@ -663,41 +610,6 @@
           "date": "20260626",
           "rceptNo": "20260626900986",
           "title": "주주총회소집결의              (임시주주총회)",
-          "type": "I"
-        },
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900588",
-          "title": "대표이사변경              ",
-          "type": "I"
-        },
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900411",
-          "title": "임시주주총회결과              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "008500",
-      "corpCode": "00146542",
-      "name": "일정실업",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "2026-06-19"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619800593",
-          "title": "최대주주등소유주식변동신고서              ",
           "type": "I"
         }
       ]
@@ -784,47 +696,6 @@
       ]
     },
     {
-      "stockCode": "376270",
-      "corpCode": "01480708",
-      "name": "HEM파마",
-      "totalDisclosures": 4,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-19"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619000658",
-          "title": "[기재정정]주요사항보고서(전환사채권발행결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260624",
-          "rceptNo": "20260624900759",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900972",
-          "title": "타법인주식및출자증권취득결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900871",
-          "title": "신규시설투자등              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "276040",
       "corpCode": "01290248",
       "name": "스코넥",
@@ -844,35 +715,6 @@
           "rceptNo": "20260626000405",
           "title": "[기재정정]주요사항보고서(유상증자결정)",
           "type": "B"
-        }
-      ]
-    },
-    {
-      "stockCode": "321370",
-      "corpCode": "01593668",
-      "name": "센서뷰",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-19"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619000576",
-          "title": "[기재정정]주요사항보고서(유상증자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900405",
-          "title": "단일판매ㆍ공급계약체결(자율공시)              ",
-          "type": "I"
         }
       ]
     },
@@ -902,29 +744,6 @@
           "rceptNo": "20260622900722",
           "title": "[기재정정]타인에대한담보제공결정              ",
           "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "104040",
-      "corpCode": "00442905",
-      "name": "디에스엠",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-19"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619000665",
-          "title": "주요사항보고서(전환사채권발행결정)",
-          "type": "B"
         }
       ]
     },
@@ -1048,22 +867,6 @@
       ]
     },
     {
-      "stockCode": "217590",
-      "corpCode": "00949161",
-      "name": "티엠씨",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619800690",
-          "title": "기업설명회(IR)개최(안내공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "299660",
       "corpCode": "01235296",
       "name": "셀리드",
@@ -1140,22 +943,6 @@
       ]
     },
     {
-      "stockCode": "086790",
-      "corpCode": "00547583",
-      "name": "하나금융지주",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619800652",
-          "title": "기업설명회(IR)개최(안내공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "059180",
       "corpCode": "00341314",
       "name": "엔더블유시",
@@ -1167,22 +954,6 @@
           "date": "20260626",
           "rceptNo": "20260626600697",
           "title": "기업설명회(IR)개최결과              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "478340",
-      "corpCode": "01787355",
-      "name": "나라스페이스테크놀로지",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900494",
-          "title": "단일판매ㆍ공급계약체결              ",
           "type": "I"
         }
       ]
@@ -1216,6 +987,22 @@
           "rceptNo": "20260625000361",
           "title": "주요사항보고서(유형자산양도결정)",
           "type": "B"
+        }
+      ]
+    },
+    {
+      "stockCode": "376270",
+      "corpCode": "01480708",
+      "name": "HEM파마",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260624",
+          "rceptNo": "20260624900759",
+          "title": "단일판매ㆍ공급계약체결              ",
+          "type": "I"
         }
       ]
     },
@@ -1404,22 +1191,6 @@
       ]
     },
     {
-      "stockCode": "049470",
-      "corpCode": "00351579",
-      "name": "비트플래닛",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900978",
-          "title": "증권발행결과(자율공시)              (제17회차 CB)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "403870",
       "corpCode": "01288827",
       "name": "HPSP",
@@ -1448,22 +1219,6 @@
       ]
     },
     {
-      "stockCode": "078340",
-      "corpCode": "00476498",
-      "name": "컴투스",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900453",
-          "title": "기업설명회(IR)개최              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "234070",
       "corpCode": "00614089",
       "name": "에이원큐브텍",
@@ -1475,22 +1230,6 @@
           "date": "20260625",
           "rceptNo": "20260625600618",
           "title": "기업설명회(IR)개최결과              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "388210",
-      "corpCode": "01529982",
-      "name": "씨엠티엑스",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260619",
-          "rceptNo": "20260619900166",
-          "title": "기업설명회(IR)개최              ",
           "type": "I"
         }
       ]

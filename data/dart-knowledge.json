@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T16:32:46.290Z",
+  "generatedAt": "2026-06-27T01:09:21.073Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,16 +12,8 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 6,
-    "totalSignals": 27,
+    "totalSignals": 21,
     "topRisks": [
-      {
-        "name": "파이온엑스",
-        "score": 45,
-        "signals": [
-          "CB발행",
-          "상장폐지위험"
-        ]
-      },
       {
         "name": "엠투엔",
         "score": 40,
@@ -34,6 +26,13 @@
         "score": 40,
         "signals": [
           "횡령/배임"
+        ]
+      },
+      {
+        "name": "파이온엑스",
+        "score": 35,
+        "signals": [
+          "상장폐지위험"
         ]
       },
       {
