@@ -3,7 +3,8 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isExpertDomain, getDomainCategory, checkExpertStatus, sendExpertReverifyOtp, completeReverify } from "@/lib/expert";
+import { requireAdmin } from "@/lib/admin-auth";
+import { isExpertDomain, getDomainCategory, sendExpertReverifyOtp, completeReverify } from "@/lib/expert";
 
 export async function POST(req: NextRequest) {
     const { action, email, adminEmail } = await req.json();
@@ -33,21 +34,18 @@ export async function POST(req: NextRequest) {
 
     // ─── 관리자 승인 ───
     if (action === "approve") {
-        const ADMIN_EMAILS = ["gameworker@gmail.com"];
-        if (!adminEmail || !ADMIN_EMAILS.includes(adminEmail)) return NextResponse.json({ error: "관리자 권한이 필요합니다." }, { status: 403 });
+        const deny = await requireAdmin(); if (deny) return deny;
         if (!email) return NextResponse.json({ error: "이메일이 필요합니다" }, { status: 400 });
 
         await prisma.appUser.updateMany({ where: { email }, data: { tier: "expert" } });
 
-        // Supabase OTP 발송
         const otpResult = await sendExpertReverifyOtp(email);
         return NextResponse.json({ ok: true, message: "승인 완료. 인증 이메일이 발송되었습니다.", otpSent: otpResult.ok });
     }
 
     // ─── 관리자 거절 ───
     if (action === "reject") {
-        const ADMIN_EMAILS = ["gameworker@gmail.com"];
-        if (!adminEmail || !ADMIN_EMAILS.includes(adminEmail)) return NextResponse.json({ error: "관리자 권한이 필요합니다." }, { status: 403 });
+        const deny = await requireAdmin(); if (deny) return deny;
         if (!email) return NextResponse.json({ error: "이메일이 필요합니다" }, { status: 400 });
 
         await prisma.appUser.updateMany({ where: { email }, data: { tier: "normal", expertCategory: null } });
@@ -88,8 +86,7 @@ export async function POST(req: NextRequest) {
 
     // ─── 신청 목록 (관리자) ───
     if (action === "list") {
-        const ADMIN_EMAILS = ["gameworker@gmail.com"];
-        if (!adminEmail || !ADMIN_EMAILS.includes(adminEmail)) return NextResponse.json({ error: "관리자 권한이 필요합니다." }, { status: 403 });
+        const deny = await requireAdmin(); if (deny) return deny;
         const apps = await prisma.appUser.findMany({ where: { expertCategory: { not: null } }, select: { email: true, tier: true, expertCategory: true, expertVerifiedAt: true }, orderBy: { createdAt: "desc" }, take: 50 });
         return NextResponse.json({ applications: apps.map(a => ({ email: a.email, tier: a.tier, category: a.expertCategory, verifiedAt: a.expertVerifiedAt?.toISOString() || null, status: a.tier === "expert" ? (a.expertVerifiedAt ? "verified" : "approved_unverified") : "pending" })) });
     }

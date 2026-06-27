@@ -21,12 +21,7 @@ try {
 
 // DART API 키
 function getDartKey(): string {
-  try {
-    const envPath = path.join(process.cwd(), ".env");
-    const env = fs.readFileSync(envPath, "utf-8");
-    const m = env.match(/DART_API_KEY=(.+)/);
-    return m ? m[1].trim() : "";
-  } catch { return ""; }
+  return process.env.DART_API_KEY || "";
 }
 
 // 검색 캐시 (Upstash Redis + 인메모리 폴백)

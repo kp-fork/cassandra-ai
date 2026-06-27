@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-auth";
 
-const ADMIN_EMAILS = ["gameworker@gmail.com"];
 const INVITE_DAYS = 7;
 
 const SUPA_URL = () => process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -31,10 +31,9 @@ async function supabaseAdminFetch(path: string, method: string, body?: object) {
 
 // POST: 초대 이메일 등록 (7일 만료)
 export async function POST(req: NextRequest) {
-  const { email, adminEmail } = await req.json();
-  if (!adminEmail || !ADMIN_EMAILS.includes(adminEmail)) {
-    return NextResponse.json({ error: "관리자 권한 필요" }, { status: 403 });
-  }
+  const auth = await requireAdmin();
+  if (auth) return auth;
+  const { email } = await req.json();
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "유효한 이메일이 필요합니다" }, { status: 400 });
   }
@@ -43,8 +42,8 @@ export async function POST(req: NextRequest) {
 
   await prisma.expertInvite.upsert({
     where: { email },
-    update: { createdBy: adminEmail, createdAt: new Date(), expiresAt, acceptedAt: null },
-    create: { email, createdBy: adminEmail, expiresAt },
+    update: { createdBy: "admin", createdAt: new Date(), expiresAt, acceptedAt: null },
+    create: { email, createdBy: "admin", expiresAt },
   });
 
   const link = `https://dart-monitor-pi.vercel.app/invite?email=${encodeURIComponent(email)}`;
