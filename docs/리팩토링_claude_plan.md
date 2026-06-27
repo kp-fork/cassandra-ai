@@ -191,6 +191,14 @@ const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 ✅ PHASE 6 — daily-sync DB 전환 + GHA 자동화 보강 (완료 — 2026-06-27)
    daily-sync.ts: dart-corp-codes.json 의존 제거 → DB Corp 기준 (--limit 300)
    GHA daily-sync.yml: backfill-marketcap + merge-samename 일일 자동 실행 추가
+        │
+        ▼
+✅ PHASE 7 — 인증 시스템 정비 + Expert 초대 확장 (완료 — 2026-06-27)
+   초대 로그인 불가 버그 수정 (SUPABASE_SERVICE_ROLE_KEY + 에러 핸들링)
+   초대 가입 폼: 비밀번호 확인 + 연락처 추가
+   Expert 초대 기능: /board에서 이메일 입력 → 링크 생성 + 이력 관리
+   /admin/experts: Expert 전체 목록 + 초대자 추적
+   /api/admin/samename 서버사이드 인증 (requireAdmin 헬퍼)
 ```
 
 ---
@@ -220,3 +228,13 @@ const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 - ✅ `daily-sync.ts` DB Corp 기준 전환 (`dart-corp-codes.json` 의존 제거, `--limit 300`)
 - ✅ GHA `daily-sync.yml`: `backfill-marketcap` 일일 자동 실행 추가 (Toss IP 우회)
 - ✅ GHA `daily-sync.yml`: `merge-samename` 일일 자동 실행 추가 (동명이인 그룹 자동 감지)
+
+**Phase 7 완료 (2026-06-27):**
+- ✅ 초대 로그인 불가 수정 — `SUPABASE_SERVICE_ROLE_KEY` Vercel 추가 + 에러 핸들링 강화
+- ✅ `middleware.ts`: `app_metadata.role` fallback 추가 (서버 전용, 보안 강화)
+- ✅ `AppUser.phone`, `ExpertInvite.phone + invitedByEmail` 스키마 추가
+- ✅ 초대 가입 폼: 비밀번호 확인 + 연락처 필드 추가
+- ✅ `/board` Expert 초대: 이메일 입력 → 링크 생성 → 이력 표시 (`/api/expert/invite`)
+- ✅ `/admin/experts`: Expert 전체 목록 + 초대자 추적 + 필터/검색
+- ✅ `/api/admin/samename` 서버사이드 인증 (`requireAdmin` 헬퍼)
+- ✅ `docs/auth_구조_분석_및_수정안.md` 작성

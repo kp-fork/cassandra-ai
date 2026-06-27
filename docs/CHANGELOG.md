@@ -1,6 +1,32 @@
 # CASSANDRA AI — 작업 히스토리
 
-> 최종 업데이트: 2026-06-27
+> 최종 업데이트: 2026-06-27 (v1.0)
+
+---
+
+## v1.0 — 인증 시스템 정비 + Expert 초대 확장 (2026-06-27)
+
+### 초대(Expert) 로그인 불가 버그 수정 (`38a8ae9`)
+- **근본 원인**: `SUPABASE_SERVICE_ROLE_KEY` Vercel 미설정 → Admin API "Bearer token" 오류 → 유저 미생성
+- `/api/admin/invite` PATCH: KEY 누락 시 명시적 500 반환, `supabaseAdminFetch` res.ok 체크 후 throw
+- 유저 생성 시 `app_metadata.role: "expert"` 추가 (서버 전용, 보안 강화)
+- `middleware.ts`: Expert 권한 체크에 `app_metadata.role` fallback 추가
+- `/invite` 페이지: `signInWithPassword` 실패 시 `/login?hint=invite&email=xxx` 안내
+- `/login` 페이지: `email` 파라미터 자동 입력 + `hint=invite` 배너 표시
+- `docs/auth_구조_분석_및_수정안.md` 신규 작성 (구조 분석 + 5단계 수정안)
+
+### Expert 초대 기능 확장 (`8830f62`)
+| 영역 | 변경 내용 |
+|------|-----------|
+| **스키마** | `AppUser.phone` 추가, `ExpertInvite.phone` + `invitedByEmail` 추가 |
+| **초대 가입 폼** | 비밀번호 확인 필드 추가, 연락처 입력 추가, 가입 시 phone DB 저장 |
+| **Board 페이지** | "친구 초대" → "Expert 초대" 교체 — 이메일 입력 → 링크 생성 + 내 초대 이력 |
+| **신규 API** | `GET/POST /api/expert/invite` — Expert 본인 인증 후 초대 생성, 내 이력 조회 |
+| **Admin Expert 관리** | `/admin/experts` 신규 페이지 — 전체 Expert 목록 + 초대자 추적 + 필터/검색 |
+
+### Admin samename API 서버사이드 인증 (`21c5514`)
+- `src/lib/admin-auth.ts`: `requireAdmin()` 헬퍼 — Supabase 쿠키 세션 서버 검증
+- `GET/POST /api/admin/samename`, `GET/POST /api/admin/samename/[id]` 전체 적용
 
 ---
 
@@ -94,11 +120,12 @@
 
 | 항목 | 상태 |
 |------|------|
-| DB | Neon PostgreSQL (1079개 Corp, ~999건 Filing, ~5000개 CorpPersonRelation) |
+| DB | Neon PostgreSQL (1090개 Corp, 1083건 Filing, ~5000개 CorpPersonRelation) |
 | 캐시 | Upstash Redis (그래프 30min, quant 72h, seohak 1h) |
 | 배포 | Vercel (dart-monitor-pi.vercel.app) |
-| 파이프라인 | GitHub Actions 매일 09:00/18:00 KST — DART sync + Toss extract + backfill |
+| 파이프라인 | GitHub Actions 매일 09:00/18:00 KST — DART sync + Toss extract + backfill + marketcap + merge-samename |
 | 외부 API | DART, Toss 증권 (IP 화이트리스트 — GHA에서만 실행), Yahoo Finance, DeepSeek V3 |
+| 인증 | Supabase Auth (Google OAuth + Expert 초대 이메일/비밀번호), `SUPABASE_SERVICE_ROLE_KEY` Vercel 설정 완료 |
 
 ---
 
