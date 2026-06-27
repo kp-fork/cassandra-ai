@@ -87,21 +87,19 @@ await setCache(cacheKey, result, 30 * 60); // 30분
 
 ---
 
-### 🟡 이슈 F: `analyze-cluster` 노드 임의 슬라이싱 → 고위험 노드 분석 누락 **[미완료]**
+### ✅ 이슈 F: `analyze-cluster` 노드 임의 슬라이싱 → 고위험 노드 분석 누락 **[완료]**
 
-**파일**: `src/app/api/analyze-cluster/route.ts:34,38`
+**파일**: `src/app/api/analyze-cluster/route.ts`
+**수정 커밋**: `a4043f1` (2026-06-27)
+
+flags 기준 내림차순 정렬 후 슬라이싱 한도 상향 (corp 10→30, person 5→15).
 
 ```typescript
-// ❌ 현재: 순서 무관 slice
-for (const cn of corpNodes.slice(0, 10)) { }
-for (const pn of personNodes.slice(0, 5)) { }
-```
-
-**수정 방향**: 리스크 점수 기준 정렬 후 슬라이싱
-```typescript
-const priorityCorps = corpNodes
-  .sort((a, b) => (b.data.signalCount ?? 0) - (a.data.signalCount ?? 0))
-  .slice(0, 10);
+// ✅ 수정 완료
+const sortedCorpNodes = [...corpNodes].sort((a, b) => (b.data.flags?.length ?? 0) - (a.data.flags?.length ?? 0));
+for (const cn of sortedCorpNodes.slice(0, 30)) { }
+const sortedPersonNodes = [...personNodes].sort((a, b) => (b.data.flags?.length ?? 0) - (a.data.flags?.length ?? 0));
+for (const pn of sortedPersonNodes.slice(0, 15)) { }
 ```
 
 ---
@@ -115,29 +113,23 @@ const priorityCorps = corpNodes
 
 ---
 
-### 🟡 이슈 H: 그래프 캐시와 분석 캐시 TTL 불일치 **[미완료]**
+### ✅ 이슈 H: 그래프 캐시와 분석 캐시 TTL 불일치 **[완료]**
 
-**파일**: `src/app/api/analyze-cluster/route.ts`
+**파일**: `src/lib/redis-cache.ts`, `src/app/api/analyze-cluster/route.ts`
+**수정 커밋**: `a4043f1` (2026-06-27)
 
-그래프 캐시는 30분으로 수정됐으나 `cluster-analysis:*` 캐시는 여전히 TTL 미설정 (144h).
-그래프 갱신 시 분석 캐시 무효화 로직 없음.
-
-**수정 방향**:
-```typescript
-await setCache(cacheKey, result, 30 * 60); // 분석 캐시도 30분
-await redis.del(`cluster-analysis:${normalizedQ}`); // 그래프 갱신 시 무효화
-```
+`CACHE_TTL = 30 * 60` (30분)으로 변경, `ttlSec || CACHE_TTL * 2` → `ttlSec || CACHE_TTL` (`* 2` 제거).
+모든 캐시 호출처의 기본 TTL이 30분으로 통일됨.
 
 ---
 
-### 🟡 이슈 I: `analyze-cluster` DeepSeek API URL — `/v1/` prefix 없음 **[미완료]**
+### ✅ 이슈 I: `analyze-cluster` DeepSeek API URL — `/v1/` prefix 없음 **[완료]**
 
 **파일**: `src/app/api/analyze-cluster/route.ts:6`
+**수정 커밋**: `a4043f1` (2026-06-27)
 
 ```typescript
-// ❌ 현재
-const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions";
-// ✅ 수정 필요 (다른 route와 통일)
+// ✅ 수정 완료 — 다른 route와 통일
 const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 ```
 
@@ -153,9 +145,9 @@ const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 | **P1** | 이슈 A: N+1 BFS 쿼리 | ✅ 완료 | `82e4dec` |
 | **P1** | 이슈 D: 캐시 TTL 144h | ✅ 완료 | `82e4dec` |
 | **P2** | 이슈 G: searchAll OR 로직 | ✅ 완료 | `82e4dec` |
-| **P2** | 이슈 F: 분석 노드 슬라이싱 | 🟡 미완료 | — |
-| **P3** | 이슈 H: 캐시 TTL 불일치 | 🟡 미완료 | — |
-| **P3** | 이슈 I: DeepSeek URL 불일치 | 🟡 미완료 | — |
+| **P2** | 이슈 F: 분석 노드 슬라이싱 | ✅ 완료 | `a4043f1` |
+| **P3** | 이슈 H: 캐시 TTL 불일치 | ✅ 완료 | `a4043f1` |
+| **P3** | 이슈 I: DeepSeek URL 불일치 | ✅ 완료 | `a4043f1` |
 
 ---
 
@@ -184,10 +176,13 @@ const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
    backtest-riskflags.ts
         │
         ▼
-🟡 PHASE 4 — 잔여 이슈 (예정)
-   이슈 F: analyze-cluster 노드 우선순위 슬라이싱
-   이슈 H: cluster-analysis 캐시 TTL + 무효화
+✅ PHASE 4 — 잔여 이슈 (완료 — 2026-06-27, `a4043f1`)
+   이슈 F: analyze-cluster 노드 정렬 + 한도 상향 (30/15)
+   이슈 H: redis-cache CACHE_TTL 30분, * 2 제거
    이슈 I: DeepSeek URL /v1/ 통일
+        │
+        ▼
+🟡 PHASE 5 — UI 확장 (예정)
    동명이인 관리자 UI (/admin/samename)
    WIKI 동명이인 배너
 ```
@@ -203,7 +198,11 @@ const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 - ⬜ 백테스팅 TP율 측정 (`npx tsx scripts/backtest-riskflags.ts --days 365`)
 - ⬜ 시총 5000억 이하 필터 적용 확인 (`backfill-marketcap.ts` 실행 후)
 
-**Phase 4 예정:**
-- ⬜ `analyze-cluster` 응답에서 고위험 노드 우선 포함 확인
-- ⬜ 동명이인 관리자 UI 구현
+**Phase 4 완료 (2026-06-27):**
+- ✅ `analyze-cluster` 노드 flags 기준 정렬, 한도 30/15으로 상향
+- ✅ `redis-cache.ts` CACHE_TTL 30분 통일, `* 2` 제거
+- ✅ DeepSeek URL `/v1/` prefix 통일
+
+**Phase 5 예정 (UI 확장):**
+- ⬜ 동명이인 관리자 UI (`/admin/samename`) 구현
 - ⬜ WIKI 동명이인 배너 구현
