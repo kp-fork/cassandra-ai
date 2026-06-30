@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T01:11:41.068Z",
+  "generatedAt": "2026-06-30T10:18:36.239Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,11 +11,18 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 14,
-    "totalSignals": 66,
+    "highRiskCount": 18,
+    "totalSignals": 78,
     "topRisks": [
       {
         "name": "프리티",
+        "score": 60,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
+        "name": "체시스",
         "score": 60,
         "signals": [
           "대주주변경"
@@ -76,14 +83,7 @@
         ]
       },
       {
-        "name": "아스타",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "체시스",
+        "name": "대원전선",
         "score": 40,
         "signals": [
           "대주주변경"
