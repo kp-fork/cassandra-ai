@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-29T10:42:22.111Z",
+  "generatedAt": "2026-06-30T01:11:41.068Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,30 +11,23 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 15,
-    "totalSignals": 69,
+    "highRiskCount": 14,
+    "totalSignals": 66,
     "topRisks": [
       {
-        "name": "체시스",
+        "name": "프리티",
         "score": 60,
         "signals": [
           "대주주변경"
         ]
       },
       {
-        "name": "에이팩트",
-        "score": 50,
+        "name": "진원생명과학",
+        "score": 45,
         "signals": [
           "대주주변경",
-          "CB발행"
-        ]
-      },
-      {
-        "name": "비투엔",
-        "score": 50,
-        "signals": [
-          "대주주변경",
-          "CB발행"
+          "CB발행",
+          "CB리픽싱"
         ]
       },
       {
@@ -84,6 +77,13 @@
       },
       {
         "name": "아스타",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
+        "name": "체시스",
         "score": 40,
         "signals": [
           "대주주변경"
