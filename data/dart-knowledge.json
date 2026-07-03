@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-03T03:54:40.626Z",
+  "generatedAt": "2026-07-03T11:35:58.145Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 9,
-    "totalSignals": 55,
+    "highRiskCount": 12,
+    "totalSignals": 58,
     "topRisks": [
       {
         "name": "진원생명과학",
@@ -67,7 +67,15 @@
         ]
       },
       {
-        "name": "쏘카",
+        "name": "트리니티항공",
+        "score": 30,
+        "signals": [
+          "CB발행",
+          "증자/감자"
+        ]
+      },
+      {
+        "name": "베노티앤알",
         "score": 30,
         "signals": [
           "대주주변경",
@@ -75,7 +83,7 @@
         ]
       },
       {
-        "name": "토박스코리아",
+        "name": "엑시온그룹",
         "score": 30,
         "signals": [
           "대주주변경",
