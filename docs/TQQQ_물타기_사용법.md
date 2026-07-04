@@ -22,13 +22,13 @@
 
 ### 1단계: 로그인
 
-[https://dart-monitor-pi.vercel.app/login](https://dart-monitor-pi.vercel.app/login)에서 **Google 로그인** 또는 **이메일/비밀번호 로그인**을 합니다.
+[https://dart-monitor-pi.vercel.app/login](https://dart-monitor-pi.vercel.app/login)에서 **Google 로그인**을 하빈다.
 
-> 구글 계정 하나만 있으면 바로 사용할 수 있습니다.
+> 구글 계정 하나만 있으면 바로 사용할 수 있습니다. 개인 정보는 구글 로그인의 최소 정보와 투자 추적을 위한 데이터만 남깁니다.
 
 ### 2단계: TQQQ 페이지 접속
 
-로그인 후 상단 메뉴 → **퀀트** → TQQQ 페이지, 또는 직접 접속:  
+로그인 후 상단 메뉴 → **퀀트** → TQQQ 페이지, 또는 직접 접속
 `https://dart-monitor-pi.vercel.app/tqqq`
 
 ---
