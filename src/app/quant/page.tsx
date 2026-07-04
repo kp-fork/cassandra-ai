@@ -60,6 +60,8 @@ export default function QuantDashboard() {
   const [marketOverview, setMarketOverview] = useState<any>(null);
   const [nasdaqMovers, setNasdaqMovers] = useState<any>(null);
   const [moversTab, setMoversTab] = useState<"daily" | "weekly">("daily");
+  const [sectorTop, setSectorTop] = useState<any>(null);
+  const [sectorTopLoading, setSectorTopLoading] = useState(false);
 
   const hookMessages = [
     "🚀 AI가 찾은 이번 주 유망 종목은?",
@@ -137,6 +139,11 @@ export default function QuantDashboard() {
     fetch("/api/nasdaq-movers").then(r => r.json()).then(d => {
       if (d.daily || d.weekly) setNasdaqMovers(d);
     }).catch(() => {});
+    // NASDAQ 100 섹터별 Top 3 AMQS
+    setSectorTopLoading(true);
+    fetch("/api/nasdaq-sector-top").then(r => r.json()).then(d => {
+      if (d.sectors?.length) setSectorTop(d);
+    }).catch(() => {}).finally(() => setSectorTopLoading(false));
   }, []);
 
   const shareText = `📊 CASSANDRA AI — 퀀트 대시보드\n\nAI×퀀트로 분석하는 코스닥 시장\nARS-X·AMQS·ARDS 전략\n\nhttps://dart-monitor-pi.vercel.app/quant`;
@@ -671,6 +678,189 @@ export default function QuantDashboard() {
           </div>
         </div>
       )}
+
+      {/* ─── NASDAQ 100 섹터별 Top 3 AMQS ─── */}
+      <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
+          <div>
+            <h2 className="text-base font-bold flex items-center gap-2">
+              <span>🏆</span> NASDAQ 100 섹터별 Top 3 — AMQS 퀀트 분석
+            </h2>
+            <p className="text-[10px] text-[var(--text-muted)] mt-0.5">
+              7개 섹터 · AMQS 4-Factor 모멘텀 점수 · 투자 의견 · 목표가 / 손절가
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setSectorTopLoading(true);
+              fetch("/api/nasdaq-sector-top?force=1").then(r => r.json()).then(d => {
+                if (d.sectors?.length) setSectorTop(d);
+              }).catch(() => {}).finally(() => setSectorTopLoading(false));
+            }}
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded border border-[var(--border)] hover:bg-[var(--border)]"
+          >
+            <RefreshCw className={`w-3 h-3 ${sectorTopLoading ? "animate-spin" : ""}`} /> 갱신
+          </button>
+        </div>
+
+        <div className="p-4">
+          {sectorTopLoading && !sectorTop && (
+            <div className="text-center text-sm text-[var(--text-muted)] py-6 animate-pulse">
+              AMQS 퀀트 분석 중… (첫 로딩 약 15초 소요)
+            </div>
+          )}
+
+          {sectorTop && (
+            <div className="space-y-5">
+              {sectorTop.sectors?.map((sector: any) => (
+                <div key={sector.id}>
+                  {/* 섹터 헤더 */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-base">{sector.emoji}</span>
+                    <h3 className="text-sm font-bold">{sector.name}</h3>
+                    <span className="text-[10px] text-[var(--text-muted)]">
+                      Top {sector.stocks?.length ?? 0}
+                    </span>
+                  </div>
+
+                  {/* 종목 카드 행 */}
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    {sector.stocks?.map((s: any, rank: number) => (
+                      <div
+                        key={s.ticker}
+                        className="rounded-lg bg-[var(--bg)] border border-[var(--border)] p-3 space-y-2"
+                      >
+                        {/* 종목 헤더 */}
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-bold text-[var(--text-muted)]">
+                                #{rank + 1}
+                              </span>
+                              <span className="text-sm font-bold font-mono">{s.ticker}</span>
+                            </div>
+                            <div className="text-[10px] text-[var(--text-muted)]">{s.name}</div>
+                          </div>
+                          {/* 투자 의견 뱃지 */}
+                          <span
+                            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                            style={{ color: s.color, background: `${s.color}22` }}
+                          >
+                            {s.emoji} {s.opinion}
+                          </span>
+                        </div>
+
+                        {/* 현재가 + AMQS 점수 */}
+                        <div className="flex items-center gap-3 text-xs">
+                          <div>
+                            <div className="text-[9px] text-[var(--text-muted)]">현재가</div>
+                            <div className="font-mono font-bold">
+                              ${s.currentPrice.toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-[9px] text-[var(--text-muted)] mb-0.5">
+                              AMQS 점수 {s.score}
+                            </div>
+                            <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
+                              <div
+                                className="h-full rounded-full transition-all"
+                                style={{
+                                  width: `${s.score}%`,
+                                  backgroundColor: s.score >= 65 ? "#22c55e" : s.score >= 50 ? "#f59e0b" : s.score >= 35 ? "#94a3b8" : "#ef4444",
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 모멘텀 지표 */}
+                        <div className="grid grid-cols-3 gap-1 text-[9px]">
+                          <div className="text-center rounded bg-[var(--surface)] p-1">
+                            <div className="text-[var(--text-muted)]">12M-1M</div>
+                            <div className={`font-bold ${s.mom12 >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                              {s.mom12 >= 0 ? "+" : ""}{s.mom12}%
+                            </div>
+                          </div>
+                          <div className="text-center rounded bg-[var(--surface)] p-1">
+                            <div className="text-[var(--text-muted)]">6M-1M</div>
+                            <div className={`font-bold ${s.mom6 >= 0 ? "text-[#22c55e]" : "text-[#ef4444]"}`}>
+                              {s.mom6 >= 0 ? "+" : ""}{s.mom6}%
+                            </div>
+                          </div>
+                          <div className="text-center rounded bg-[var(--surface)] p-1">
+                            <div className="text-[var(--text-muted)]">RSI</div>
+                            <div className={`font-bold ${s.rsi < 30 ? "text-[#6c5ce7]" : s.rsi > 70 ? "text-[#ef4444]" : "text-white"}`}>
+                              {s.rsi}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 가격 목표 */}
+                        <div className="rounded bg-[var(--surface)] p-2 grid grid-cols-3 gap-1 text-[9px]">
+                          <div className="text-center">
+                            <div className="text-[var(--text-muted)]">매수가</div>
+                            <div className="font-mono font-bold text-[#22c55e]">
+                              ${s.buyPrice.toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="text-center border-x border-[var(--border)]">
+                            <div className="text-[var(--text-muted)]">목표가(TP)</div>
+                            <div className="font-mono font-bold text-[#6c5ce7]">
+                              ${s.sellPrice.toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-[var(--text-muted)]">손절(SL)</div>
+                            <div className="font-mono font-bold text-[#ef4444]">
+                              ${s.stopLoss.toLocaleString()}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 종목 설명 */}
+                        <p className="text-[9px] text-[var(--text-muted)] leading-relaxed">
+                          {s.desc}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* 방법론 + 갱신 시각 */}
+              <details className="text-[9px] text-[var(--text-muted)]">
+                <summary className="cursor-pointer hover:text-[var(--text)]">방법론</summary>
+                <p className="mt-1 leading-relaxed">
+                  AMQS 4-Factor Composite: (A) 12M-1M 모멘텀 50% · (B) 6M-1M 30% · (C) 3M-1M 15% · (D) 역변동성 5%.
+                  각 factor를 z-score 정규화 후 가중합 → 0~100점. 투자 의견: 65↑=매수, 50~64=중립, 35~49=관망, RSI&lt;30·점수&lt;40=과매도, 35↓=매도.
+                  목표 매수가=현재가-1~5%, 목표 매도가=모멘텀 점수 기반 7~18% 업사이드, 손절가=-12%(AMQS 기본).
+                  Yahoo Finance 주봉 12개월 데이터 기준. 캐시 1시간(장중)/4시간(마감후).
+                </p>
+              </details>
+              <div className="text-[9px] text-[var(--text-muted)] text-right">
+                갱신: {sectorTop.generatedAt ? new Date(sectorTop.generatedAt).toLocaleString("ko-KR") : "—"}
+                {sectorTop.fromCache && ` · 캐시${sectorTop.cachedSecondsAgo ? ` (${Math.floor(sectorTop.cachedSecondsAgo / 60)}분 전)` : ""}`}
+              </div>
+            </div>
+          )}
+
+          {/* AMQS 리스크 고지 */}
+          <div className="mt-4 p-3 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[9px] text-[var(--text-muted)] space-y-1">
+            <p className="font-semibold text-[var(--warning)] flex items-center gap-1">
+              <AlertTriangle className="w-3 h-3" /> AMQS 퀀트 분석 리스크 고지
+            </p>
+            <p>
+              본 분석은 <strong>AMQS(Adaptive Momentum Quant Strategy)</strong> 모델 기반 교육·참고 목적 자료이며,
+              <strong> 특정 종목의 매수·매도를 권유하지 않습니다.</strong>
+              모멘텀 전략은 추세 전환점에서 단기간 -15~-30% 손실이 발생할 수 있으며(2020.03, 2025.01 DeepSeek 쇼크 사례),
+              목표가·손절가는 과거 데이터 기반 참고치일 뿐 미래 수익을 보장하지 않습니다.
+              한국 거주자는 양도소득세(22%) 및 환전 비용을 추가 고려하십시오.
+              모든 투자 결정은 본인의 판단과 책임 하에 이루어져야 합니다.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* ─── 서학개미 퀀트 ─── */}
       <div className="rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden">
