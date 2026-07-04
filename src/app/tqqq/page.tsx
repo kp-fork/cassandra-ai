@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 
-const ADMIN_EMAILS = ["gameworker@gmail.com"];
 
 /* ── 포맷 helpers ── */
 const KRW  = (n: number) => `${(n / 10_000).toFixed(0)}만원`;
@@ -591,7 +590,7 @@ export default function TQQQPage() {
     (async () => {
       const supabase = createSupabaseBrowser();
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
+      if (!session?.user?.email) {
         setAuthed(false); return;
       }
       setAuthed(true);
@@ -623,7 +622,11 @@ export default function TQQQPage() {
 
   if (authed === false) return (
     <main className="min-h-screen flex items-center justify-center bg-[var(--bg)]">
-      <div className="text-center space-y-3"><Lock className="w-10 h-10 text-[var(--text-muted)] mx-auto" /><p className="text-[var(--text-muted)] text-sm">관리자 전용 페이지입니다.</p></div>
+      <div className="text-center space-y-3">
+        <Lock className="w-10 h-10 text-[var(--text-muted)] mx-auto" />
+        <p className="text-[var(--text-muted)] text-sm">로그인이 필요합니다.</p>
+        <a href="/login" className="inline-block px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-xs">로그인하기</a>
+      </div>
     </main>
   );
   if (authed === null || loading) return (
@@ -646,7 +649,6 @@ export default function TQQQPage() {
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
               <span className="text-2xl">📈</span> TQQQ 장기 DCA 전략
-              <span className="text-[10px] bg-[#f59e0b]/10 border border-[#f59e0b]/30 text-[#f59e0b] px-2 py-0.5 rounded-full">관리자 전용</span>
             </h1>
             <p className="text-[11px] text-[var(--text-muted)] mt-1">
               월 100~500만원 · QQQ·TQQQ·미국채 장기 보유 · 나스닥 하락 시 TQQQ 비중 확대
