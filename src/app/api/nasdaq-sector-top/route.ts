@@ -301,7 +301,7 @@ export async function GET(req: NextRequest) {
 
     const h = new Date().getUTCHours();
     const isMarketHours = h >= 14 && h <= 21;
-    await setCache(CACHE_KEY, payload, isMarketHours ? 3600 : 14400);
+    await setCache(CACHE_KEY, payload, isMarketHours ? 3600 : 43200);
 
     return NextResponse.json({ ...payload, fromCache: false });
   } catch (e: any) {
