@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-03T11:35:58.145Z",
+  "generatedAt": "2026-07-04T03:46:49.150Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 12,
-    "totalSignals": 58,
+    "highRiskCount": 11,
+    "totalSignals": 53,
     "topRisks": [
       {
         "name": "진원생명과학",

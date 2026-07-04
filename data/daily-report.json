@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-03T11:35:58.144Z",
+  "generatedAt": "2026-07-04T03:46:49.149Z",
   "period": {
-    "from": "20260626",
-    "to": "20260703"
+    "from": "20260627",
+    "to": "20260704"
   },
-  "totalCompanies": 142,
-  "totalDisclosures": 240,
+  "totalCompanies": 129,
+  "totalDisclosures": 214,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -191,7 +191,7 @@
       "stockCode": "010140",
       "corpCode": "00126478",
       "name": "삼성중공업",
-      "totalDisclosures": 4,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "대주주변경",
@@ -218,12 +218,6 @@
           "date": "20260629",
           "rceptNo": "20260629800706",
           "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800634",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
           "type": "I"
         }
       ]
@@ -390,7 +384,7 @@
       "stockCode": "069920",
       "corpCode": "00426068",
       "name": "엑시온그룹",
-      "totalDisclosures": 5,
+      "totalDisclosures": 4,
       "signals": [
         {
           "rule": "대주주변경",
@@ -430,12 +424,6 @@
           "rceptNo": "20260629901234",
           "title": "불성실공시법인지정              (공시번복)",
           "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900857",
-          "title": "임시주주총회결과              ",
-          "type": "I"
         }
       ]
     },
@@ -470,41 +458,6 @@
           "date": "20260629",
           "rceptNo": "20260629801108",
           "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "215480",
-      "corpCode": "01064069",
-      "name": "토박스코리아",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        },
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 30,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626000392",
-          "title": "주요사항보고서(유상증자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900610",
-          "title": "최대주주변경을수반하는주식양수도계약체결              ",
           "type": "I"
         }
       ]
@@ -643,7 +596,7 @@
       "stockCode": "010140",
       "corpCode": "00126478",
       "name": "삼성중공업",
-      "totalDisclosures": 4,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "대주주변경",
@@ -670,12 +623,6 @@
           "date": "20260629",
           "rceptNo": "20260629800706",
           "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800634",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
           "type": "I"
         }
       ]
@@ -842,7 +789,7 @@
       "stockCode": "069920",
       "corpCode": "00426068",
       "name": "엑시온그룹",
-      "totalDisclosures": 5,
+      "totalDisclosures": 4,
       "signals": [
         {
           "rule": "대주주변경",
@@ -881,12 +828,6 @@
           "date": "20260629",
           "rceptNo": "20260629901234",
           "title": "불성실공시법인지정              (공시번복)",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900857",
-          "title": "임시주주총회결과              ",
           "type": "I"
         }
       ]
@@ -927,165 +868,129 @@
       ]
     },
     {
-      "stockCode": "215480",
-      "corpCode": "01064069",
-      "name": "토박스코리아",
+      "stockCode": "000320",
+      "corpCode": "00113508",
+      "name": "노루홀딩스",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 20,
+          "count": 1,
+          "latestDate": "2026-07-03"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260703",
+          "rceptNo": "20260703800561",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "102260",
+      "corpCode": "00679314",
+      "name": "동성케미컬",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 20,
+          "count": 1,
+          "latestDate": "2026-07-03"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260703",
+          "rceptNo": "20260703800715",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "083640",
+      "corpCode": "00475976",
+      "name": "인콘",
       "totalDisclosures": 2,
       "signals": [
         {
           "rule": "대주주변경",
           "weight": 20,
           "count": 1,
-          "latestDate": "2026-06-26"
-        },
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-26"
+          "latestDate": "2026-07-02"
         }
       ],
-      "riskScore": 30,
+      "riskScore": 20,
       "recentDisclosures": [
         {
-          "date": "20260626",
-          "rceptNo": "20260626000392",
-          "title": "주요사항보고서(유상증자결정)",
-          "type": "B"
+          "date": "20260702",
+          "rceptNo": "20260702900787",
+          "title": "최대주주변경              ",
+          "type": "I"
         },
         {
-          "date": "20260626",
-          "rceptNo": "20260626900610",
-          "title": "최대주주변경을수반하는주식양수도계약체결              ",
+          "date": "20260702",
+          "rceptNo": "20260702900703",
+          "title": "증권발행결과(자율공시)              ",
           "type": "I"
         }
       ]
     },
     {
-      "stockCode": "221840",
-      "corpCode": "00688358",
-      "name": "하이즈항공",
+      "stockCode": "004250",
+      "corpCode": "00108038",
+      "name": "엔피씨",
       "totalDisclosures": 1,
       "signals": [
         {
-          "rule": "소송/분쟁",
-          "weight": 25,
+          "rule": "대주주변경",
+          "weight": 20,
           "count": 1,
-          "latestDate": "2026-06-26"
+          "latestDate": "2026-07-03"
         }
       ],
-      "riskScore": 25,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900836",
-          "title": "소송등의판결ㆍ결정              (회계장부 등 열람등사 신청)",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "082210",
-      "corpCode": "00327396",
-      "name": "옵트론텍",
-      "totalDisclosures": 4,
-      "signals": [
-        {
-          "rule": "CB리픽싱",
-          "weight": 15,
-          "count": 1,
-          "latestDate": "2026-06-30"
-        },
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 25,
+      "riskScore": 20,
       "recentDisclosures": [
         {
           "date": "20260703",
-          "rceptNo": "20260703900541",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
-          "type": "I"
-        },
-        {
-          "date": "20260630",
-          "rceptNo": "20260630900557",
-          "title": "전환가액의조정              (제16회차)",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900512",
-          "title": "타법인주식및출자증권취득결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900509",
-          "title": "유상증자결정(종속회사의주요경영사항)              ",
+          "rceptNo": "20260703800753",
+          "title": "최대주주등소유주식변동신고서              ",
           "type": "I"
         }
       ]
     },
     {
-      "stockCode": "256840",
-      "corpCode": "01179617",
-      "name": "한국비엔씨",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "소송/분쟁",
-          "weight": 25,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 25,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900642",
-          "title": "기타경영사항(자율공시)              (의약품 회수·폐기 및 잠정 제조중지 등 명령 취소 소송 상고심 판결)",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "054540",
-      "corpCode": "00250614",
-      "name": "삼영엠텍",
+      "stockCode": "054220",
+      "corpCode": "00201432",
+      "name": "비츠로시스",
       "totalDisclosures": 2,
       "signals": [
         {
           "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-29"
-        },
-        {
-          "rule": "CB리픽싱",
-          "weight": 15,
-          "count": 1,
-          "latestDate": "2026-06-29"
+          "weight": 20,
+          "count": 2,
+          "latestDate": "2026-06-30"
         }
       ],
-      "riskScore": 25,
+      "riskScore": 20,
       "recentDisclosures": [
         {
-          "date": "20260629",
-          "rceptNo": "20260629900919",
-          "title": "신주인수권행사가액의조정              ",
-          "type": "I"
+          "date": "20260630",
+          "rceptNo": "20260630001064",
+          "title": "주요사항보고서(자기전환사채매도결정)",
+          "type": "B"
         },
         {
-          "date": "20260629",
-          "rceptNo": "20260629900913",
-          "title": "전환가액의조정              ",
-          "type": "I"
+          "date": "20260630",
+          "rceptNo": "20260630001057",
+          "title": "주요사항보고서(자기전환사채매도결정)",
+          "type": "B"
         }
       ]
     },
@@ -1471,51 +1376,10 @@
       ]
     },
     {
-      "stockCode": "017040",
-      "corpCode": "00103662",
-      "name": "광명전기",
-      "totalDisclosures": 4,
-      "signals": [
-        {
-          "rule": "증자/감자",
-          "weight": 20,
-          "count": 2,
-          "latestDate": "2026-07-01"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260701",
-          "rceptNo": "20260701000465",
-          "title": "[기재정정]주요사항보고서(감자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260625000640",
-          "title": "[기재정정]주요사항보고서(감자결정)",
-          "type": "B"
-        },
-        {
-          "date": "20260701",
-          "rceptNo": "20260701800475",
-          "title": "[기재정정]주주총회소집결의              ",
-          "type": "I"
-        },
-        {
-          "date": "20260629",
-          "rceptNo": "20260629800411",
-          "title": "대표이사(대표집행임원)변경(안내공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "024840",
       "corpCode": "00158024",
       "name": "KBI메탈",
-      "totalDisclosures": 3,
+      "totalDisclosures": 2,
       "signals": [
         {
           "rule": "대주주변경",
@@ -1536,12 +1400,6 @@
           "date": "20260630",
           "rceptNo": "20260630901465",
           "title": "전환청구권행사              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900926",
-          "title": "[기재정정]금전대여결정              ",
           "type": "I"
         }
       ]
@@ -1599,76 +1457,24 @@
       ]
     },
     {
-      "stockCode": "119610",
-      "corpCode": "00604426",
-      "name": "인터로조",
+      "stockCode": "148150",
+      "corpCode": "00913689",
+      "name": "세경하이테크",
       "totalDisclosures": 1,
       "signals": [
         {
-          "rule": "대주주변경",
-          "weight": 20,
+          "rule": "CB리픽싱",
+          "weight": 15,
           "count": 1,
-          "latestDate": "2026-06-26"
+          "latestDate": "2026-06-30"
         }
       ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900716",
-          "title": "[기재정정]최대주주변경을수반하는주식담보제공계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "021240",
-      "corpCode": "00170558",
-      "name": "코웨이",
-      "totalDisclosures": 2,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 20,
+      "riskScore": 15,
       "recentDisclosures": [
         {
           "date": "20260630",
-          "rceptNo": "20260630800241",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800804",
-          "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "077500",
-      "corpCode": "00414601",
-      "name": "유니퀘스트",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "대주주변경",
-          "weight": 20,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 20,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800700",
-          "title": "최대주주등소유주식변동신고서              ",
+          "rceptNo": "20260630901018",
+          "title": "전환주식의전환가액조정              (상환전환우선주)",
           "type": "I"
         }
       ]
@@ -1697,31 +1503,106 @@
       ]
     },
     {
-      "stockCode": "079550",
-      "corpCode": "00503668",
-      "name": "LIG디펜스앤에어로스페이스",
+      "stockCode": "082210",
+      "corpCode": "00327396",
+      "name": "옵트론텍",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "CB리픽싱",
+          "weight": 15,
+          "count": 1,
+          "latestDate": "2026-06-30"
+        }
+      ],
+      "riskScore": 15,
+      "recentDisclosures": [
+        {
+          "date": "20260703",
+          "rceptNo": "20260703900541",
+          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
+          "type": "I"
+        },
+        {
+          "date": "20260630",
+          "rceptNo": "20260630900557",
+          "title": "전환가액의조정              (제16회차)",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "048530",
+      "corpCode": "00292434",
+      "name": "인트론바이오",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "CB발행",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "2026-06-30"
+        }
+      ],
+      "riskScore": 10,
+      "recentDisclosures": [
+        {
+          "date": "20260630",
+          "rceptNo": "20260630000749",
+          "title": "주요사항보고서(전환사채권발행결정)",
+          "type": "B"
+        }
+      ]
+    },
+    {
+      "stockCode": "270520",
+      "corpCode": "01228515",
+      "name": "앱튼",
       "totalDisclosures": 2,
       "signals": [
         {
           "rule": "증자/감자",
           "weight": 10,
           "count": 1,
-          "latestDate": "2026-06-26"
+          "latestDate": "2026-06-29"
         }
       ],
       "riskScore": 10,
       "recentDisclosures": [
         {
-          "date": "20260626",
-          "rceptNo": "20260626000001",
-          "title": "주요사항보고서(유상증자결정)",
+          "date": "20260629",
+          "rceptNo": "20260629000502",
+          "title": "[기재정정]주요사항보고서(유상증자결정)",
           "type": "B"
         },
         {
-          "date": "20260629",
-          "rceptNo": "20260629800362",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
+          "date": "20260702",
+          "rceptNo": "20260702900281",
+          "title": "타법인주식및출자증권취득결정              ",
           "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "271830",
+      "corpCode": "01146220",
+      "name": "팸텍",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "CB발행",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "2026-07-02"
+        }
+      ],
+      "riskScore": 10,
+      "recentDisclosures": [
+        {
+          "date": "20260702",
+          "rceptNo": "20260702000416",
+          "title": "주요사항보고서(전환사채권발행결정)",
+          "type": "B"
         }
       ]
     },
@@ -1729,7 +1610,7 @@
       "stockCode": "260870",
       "corpCode": "01188730",
       "name": "SK시그넷",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [
         {
           "rule": "증자/감자",
@@ -1745,58 +1626,6 @@
           "rceptNo": "20260629601196",
           "title": "증권발행결과(자율공시)              (제3자배정 유상증자_우선주)",
           "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626601075",
-          "title": "기업설명회(IR)개최결과              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "138360",
-      "corpCode": "00808068",
-      "name": "앤로보틱스",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900960",
-          "title": "증권발행결과(자율공시)              (제3자배정 유상증자)",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "224060",
-      "corpCode": "00530413",
-      "name": "더코디",
-      "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "CB발행",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-26"
-        }
-      ],
-      "riskScore": 10,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626000556",
-          "title": "[기재정정]주요사항보고서(자기전환사채매도결정)",
-          "type": "B"
         }
       ]
     },
@@ -1888,6 +1717,41 @@
       ]
     },
     {
+      "stockCode": "017040",
+      "corpCode": "00103662",
+      "name": "광명전기",
+      "totalDisclosures": 3,
+      "signals": [
+        {
+          "rule": "증자/감자",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "2026-07-01"
+        }
+      ],
+      "riskScore": 10,
+      "recentDisclosures": [
+        {
+          "date": "20260701",
+          "rceptNo": "20260701000465",
+          "title": "[기재정정]주요사항보고서(감자결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260701",
+          "rceptNo": "20260701800475",
+          "title": "[기재정정]주주총회소집결의              ",
+          "type": "I"
+        },
+        {
+          "date": "20260629",
+          "rceptNo": "20260629800411",
+          "title": "대표이사(대표집행임원)변경(안내공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "032790",
       "corpCode": "00110884",
       "name": "엠젠솔루션",
@@ -1911,24 +1775,99 @@
       ]
     },
     {
-      "stockCode": "007720",
-      "corpCode": "00104810",
-      "name": "소노스퀘어",
+      "stockCode": "004990",
+      "corpCode": "00120562",
+      "name": "롯데지주",
       "totalDisclosures": 1,
-      "signals": [
-        {
-          "rule": "증자/감자",
-          "weight": 10,
-          "count": 1,
-          "latestDate": "2026-06-30"
-        }
-      ],
-      "riskScore": 10,
+      "signals": [],
+      "riskScore": 0,
       "recentDisclosures": [
         {
           "date": "20260630",
-          "rceptNo": "20260630900547",
-          "title": "감자완료              ",
+          "rceptNo": "20260630801535",
+          "title": "지속가능경영보고서등관련사항(자율공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "348340",
+      "corpCode": "01336461",
+      "name": "뉴로메카",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260702",
+          "rceptNo": "20260702900553",
+          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "389260",
+      "corpCode": "01150515",
+      "name": "대명에너지",
+      "totalDisclosures": 3,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260629",
+          "rceptNo": "20260629900545",
+          "title": "단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        },
+        {
+          "date": "20260629",
+          "rceptNo": "20260629900538",
+          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        },
+        {
+          "date": "20260629",
+          "rceptNo": "20260629900533",
+          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "476060",
+      "corpCode": "01632912",
+      "name": "온코닉테라퓨틱스",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260702",
+          "rceptNo": "20260702900190",
+          "title": "투자판단관련주요경영사항(임상시험계획변경승인)              (자큐보정(JP1366)의 미란성 위식도역류질환 치료 후 유지요법에 대한 제3상 임상시험계획승인(변경승인))",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "010950",
+      "corpCode": "00138279",
+      "name": "S-Oil",
+      "totalDisclosures": 2,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260630",
+          "rceptNo": "20260630801472",
+          "title": "[기재정정]신규시설투자등              ",
+          "type": "I"
+        },
+        {
+          "date": "20260629",
+          "rceptNo": "20260629800928",
+          "title": "지속가능경영보고서등관련사항(자율공시)              ",
           "type": "I"
         }
       ]
@@ -1953,7 +1892,7 @@
       "stockCode": "009830",
       "corpCode": "00162461",
       "name": "한화솔루션",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -1961,28 +1900,6 @@
           "date": "20260629",
           "rceptNo": "20260629800565",
           "title": "[첨부정정]지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800747",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "405920",
-      "corpCode": "01021639",
-      "name": "나라셀라",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900182",
-          "title": "[기재정정]타법인주식및출자증권취득결정(자율공시)              ",
           "type": "I"
         }
       ]
@@ -2086,6 +2003,22 @@
       ]
     },
     {
+      "stockCode": "079550",
+      "corpCode": "00503668",
+      "name": "LIG디펜스앤에어로스페이스",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260629",
+          "rceptNo": "20260629800362",
+          "title": "지속가능경영보고서등관련사항(자율공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "111770",
       "corpCode": "00776820",
       "name": "영원무역",
@@ -2165,7 +2098,7 @@
       "stockCode": "383800",
       "corpCode": "01562589",
       "name": "LX홀딩스",
-      "totalDisclosures": 3,
+      "totalDisclosures": 2,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -2179,12 +2112,6 @@
           "date": "20260630",
           "rceptNo": "20260630801457",
           "title": "[기재정정]신규시설투자등(자회사의 주요경영사항)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800830",
-          "title": "단기차입금증가결정(자회사의 주요경영사항)              ",
           "type": "I"
         }
       ]
@@ -2239,22 +2166,6 @@
           "date": "20260702",
           "rceptNo": "20260702900262",
           "title": "[기재정정]단일판매ㆍ공급계약체결(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "131290",
-      "corpCode": "00372226",
-      "name": "티에스이",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900651",
-          "title": "기업설명회(IR)개최              ",
           "type": "I"
         }
       ]
@@ -2317,7 +2228,7 @@
       "stockCode": "064290",
       "corpCode": "00479787",
       "name": "인텍플러스",
-      "totalDisclosures": 5,
+      "totalDisclosures": 3,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -2337,18 +2248,6 @@
           "date": "20260702",
           "rceptNo": "20260702900516",
           "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900604",
-          "title": "단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900596",
-          "title": "단일판매ㆍ공급계약체결(자율공시)              ",
           "type": "I"
         }
       ]
@@ -2389,7 +2288,7 @@
       "stockCode": "456040",
       "corpCode": "01760738",
       "name": "OCI",
-      "totalDisclosures": 3,
+      "totalDisclosures": 2,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -2403,12 +2302,6 @@
           "date": "20260629",
           "rceptNo": "20260629800720",
           "title": "[기재정정]타법인주식및출자증권취득결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626801370",
-          "title": "정보보호현황(자율공시)              ",
           "type": "I"
         }
       ]
@@ -2651,22 +2544,6 @@
           "date": "20260630",
           "rceptNo": "20260630801405",
           "title": "투자판단관련주요경영사항(자회사의 주요경영사항)              (제미다파엠서방정 국내 품목허가 신청)",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "001680",
-      "corpCode": "00121941",
-      "name": "대상",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800897",
-          "title": "[기재정정]주주명부폐쇄기간또는기준일설정              ",
           "type": "I"
         }
       ]
@@ -3080,22 +2957,6 @@
       ]
     },
     {
-      "stockCode": "096870",
-      "corpCode": "00540571",
-      "name": "엘디티",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900740",
-          "title": "기업설명회(IR)개최              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "317330",
       "corpCode": "01021666",
       "name": "덕산테코피아",
@@ -3409,7 +3270,7 @@
       "stockCode": "068270",
       "corpCode": "00413046",
       "name": "셀트리온",
-      "totalDisclosures": 2,
+      "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
@@ -3417,12 +3278,6 @@
           "date": "20260703",
           "rceptNo": "20260703800022",
           "title": "연결재무제표기준영업(잠정)실적(공정공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626801203",
-          "title": "투자판단관련주요경영사항              (CTP55(코센틱스 바이오시밀러) 한국 품목허가 신청)",
           "type": "I"
         }
       ]
@@ -3526,54 +3381,6 @@
       ]
     },
     {
-      "stockCode": "258610",
-      "corpCode": "00961507",
-      "name": "케일럼",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900966",
-          "title": "[기재정정]단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "009290",
-      "corpCode": "00103592",
-      "name": "광동제약",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800243",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "299660",
-      "corpCode": "01235296",
-      "name": "셀리드",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626901072",
-          "title": "투자판단관련주요경영사항(임상시험결과)              (COVID-19 예방 백신 AdCLD-CoV19-1 OMI의 제3상 임상시험 결과)",
-          "type": "I"
-        }
-      ]
-    },
-    {
       "stockCode": "432470",
       "corpCode": "01402995",
       "name": "케이엔에스",
@@ -3591,178 +3398,6 @@
           "date": "20260630",
           "rceptNo": "20260630900433",
           "title": "[기재정정]단일판매ㆍ공급계약체결              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "004370",
-      "corpCode": "00108241",
-      "name": "농심",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260629",
-          "rceptNo": "20260629800515",
-          "title": "기업가치제고계획(자율공시)              (2025년 이행현황)",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "000670",
-      "corpCode": "00141307",
-      "name": "영풍",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260629",
-          "rceptNo": "20260629800613",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "018880",
-      "corpCode": "00161125",
-      "name": "한온시스템",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260630",
-          "rceptNo": "20260630800355",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "017800",
-      "corpCode": "00164724",
-      "name": "현대엘리베이터",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260630",
-          "rceptNo": "20260630800747",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "001120",
-      "corpCode": "00120076",
-      "name": "LX인터내셔널",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260630",
-          "rceptNo": "20260630800136",
-          "title": "지속가능경영보고서등관련사항(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "044820",
-      "corpCode": "00219574",
-      "name": "코스맥스비티아이",
-      "totalDisclosures": 3,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260629",
-          "rceptNo": "20260629800868",
-          "title": "타인에대한채무보증결정(자회사의 주요경영사항)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800726",
-          "title": "타인에대한담보제공결정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260626",
-          "rceptNo": "20260626800722",
-          "title": "타인에대한담보제공결정              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "033160",
-      "corpCode": "00121686",
-      "name": "엠케이전자",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260629",
-          "rceptNo": "20260629900410",
-          "title": "기업설명회(IR)개최              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "053950",
-      "corpCode": "00307028",
-      "name": "경남제약",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260701",
-          "rceptNo": "20260701900732",
-          "title": "증권발행결과(자율공시)              ",
-          "type": "I"
-        }
-      ]
-    },
-    {
-      "stockCode": "238120",
-      "corpCode": "01073678",
-      "name": "얼라인드",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260630",
-          "rceptNo": "20260630000886",
-          "title": "[기재정정]주요사항보고서(자기주식처분결정)",
-          "type": "B"
-        }
-      ]
-    },
-    {
-      "stockCode": "066430",
-      "corpCode": "00370200",
-      "name": "아이로보틱스",
-      "totalDisclosures": 1,
-      "signals": [],
-      "riskScore": 0,
-      "recentDisclosures": [
-        {
-          "date": "20260626",
-          "rceptNo": "20260626900790",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
           "type": "I"
         }
       ]
