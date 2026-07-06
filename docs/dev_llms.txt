@@ -1,5 +1,5 @@
 # CASSANDRA AI — 개발 기능 명세 (LLM-readable)
-# Version: 1.4.0 | Updated: 2026-06-18
+# Version: 1.4.0 | Updated: 2026-06-27
 # Format: dev_llms.txt — optimized for LLM context ingestion
 
 ## PROJECT OVERVIEW
@@ -8,6 +8,7 @@ Purpose: KOSDAQ DART disclosure intelligence platform
 Stack: Next.js 15 + TypeScript + Prisma + Neon PostgreSQL + Upstash Redis + Supabase Auth + Vercel
 Cost: $0/month (free tier only)
 URL: https://dart-monitor-pi.vercel.app
+Real-time Korean stocks: Toss Securities API
 
 ## INFRASTRUCTURE (ALL FREE TIER)
 | Service | Plan | Limit | Usage |
