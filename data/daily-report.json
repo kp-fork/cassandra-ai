@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-05T11:07:41.804Z",
+  "generatedAt": "2026-07-06T04:12:39.609Z",
   "period": {
-    "from": "20260628",
-    "to": "20260705"
+    "from": "20260629",
+    "to": "20260706"
   },
-  "totalCompanies": 129,
-  "totalDisclosures": 214,
+  "totalCompanies": 131,
+  "totalDisclosures": 216,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -1921,6 +1921,22 @@
       ]
     },
     {
+      "stockCode": "362320",
+      "corpCode": "01534577",
+      "name": "청담글로벌",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260706",
+          "rceptNo": "20260706900215",
+          "title": "주식소각결정              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "000640",
       "corpCode": "00116824",
       "name": "동아쏘시오홀딩스",
@@ -3322,6 +3338,22 @@
           "date": "20260630",
           "rceptNo": "20260630801361",
           "title": "[기재정정]영업양도결정(자율공시)(종속회사의주요경영사항)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "382800",
+      "corpCode": "00958327",
+      "name": "지앤비에스 에코",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260706",
+          "rceptNo": "20260706900256",
+          "title": "현금ㆍ현물배당결정              ",
           "type": "I"
         }
       ]
