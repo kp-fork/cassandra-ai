@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T04:12:39.611Z",
+  "generatedAt": "2026-07-06T12:51:23.513Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 11,
-    "totalSignals": 53,
+    "highRiskCount": 10,
+    "totalSignals": 56,
     "topRisks": [
       {
         "name": "진원생명과학",
@@ -39,13 +39,6 @@
       },
       {
         "name": "SG세계물산",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "삼성중공업",
         "score": 40,
         "signals": [
           "대주주변경"
@@ -84,6 +77,14 @@
       },
       {
         "name": "엑시온그룹",
+        "score": 30,
+        "signals": [
+          "대주주변경",
+          "증자/감자"
+        ]
+      },
+      {
+        "name": "쏘카",
         "score": 30,
         "signals": [
           "대주주변경",
