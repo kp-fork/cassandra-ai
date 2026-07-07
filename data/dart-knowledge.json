@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T04:02:42.739Z",
+  "generatedAt": "2026-07-07T11:54:52.862Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 10,
-    "totalSignals": 48,
+    "highRiskCount": 12,
+    "totalSignals": 51,
     "topRisks": [
       {
         "name": "위메이드",
@@ -50,10 +50,25 @@
         ]
       },
       {
+        "name": "화승코퍼레이션",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
         "name": "필에너지",
         "score": 35,
         "signals": [
           "상장폐지위험"
+        ]
+      },
+      {
+        "name": "광명전기",
+        "score": 35,
+        "signals": [
+          "소송/분쟁",
+          "증자/감자"
         ]
       },
       {
@@ -69,22 +84,6 @@
         "score": 30,
         "signals": [
           "CB발행",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "베노티앤알",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "엑시온그룹",
-        "score": 30,
-        "signals": [
-          "대주주변경",
           "증자/감자"
         ]
       }
