@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T12:51:23.513Z",
+  "generatedAt": "2026-07-07T04:02:42.739Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,15 +12,13 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 10,
-    "totalSignals": 56,
+    "totalSignals": 48,
     "topRisks": [
       {
-        "name": "진원생명과학",
-        "score": 45,
+        "name": "위메이드",
+        "score": 40,
         "signals": [
-          "대주주변경",
-          "CB발행",
-          "CB리픽싱"
+          "대주주변경"
         ]
       },
       {
@@ -45,6 +43,13 @@
         ]
       },
       {
+        "name": "INVENI",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
         "name": "필에너지",
         "score": 35,
         "signals": [
@@ -52,10 +57,10 @@
         ]
       },
       {
-        "name": "넥스틸",
+        "name": "에이비온",
         "score": 30,
         "signals": [
-          "CB발행",
+          "대주주변경",
           "증자/감자"
         ]
       },
@@ -77,14 +82,6 @@
       },
       {
         "name": "엑시온그룹",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "쏘카",
         "score": 30,
         "signals": [
           "대주주변경",
