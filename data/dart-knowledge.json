@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T11:54:52.862Z",
+  "generatedAt": "2026-07-08T03:28:58.903Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,46 +11,11 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 12,
-    "totalSignals": 51,
+    "highRiskCount": 5,
+    "totalSignals": 34,
     "topRisks": [
       {
-        "name": "위메이드",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
         "name": "한솔케미칼",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "SG글로벌",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "SG세계물산",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "INVENI",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "화승코퍼레이션",
         "score": 40,
         "signals": [
           "대주주변경"
@@ -64,11 +29,11 @@
         ]
       },
       {
-        "name": "광명전기",
-        "score": 35,
+        "name": "삼호개발",
+        "score": 30,
         "signals": [
-          "소송/분쟁",
-          "증자/감자"
+          "대주주변경",
+          "CB발행"
         ]
       },
       {
@@ -80,10 +45,10 @@
         ]
       },
       {
-        "name": "트리니티항공",
+        "name": "베노티앤알",
         "score": 30,
         "signals": [
-          "CB발행",
+          "대주주변경",
           "증자/감자"
         ]
       }
