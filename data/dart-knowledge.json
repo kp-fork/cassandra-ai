@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T11:07:52.974Z",
+  "generatedAt": "2026-07-09T03:56:35.598Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,21 +11,14 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 7,
-    "totalSignals": 37,
+    "highRiskCount": 6,
+    "totalSignals": 32,
     "topRisks": [
       {
-        "name": "한솔케미칼",
-        "score": 40,
+        "name": "엔바이오니아",
+        "score": 30,
         "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "필에너지",
-        "score": 35,
-        "signals": [
-          "상장폐지위험"
+          "CB리픽싱"
         ]
       },
       {
