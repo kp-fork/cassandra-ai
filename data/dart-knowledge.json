@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T03:56:35.598Z",
+  "generatedAt": "2026-07-09T12:01:45.973Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,9 +11,23 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 6,
-    "totalSignals": 32,
+    "highRiskCount": 9,
+    "totalSignals": 36,
     "topRisks": [
+      {
+        "name": "조일알미늄",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
+        "name": "한탑",
+        "score": 35,
+        "signals": [
+          "상장폐지위험"
+        ]
+      },
       {
         "name": "엔바이오니아",
         "score": 30,
@@ -43,6 +57,14 @@
         "signals": [
           "대주주변경",
           "증자/감자"
+        ]
+      },
+      {
+        "name": "인콘",
+        "score": 30,
+        "signals": [
+          "대주주변경",
+          "CB발행"
         ]
       },
       {
