@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T12:01:45.973Z",
+  "generatedAt": "2026-07-10T03:57:28.208Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,7 +11,7 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 9,
+    "highRiskCount": 6,
     "totalSignals": 36,
     "topRisks": [
       {
@@ -29,10 +29,10 @@
         ]
       },
       {
-        "name": "엔바이오니아",
+        "name": "이렘",
         "score": 30,
         "signals": [
-          "CB리픽싱"
+          "증자/감자"
         ]
       },
       {
@@ -41,30 +41,6 @@
         "signals": [
           "대주주변경",
           "증자/감자"
-        ]
-      },
-      {
-        "name": "삼호개발",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "CB발행"
-        ]
-      },
-      {
-        "name": "에이비온",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "인콘",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "CB발행"
         ]
       },
       {
