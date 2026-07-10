@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T03:57:28.208Z",
+  "generatedAt": "2026-07-10T11:55:39.441Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,14 +11,28 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 6,
-    "totalSignals": 36,
+    "highRiskCount": 8,
+    "totalSignals": 39,
     "topRisks": [
       {
         "name": "조일알미늄",
+        "score": 60,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
+        "name": "동성케미컬",
         "score": 40,
         "signals": [
           "대주주변경"
+        ]
+      },
+      {
+        "name": "인산가",
+        "score": 35,
+        "signals": [
+          "상장폐지위험"
         ]
       },
       {
