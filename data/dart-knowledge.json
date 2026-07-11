@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T11:55:39.441Z",
+  "generatedAt": "2026-07-11T03:23:28.504Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 8,
-    "totalSignals": 39,
+    "highRiskCount": 6,
+    "totalSignals": 32,
     "topRisks": [
       {
         "name": "조일알미늄",
@@ -22,10 +22,12 @@
         ]
       },
       {
-        "name": "동성케미컬",
-        "score": 40,
+        "name": "KR모터스",
+        "score": 45,
         "signals": [
-          "대주주변경"
+          "대주주변경",
+          "CB발행",
+          "CB리픽싱"
         ]
       },
       {
@@ -51,22 +53,6 @@
       },
       {
         "name": "LK삼양",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "트리니티항공",
-        "score": 30,
-        "signals": [
-          "대주주변경",
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "베노티앤알",
         "score": 30,
         "signals": [
           "대주주변경",
