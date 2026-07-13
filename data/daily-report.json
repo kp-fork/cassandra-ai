@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-12T10:31:15.726Z",
+  "generatedAt": "2026-07-13T03:38:52.620Z",
   "period": {
-    "from": "20260705",
-    "to": "20260712"
+    "from": "20260706",
+    "to": "20260713"
   },
-  "totalCompanies": 65,
-  "totalDisclosures": 92,
+  "totalCompanies": 68,
+  "totalDisclosures": 95,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -1059,6 +1059,38 @@
       ]
     },
     {
+      "stockCode": "391710",
+      "corpCode": "01573284",
+      "name": "코닉오토메이션",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260713",
+          "rceptNo": "20260713900198",
+          "title": "임시주주총회결과              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "950220",
+      "corpCode": "01511558",
+      "name": "네오이뮨텍",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260713",
+          "rceptNo": "20260713900099",
+          "title": "기업설명회(IR)개최              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "137940",
       "corpCode": "00614593",
       "name": "넥스트아이",
@@ -1640,6 +1672,22 @@
           "date": "20260709",
           "rceptNo": "20260709900508",
           "title": "연결재무제표기준영업(잠정)실적(공정공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "373170",
+      "corpCode": "01497142",
+      "name": "엠아이큐브솔루션",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260713",
+          "rceptNo": "20260713900221",
+          "title": "단일판매ㆍ공급계약체결(자율공시)              ",
           "type": "I"
         }
       ]
