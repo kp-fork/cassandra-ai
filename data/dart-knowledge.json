@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T12:09:27.316Z",
+  "generatedAt": "2026-07-14T02:59:37.168Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,9 +11,16 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 6,
-    "totalSignals": 37,
+    "highRiskCount": 7,
+    "totalSignals": 38,
     "topRisks": [
+      {
+        "name": "이화산업",
+        "score": 60,
+        "signals": [
+          "대주주변경"
+        ]
+      },
       {
         "name": "조일알미늄",
         "score": 60,
@@ -28,6 +35,13 @@
           "대주주변경",
           "CB발행",
           "CB리픽싱"
+        ]
+      },
+      {
+        "name": "데이타솔루션",
+        "score": 35,
+        "signals": [
+          "상장폐지위험"
         ]
       },
       {
@@ -48,14 +62,6 @@
         "name": "이렘",
         "score": 30,
         "signals": [
-          "증자/감자"
-        ]
-      },
-      {
-        "name": "LK삼양",
-        "score": 30,
-        "signals": [
-          "대주주변경",
           "증자/감자"
         ]
       }
