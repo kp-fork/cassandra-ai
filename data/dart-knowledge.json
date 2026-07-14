@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T02:59:37.168Z",
+  "generatedAt": "2026-07-14T10:49:29.878Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,9 +11,17 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 7,
-    "totalSignals": 38,
+    "highRiskCount": 8,
+    "totalSignals": 41,
     "topRisks": [
+      {
+        "name": "이렘",
+        "score": 65,
+        "signals": [
+          "증자/감자",
+          "상장폐지위험"
+        ]
+      },
       {
         "name": "이화산업",
         "score": 60,
@@ -38,6 +46,13 @@
         ]
       },
       {
+        "name": "육일씨엔에쓰",
+        "score": 35,
+        "signals": [
+          "상장폐지위험"
+        ]
+      },
+      {
         "name": "데이타솔루션",
         "score": 35,
         "signals": [
@@ -56,13 +71,6 @@
         "score": 35,
         "signals": [
           "상장폐지위험"
-        ]
-      },
-      {
-        "name": "이렘",
-        "score": 30,
-        "signals": [
-          "증자/감자"
         ]
       }
     ]
