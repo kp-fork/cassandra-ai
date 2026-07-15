@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-15T02:57:42.353Z",
+  "generatedAt": "2026-07-15T10:53:33.563Z",
   "period": {
     "from": "20260708",
     "to": "20260715"
   },
-  "totalCompanies": 69,
-  "totalDisclosures": 99,
+  "totalCompanies": 76,
+  "totalDisclosures": 115,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -848,10 +848,33 @@
       ]
     },
     {
+      "stockCode": "090430",
+      "corpCode": "00583424",
+      "name": "아모레퍼시픽",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 20,
+          "count": 1,
+          "latestDate": "2026-07-15"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800680",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "102260",
       "corpCode": "00679314",
       "name": "동성케미컬",
-      "totalDisclosures": 1,
+      "totalDisclosures": 2,
       "signals": [
         {
           "rule": "대주주변경",
@@ -862,6 +885,12 @@
       ],
       "riskScore": 20,
       "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800643",
+          "title": "현금ㆍ현물배당결정              ",
+          "type": "I"
+        },
         {
           "date": "20260710",
           "rceptNo": "20260710800831",
@@ -912,6 +941,35 @@
           "date": "20260708",
           "rceptNo": "20260708800461",
           "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "008830",
+      "corpCode": "00109310",
+      "name": "대동기어",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "증자/감자",
+          "weight": 20,
+          "count": 2,
+          "latestDate": "2026-07-15"
+        }
+      ],
+      "riskScore": 20,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715000369",
+          "title": "[기재정정]주요사항보고서(유무상증자결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260715",
+          "rceptNo": "20260715900593",
+          "title": "유상증자최종발행가액확정              ",
           "type": "I"
         }
       ]
@@ -1047,7 +1105,7 @@
       "stockCode": "226950",
       "corpCode": "01113718",
       "name": "올릭스",
-      "totalDisclosures": 2,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "증자/감자",
@@ -1065,6 +1123,12 @@
           "type": "B"
         },
         {
+          "date": "20260715",
+          "rceptNo": "20260715900484",
+          "title": "주주총회소집결의              (임시주주총회)",
+          "type": "I"
+        },
+        {
           "date": "20260708",
           "rceptNo": "20260708900340",
           "title": "증권발행결과(자율공시)              ",
@@ -1076,7 +1140,7 @@
       "stockCode": "179900",
       "corpCode": "00961774",
       "name": "유티아이",
-      "totalDisclosures": 2,
+      "totalDisclosures": 3,
       "signals": [
         {
           "rule": "CB발행",
@@ -1092,6 +1156,12 @@
           "rceptNo": "20260707000469",
           "title": "주요사항보고서(전환사채권발행결정)",
           "type": "B"
+        },
+        {
+          "date": "20260715",
+          "rceptNo": "20260715900399",
+          "title": "증권발행결과(자율공시)              (제7회차 CB)",
+          "type": "I"
         },
         {
           "date": "20260708",
@@ -1125,6 +1195,29 @@
       ]
     },
     {
+      "stockCode": "060900",
+      "corpCode": "00367695",
+      "name": "에이전트AI",
+      "totalDisclosures": 1,
+      "signals": [
+        {
+          "rule": "증자/감자",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "2026-07-15"
+        }
+      ],
+      "riskScore": 10,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715000175",
+          "title": "주요사항보고서(유상증자결정)",
+          "type": "B"
+        }
+      ]
+    },
+    {
       "stockCode": "031310",
       "corpCode": "00200910",
       "name": "아이즈비전",
@@ -1143,6 +1236,35 @@
           "date": "20260713",
           "rceptNo": "20260713900624",
           "title": "전환사채(해외전환사채포함)발행후만기전사채취득              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "270520",
+      "corpCode": "01228515",
+      "name": "앱튼",
+      "totalDisclosures": 2,
+      "signals": [
+        {
+          "rule": "증자/감자",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "2026-07-15"
+        }
+      ],
+      "riskScore": 10,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715900348",
+          "title": "증권발행결과(자율공시)              (제3자배정 유상증자)",
+          "type": "I"
+        },
+        {
+          "date": "20260710",
+          "rceptNo": "20260710900576",
+          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
           "type": "I"
         }
       ]
@@ -1395,6 +1517,34 @@
       ]
     },
     {
+      "stockCode": "030190",
+      "corpCode": "00158325",
+      "name": "NICE평가정보",
+      "totalDisclosures": 3,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715000473",
+          "title": "주요사항보고서(자기주식취득신탁계약체결결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260715",
+          "rceptNo": "20260715000210",
+          "title": "주요사항보고서(자기주식취득신탁계약해지결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800355",
+          "title": "주식소각결정              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "158430",
       "corpCode": "00595182",
       "name": "아톤",
@@ -1443,6 +1593,28 @@
       ]
     },
     {
+      "stockCode": "007340",
+      "corpCode": "00116949",
+      "name": "DN오토모티브",
+      "totalDisclosures": 2,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800493",
+          "title": "현금ㆍ현물배당결정              ",
+          "type": "I"
+        },
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800472",
+          "title": "현금ㆍ현물배당을위한주주명부폐쇄(기준일)결정              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
       "stockCode": "398120",
       "corpCode": "01179866",
       "name": "에스지헬스케어",
@@ -1462,10 +1634,16 @@
       "stockCode": "002350",
       "corpCode": "00173874",
       "name": "넥센타이어",
-      "totalDisclosures": 1,
+      "totalDisclosures": 2,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800312",
+          "title": "기업설명회(IR)개최(안내공시)              ",
+          "type": "I"
+        },
         {
           "date": "20260713",
           "rceptNo": "20260713800401",
@@ -1685,17 +1863,17 @@
       ]
     },
     {
-      "stockCode": "270520",
-      "corpCode": "01228515",
-      "name": "앱튼",
+      "stockCode": "048530",
+      "corpCode": "00292434",
+      "name": "인트론바이오",
       "totalDisclosures": 1,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
         {
-          "date": "20260710",
-          "rceptNo": "20260710900576",
-          "title": "[기재정정]주주총회소집결의              (임시주주총회)",
+          "date": "20260715",
+          "rceptNo": "20260715900488",
+          "title": "증권발행결과(자율공시)              ",
           "type": "I"
         }
       ]
@@ -1808,6 +1986,22 @@
           "date": "20260709",
           "rceptNo": "20260709800374",
           "title": "영업(잠정)실적(공정공시)              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "006260",
+      "corpCode": "00105952",
+      "name": "LS",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260715",
+          "rceptNo": "20260715800794",
+          "title": "주요사항보고서(자기주식처분결정)(자회사의 주요경영사항)              ",
           "type": "I"
         }
       ]
