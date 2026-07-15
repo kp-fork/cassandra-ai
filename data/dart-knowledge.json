@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T10:49:29.878Z",
+  "generatedAt": "2026-07-15T02:57:42.354Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 8,
-    "totalSignals": 41,
+    "highRiskCount": 7,
+    "totalSignals": 36,
     "topRisks": [
       {
         "name": "이렘",
@@ -47,13 +47,6 @@
       },
       {
         "name": "육일씨엔에쓰",
-        "score": 35,
-        "signals": [
-          "상장폐지위험"
-        ]
-      },
-      {
-        "name": "데이타솔루션",
         "score": 35,
         "signals": [
           "상장폐지위험"
