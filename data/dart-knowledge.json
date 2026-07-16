@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T10:53:33.564Z",
+  "generatedAt": "2026-07-16T03:20:17.701Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 7,
-    "totalSignals": 40,
+    "highRiskCount": 6,
+    "totalSignals": 34,
     "topRisks": [
       {
         "name": "이렘",
@@ -34,15 +34,6 @@
         "score": 60,
         "signals": [
           "대주주변경"
-        ]
-      },
-      {
-        "name": "KR모터스",
-        "score": 45,
-        "signals": [
-          "대주주변경",
-          "CB발행",
-          "CB리픽싱"
         ]
       },
       {
