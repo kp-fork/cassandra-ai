@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T10:50:10.181Z",
+  "generatedAt": "2026-07-18T02:59:21.741Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 9,
-    "totalSignals": 39,
+    "highRiskCount": 7,
+    "totalSignals": 29,
     "topRisks": [
       {
         "name": "이렘",
@@ -20,20 +20,6 @@
         "signals": [
           "증자/감자",
           "상장폐지위험"
-        ]
-      },
-      {
-        "name": "조일알미늄",
-        "score": 60,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "프로젠",
-        "score": 45,
-        "signals": [
-          "CB리픽싱"
         ]
       },
       {
@@ -45,14 +31,6 @@
         ]
       },
       {
-        "name": "지슨",
-        "score": 45,
-        "signals": [
-          "증자/감자",
-          "상장폐지위험"
-        ]
-      },
-      {
         "name": "모티브링크",
         "score": 40,
         "signals": [
@@ -60,17 +38,24 @@
         ]
       },
       {
-        "name": "육일씨엔에쓰",
+        "name": "조일알미늄",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
+        "name": "지슨",
         "score": 35,
         "signals": [
           "상장폐지위험"
         ]
       },
       {
-        "name": "인산가",
-        "score": 35,
+        "name": "프로젠",
+        "score": 30,
         "signals": [
-          "상장폐지위험"
+          "CB리픽싱"
         ]
       },
       {
