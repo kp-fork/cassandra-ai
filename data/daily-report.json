@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-19T10:31:37.221Z",
+  "generatedAt": "2026-07-20T03:45:38.365Z",
   "period": {
-    "from": "20260712",
-    "to": "20260719"
+    "from": "20260713",
+    "to": "20260720"
   },
-  "totalCompanies": 57,
-  "totalDisclosures": 80,
+  "totalCompanies": 58,
+  "totalDisclosures": 81,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -1405,6 +1405,22 @@
           "date": "20260714",
           "rceptNo": "20260714900775",
           "title": "[기재정정]벌금등의부과              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "900140",
+      "corpCode": "00838500",
+      "name": "엘브이엠씨",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260720",
+          "rceptNo": "20260720800008",
+          "title": "지주회사의자회사탈퇴              ",
           "type": "I"
         }
       ]
