@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T03:25:13.861Z",
+  "generatedAt": "2026-07-21T11:11:43.785Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,7 +12,7 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 8,
-    "totalSignals": 31,
+    "totalSignals": 33,
     "topRisks": [
       {
         "name": "이렘",
@@ -20,6 +20,13 @@
         "signals": [
           "증자/감자",
           "상장폐지위험"
+        ]
+      },
+      {
+        "name": "조일알미늄",
+        "score": 60,
+        "signals": [
+          "대주주변경"
         ]
       },
       {
@@ -40,13 +47,6 @@
       },
       {
         "name": "모티브링크",
-        "score": 40,
-        "signals": [
-          "대주주변경"
-        ]
-      },
-      {
-        "name": "조일알미늄",
         "score": 40,
         "signals": [
           "대주주변경"
