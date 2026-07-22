@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T11:11:43.785Z",
+  "generatedAt": "2026-07-22T03:23:53.203Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,24 +11,9 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 8,
-    "totalSignals": 33,
+    "highRiskCount": 6,
+    "totalSignals": 28,
     "topRisks": [
-      {
-        "name": "이렘",
-        "score": 65,
-        "signals": [
-          "증자/감자",
-          "상장폐지위험"
-        ]
-      },
-      {
-        "name": "조일알미늄",
-        "score": 60,
-        "signals": [
-          "대주주변경"
-        ]
-      },
       {
         "name": "엔피",
         "score": 45,
@@ -53,6 +38,13 @@
         ]
       },
       {
+        "name": "조일알미늄",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
         "name": "지슨",
         "score": 35,
         "signals": [
@@ -64,14 +56,6 @@
         "score": 30,
         "signals": [
           "CB리픽싱"
-        ]
-      },
-      {
-        "name": "뉴온",
-        "score": 30,
-        "signals": [
-          "CB발행",
-          "증자/감자"
         ]
       }
     ]
