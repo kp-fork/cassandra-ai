@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T03:23:53.203Z",
+  "generatedAt": "2026-07-22T11:12:51.594Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,15 +11,16 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 6,
-    "totalSignals": 28,
+    "highRiskCount": 7,
+    "totalSignals": 38,
     "topRisks": [
       {
         "name": "엔피",
-        "score": 45,
+        "score": 80,
         "signals": [
           "사명변경",
-          "대주주변경"
+          "대주주변경",
+          "상장폐지위험"
         ]
       },
       {
@@ -46,6 +47,13 @@
       },
       {
         "name": "지슨",
+        "score": 35,
+        "signals": [
+          "상장폐지위험"
+        ]
+      },
+      {
+        "name": "스트라드비젼",
         "score": 35,
         "signals": [
           "상장폐지위험"
