@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T11:12:51.594Z",
+  "generatedAt": "2026-07-23T03:30:51.728Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,18 +11,9 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 7,
-    "totalSignals": 38,
+    "highRiskCount": 6,
+    "totalSignals": 32,
     "topRisks": [
-      {
-        "name": "엔피",
-        "score": 80,
-        "signals": [
-          "사명변경",
-          "대주주변경",
-          "상장폐지위험"
-        ]
-      },
       {
         "name": "케스피온",
         "score": 45,
@@ -32,17 +23,17 @@
         ]
       },
       {
-        "name": "모티브링크",
+        "name": "조일알미늄",
         "score": 40,
         "signals": [
           "대주주변경"
         ]
       },
       {
-        "name": "조일알미늄",
-        "score": 40,
+        "name": "엔피",
+        "score": 35,
         "signals": [
-          "대주주변경"
+          "상장폐지위험"
         ]
       },
       {
