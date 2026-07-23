@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-23T03:30:51.727Z",
+  "generatedAt": "2026-07-23T11:13:36.703Z",
   "period": {
     "from": "20260716",
     "to": "20260723"
   },
-  "totalCompanies": 59,
-  "totalDisclosures": 98,
+  "totalCompanies": 63,
+  "totalDisclosures": 111,
   "rules": [
     {
       "key": "NAME_CHANGE",
@@ -113,6 +113,53 @@
           "date": "20260720",
           "rceptNo": "20260720800578",
           "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "267260",
+      "corpCode": "01205851",
+      "name": "HD현대일렉트릭",
+      "totalDisclosures": 5,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 40,
+          "count": 2,
+          "latestDate": "2026-07-23"
+        }
+      ],
+      "riskScore": 40,
+      "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800577",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        },
+        {
+          "date": "20260722",
+          "rceptNo": "20260722800647",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        },
+        {
+          "date": "20260721",
+          "rceptNo": "20260721800698",
+          "title": "주주명부폐쇄기간또는기준일설정              ",
+          "type": "I"
+        },
+        {
+          "date": "20260721",
+          "rceptNo": "20260721800703",
+          "title": "기업설명회(IR)개최(안내공시)              ",
+          "type": "I"
+        },
+        {
+          "date": "20260721",
+          "rceptNo": "20260721800693",
+          "title": "주주총회소집결의              ",
           "type": "I"
         }
       ]
@@ -283,6 +330,53 @@
           "date": "20260720",
           "rceptNo": "20260720800578",
           "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "267260",
+      "corpCode": "01205851",
+      "name": "HD현대일렉트릭",
+      "totalDisclosures": 5,
+      "signals": [
+        {
+          "rule": "대주주변경",
+          "weight": 40,
+          "count": 2,
+          "latestDate": "2026-07-23"
+        }
+      ],
+      "riskScore": 40,
+      "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800577",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        },
+        {
+          "date": "20260722",
+          "rceptNo": "20260722800647",
+          "title": "최대주주등소유주식변동신고서              ",
+          "type": "I"
+        },
+        {
+          "date": "20260721",
+          "rceptNo": "20260721800698",
+          "title": "주주명부폐쇄기간또는기준일설정              ",
+          "type": "I"
+        },
+        {
+          "date": "20260721",
+          "rceptNo": "20260721800703",
+          "title": "기업설명회(IR)개최(안내공시)              ",
+          "type": "I"
+        },
+        {
+          "date": "20260721",
+          "rceptNo": "20260721800693",
+          "title": "주주총회소집결의              ",
           "type": "I"
         }
       ]
@@ -705,14 +799,20 @@
       ]
     },
     {
-      "stockCode": "267260",
-      "corpCode": "01205851",
-      "name": "HD현대일렉트릭",
-      "totalDisclosures": 4,
+      "stockCode": "277410",
+      "corpCode": "01243161",
+      "name": "인산가",
+      "totalDisclosures": 2,
       "signals": [
         {
-          "rule": "대주주변경",
-          "weight": 20,
+          "rule": "CB발행",
+          "weight": 10,
+          "count": 1,
+          "latestDate": "2026-07-23"
+        },
+        {
+          "rule": "증자/감자",
+          "weight": 10,
           "count": 1,
           "latestDate": "2026-07-22"
         }
@@ -721,26 +821,14 @@
       "recentDisclosures": [
         {
           "date": "20260722",
-          "rceptNo": "20260722800647",
-          "title": "최대주주등소유주식변동신고서              ",
-          "type": "I"
+          "rceptNo": "20260722000262",
+          "title": "주요사항보고서(유상증자결정)",
+          "type": "B"
         },
         {
-          "date": "20260721",
-          "rceptNo": "20260721800698",
-          "title": "주주명부폐쇄기간또는기준일설정              ",
-          "type": "I"
-        },
-        {
-          "date": "20260721",
-          "rceptNo": "20260721800703",
-          "title": "기업설명회(IR)개최(안내공시)              ",
-          "type": "I"
-        },
-        {
-          "date": "20260721",
-          "rceptNo": "20260721800693",
-          "title": "주주총회소집결의              ",
+          "date": "20260723",
+          "rceptNo": "20260723900783",
+          "title": "신주인수권부사채(해외신주인수권부사채포함)발행후만기전사채취득              ",
           "type": "I"
         }
       ]
@@ -1024,25 +1112,25 @@
       ]
     },
     {
-      "stockCode": "277410",
-      "corpCode": "01243161",
-      "name": "인산가",
+      "stockCode": "060900",
+      "corpCode": "00367695",
+      "name": "에이전트AI",
       "totalDisclosures": 1,
       "signals": [
         {
           "rule": "증자/감자",
           "weight": 10,
           "count": 1,
-          "latestDate": "2026-07-22"
+          "latestDate": "2026-07-23"
         }
       ],
       "riskScore": 10,
       "recentDisclosures": [
         {
-          "date": "20260722",
-          "rceptNo": "20260722000262",
-          "title": "주요사항보고서(유상증자결정)",
-          "type": "B"
+          "date": "20260723",
+          "rceptNo": "20260723900525",
+          "title": "증권발행결과(자율공시)              (제3자배정 유상증자)",
+          "type": "I"
         }
       ]
     },
@@ -1204,10 +1292,40 @@
       "stockCode": "005380",
       "corpCode": "00164742",
       "name": "현대자동차",
-      "totalDisclosures": 1,
+      "totalDisclosures": 6,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723000599",
+          "title": "주요사항보고서(자기주식처분결정)",
+          "type": "B"
+        },
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800961",
+          "title": "공정거래자율준수프로그램운영현황(안내공시)              ",
+          "type": "I"
+        },
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800323",
+          "title": "현금ㆍ현물배당결정              ",
+          "type": "I"
+        },
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800321",
+          "title": "현금ㆍ현물배당을위한주주명부폐쇄(기준일)결정              ",
+          "type": "I"
+        },
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800315",
+          "title": "연결재무제표기준영업(잠정)실적(공정공시)              ",
+          "type": "I"
+        },
         {
           "date": "20260716",
           "rceptNo": "20260716800634",
@@ -1278,6 +1396,38 @@
           "date": "20260716",
           "rceptNo": "20260716900772",
           "title": "전환청구권행사              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "005810",
+      "corpCode": "00155531",
+      "name": "풍산홀딩스",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723000655",
+          "title": "주요사항보고서(자기주식취득결정)",
+          "type": "B"
+        }
+      ]
+    },
+    {
+      "stockCode": "086390",
+      "corpCode": "00540447",
+      "name": "유니테스트",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723900301",
+          "title": "단일판매ㆍ공급계약체결              ",
           "type": "I"
         }
       ]
@@ -1372,10 +1522,16 @@
       "stockCode": "036460",
       "corpCode": "00261285",
       "name": "한국가스공사",
-      "totalDisclosures": 1,
+      "totalDisclosures": 2,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800464",
+          "title": "임시주주총회결과              ",
+          "type": "I"
+        },
         {
           "date": "20260716",
           "rceptNo": "20260716800319",
@@ -1426,10 +1582,16 @@
       "stockCode": "246690",
       "corpCode": "00778235",
       "name": "TS인베스트먼트",
-      "totalDisclosures": 1,
+      "totalDisclosures": 2,
       "signals": [],
       "riskScore": 0,
       "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723000235",
+          "title": "주요사항보고서(자기주식취득신탁계약체결결정)",
+          "type": "B"
+        },
         {
           "date": "20260722",
           "rceptNo": "20260722900396",
@@ -1586,6 +1748,22 @@
           "date": "20260722",
           "rceptNo": "20260722900195",
           "title": "기업설명회(IR)개최              ",
+          "type": "I"
+        }
+      ]
+    },
+    {
+      "stockCode": "090430",
+      "corpCode": "00583424",
+      "name": "아모레퍼시픽",
+      "totalDisclosures": 1,
+      "signals": [],
+      "riskScore": 0,
+      "recentDisclosures": [
+        {
+          "date": "20260723",
+          "rceptNo": "20260723800423",
+          "title": "결산실적공시예고(안내공시)              ",
           "type": "I"
         }
       ]

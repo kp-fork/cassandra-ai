@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T03:30:51.728Z",
+  "generatedAt": "2026-07-23T11:13:36.704Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -11,8 +11,8 @@
   },
   "companies": {},
   "dailyReport": {
-    "highRiskCount": 6,
-    "totalSignals": 32,
+    "highRiskCount": 7,
+    "totalSignals": 34,
     "topRisks": [
       {
         "name": "케스피온",
@@ -24,6 +24,13 @@
       },
       {
         "name": "조일알미늄",
+        "score": 40,
+        "signals": [
+          "대주주변경"
+        ]
+      },
+      {
+        "name": "HD현대일렉트릭",
         "score": 40,
         "signals": [
           "대주주변경"
