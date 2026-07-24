@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T03:24:47.646Z",
+  "generatedAt": "2026-07-24T11:07:04.061Z",
   "totalCompanies": 0,
   "totalDisclosures": 0,
   "categories": {
@@ -12,8 +12,16 @@
   "companies": {},
   "dailyReport": {
     "highRiskCount": 5,
-    "totalSignals": 31,
+    "totalSignals": 35,
     "topRisks": [
+      {
+        "name": "엔피",
+        "score": 45,
+        "signals": [
+          "증자/감자",
+          "상장폐지위험"
+        ]
+      },
       {
         "name": "케스피온",
         "score": 45,
@@ -41,13 +49,6 @@
         "score": 40,
         "signals": [
           "대주주변경"
-        ]
-      },
-      {
-        "name": "엔피",
-        "score": 35,
-        "signals": [
-          "상장폐지위험"
         ]
       }
     ]
